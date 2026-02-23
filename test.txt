@@ -1,0 +1,8 @@
+시장 데이터 분석 / https://github.com/FinanceData/FinanceDataReader
+
+
+
+수집 유지수, 안진경
+저장 최혜인, 김어진
+분석 최혜인, 김어진, 권서진
+스크래핑 권서진, 안진경
