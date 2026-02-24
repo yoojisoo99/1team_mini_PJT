@@ -333,10 +333,12 @@ st.markdown("""
         color: #f0e8dc !important;
     }
 
-    /* 경고/정보 박스 */
-    .stWarning, .stInfo {
+    /* 경고/정보/성공/에러 박스 텍스트 가독성 */
+    [data-testid="stAlert"] {
         background: rgba(55, 50, 46, 0.9) !important;
-        border-left-color: #dcb98c !important;
+    }
+    [data-testid="stAlert"] p, [data-testid="stAlert"] span, [data-testid="stAlert"] div {
+        color: #f0e8dc !important;
     }
 </style>
 """, unsafe_allow_html=True)
