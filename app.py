@@ -375,6 +375,8 @@ if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 if 'username' not in st.session_state:
     st.session_state['username'] = ""
+if 'current_page' not in st.session_state:
+    st.session_state['current_page'] = "🏠 메인 대시보드"
 
 # ============================================================
 # 사이드바 네비게이션 & 로그인 폼
@@ -385,54 +387,27 @@ with st.sidebar:
     
     # 로그인 폼 구성
     if not st.session_state['logged_in']:
-        tab_login, tab_signup = st.tabs(["🔑 로그인", "📝 회원가입"])
-        
-        with tab_login:
-            login_id = st.text_input("아이디", key="login_id")
-            login_pw = st.text_input("비밀번호", type="password", key="login_pw")
-            if st.button("로그인", use_container_width=True):
-                users = load_users()
-                if login_id in users:
-                    user_data = users[login_id]
-                    # 구버전 호환성 (단순 string 해시 비밀번호인 경우)
-                    if isinstance(user_data, str):
-                        hashed_pw = user_data
-                    else:
-                        hashed_pw = user_data.get("user_password", "")
-                        
-                    if _safe_verify(login_pw, hashed_pw):
-                        st.session_state['logged_in'] = True
-                        st.session_state['username'] = login_id
-                        st.success("로그인 성공!")
-                        st.rerun()
-                    else:
-                        st.error("아이디 또는 비밀번호가 틀렸습니다.")
+        st.markdown("### 🔑 로그인")
+        login_id = st.text_input("아이디", key="login_id")
+        login_pw = st.text_input("비밀번호", type="password", key="login_pw")
+        if st.button("로그인", use_container_width=True):
+            users = load_users()
+            if login_id in users:
+                user_data = users[login_id]
+                if isinstance(user_data, str):
+                    hashed_pw = user_data
+                else:
+                    hashed_pw = user_data.get("user_password", "")
+                    
+                if _safe_verify(login_pw, hashed_pw):
+                    st.session_state['logged_in'] = True
+                    st.session_state['username'] = login_id
+                    st.success("로그인 성공!")
+                    st.rerun()
                 else:
                     st.error("아이디 또는 비밀번호가 틀렸습니다.")
-                    
-        with tab_signup:
-            new_id = st.text_input("새 아이디", key="new_id")
-            new_email = st.text_input("이메일 주소", key="new_email")
-            new_pw = st.text_input("새 비밀번호", type="password", key="new_pw")
-            new_pw_check = st.text_input("비밀번호 확인", type="password", key="new_pw_chk")
-            
-            if st.button("가입하기", use_container_width=True):
-                users = load_users()
-                if new_id in users:
-                    st.error("이미 존재하는 아이디입니다.")
-                elif new_pw != new_pw_check:
-                    st.error("비밀번호가 일치하지 않습니다.")
-                elif len(new_id) < 4 or len(new_pw) < 4:
-                    st.error("아이디와 비밀번호는 4자리 이상이어야 합니다.")
-                elif not new_email or "@" not in new_email:
-                    st.error("유효한 이메일 주소를 입력해주세요.")
-                else:
-                    users[new_id] = {
-                        "user_password": _safe_hash(new_pw),
-                        "user_email": new_email
-                    }
-                    save_users(users)
-                    st.success("회원가입이 완료되었습니다! 로그인해주세요.")
+            else:
+                st.error("아이디 또는 비밀번호가 틀렸습니다.")
     else:
         st.success(f"👋 환영합니다, **{st.session_state['username']}**님!")
         if st.button("로그아웃", use_container_width=True):
@@ -442,10 +417,23 @@ with st.sidebar:
             
     st.markdown("---")
 
+    menu_options = ["🏠 메인 대시보드", "📝 회원가입", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
+                    "📈 분석 신호", "📰 종목 뉴스", "📧 뉴스레터"]
+    
+    # 로그인 상태면 회원가입 메뉴 숨기기
+    if st.session_state['logged_in']:
+        menu_options.remove("📝 회원가입")
+
+    # 콜백 함수를 통해 session state 수동 업데이트 우회
+    def on_page_change():
+        st.session_state['current_page'] = st.session_state['menu_radio']
+
     page = st.radio(
         "메뉴 선택",
-        ["🏠 메인 대시보드", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
-         "📈 분석 신호", "📰 종목 뉴스", "📧 뉴스레터"],
+        menu_options,
+        index=menu_options.index(st.session_state['current_page']) if st.session_state['current_page'] in menu_options else 0,
+        key="menu_radio",
+        on_change=on_page_change,
         label_visibility="collapsed",
     )
 
@@ -477,9 +465,47 @@ stock_df, news_df, hist_df, signals_df = load_latest_data()
 
 
 # ============================================================
+# 📝 회원가입 전용 페이지
+# ============================================================
+if page == "📝 회원가입":
+    st.markdown("# 📝 회원가입")
+    st.markdown("주식 추천 시스템의 모든 기능을 이용하시려면 회원가입을 진행해주세요.")
+    st.markdown("---")
+    
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        with st.form("signup_form_main"):
+            new_id = st.text_input("아이디 (4자리 이상)")
+            new_email = st.text_input("이메일 주소")
+            new_pw = st.text_input("비밀번호 (4자리 이상)", type="password")
+            new_pw_check = st.text_input("비밀번호 확인", type="password")
+            
+            submitted = st.form_submit_button("회원가입 완료", use_container_width=True)
+            
+            if submitted:
+                users = load_users()
+                if new_id in users:
+                    st.error("이미 존재하는 아이디입니다.")
+                elif new_pw != new_pw_check:
+                    st.error("비밀번호가 일치하지 않습니다.")
+                elif len(new_id) < 4 or len(new_pw) < 4:
+                    st.error("아이디와 비밀번호는 4자리 이상이어야 합니다.")
+                elif not new_email or "@" not in new_email:
+                    st.error("유효한 이메일 주소를 입력해주세요.")
+                else:
+                    users[new_id] = {
+                        "user_password": _safe_hash(new_pw),
+                        "user_email": new_email
+                    }
+                    save_users(users)
+                    st.success("✅ 회원가입이 완료되었습니다! 왼쪽 사이드바에서 로그인해주세요.")
+                    st.session_state['current_page'] = "🏠 메인 대시보드"
+                    st.rerun()
+
+# ============================================================
 # 🏠 메인 대시보드
 # ============================================================
-if page == "🏠 메인 대시보드":
+elif page == "🏠 메인 대시보드":
     st.markdown("# 🏠 시장 개요 대시보드")
 
     # ── 초보자 용어 설명 ──
