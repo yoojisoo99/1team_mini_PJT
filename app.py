@@ -286,18 +286,19 @@ st.markdown("""
         background: rgba(220, 185, 140, 0.08);
     }
 
-    /* 버튼 */
-    .stButton > button {
-        background: linear-gradient(135deg, #a67c52, #c19b76);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    /* 버튼 및 폼 제출 버튼 */
+    .stButton > button, [data-testid="stFormSubmitButton"] > button {
+        background: linear-gradient(135deg, #a67c52, #c19b76) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
     }
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #c19b76, #dcb98c);
-        box-shadow: 0 4px 15px rgba(220, 185, 140, 0.3);
+    .stButton > button:hover, [data-testid="stFormSubmitButton"] > button:hover {
+        background: linear-gradient(135deg, #c19b76, #dcb98c) !important;
+        box-shadow: 0 4px 15px rgba(220, 185, 140, 0.3) !important;
+        color: white !important;
     }
 
     /* 익스팬더 (펼쳐보기) 스타일 수정 — 열렸을 때도 다크 유지 */
