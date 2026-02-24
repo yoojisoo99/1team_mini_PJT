@@ -414,6 +414,7 @@ with st.sidebar:
             st.session_state['current_page'] = "📝 회원가입"
             st.session_state['menu_radio'] = "🏠 메인 대시보드" # 라디오 버튼 선택 해제 효과를 위해 기본값 유지
             st.rerun()
+    else:
         st.success(f"👋 환영합니다, **{st.session_state['username']}**님!")
         if st.button("로그아웃", use_container_width=True):
             st.session_state['logged_in'] = False
