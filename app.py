@@ -348,7 +348,7 @@ st.markdown("""
 import json
 import bcrypt as _bcrypt  # passlib 대신 raw bcrypt 사용 (backend 호환 문제 해결)
 import os
-from db_manager import load_users_from_db, save_users_to_db, init_user_type_table
+from db_manager import load_users_from_db, save_users_to_db, init_user_type_table, save_user_profile
 
 if 'user_type_init' not in st.session_state:
     init_user_type_table()
@@ -429,8 +429,7 @@ with st.sidebar:
                 else:
                     users[new_id] = {
                         "user_password": _safe_hash(new_pw),
-                        "user_email": new_email,
-                        "type_id": None # 설문 전 기본값
+                        "user_email": new_email
                     }
                     save_users(users)
                     st.success("회원가입이 완료되었습니다! 로그인해주세요.")
@@ -794,21 +793,20 @@ elif page == "📋 투자 성향 설문":
         st.session_state['survey_score'] = total_score
         st.session_state['survey_answers'] = answers
         
-        # 로그인 되어있다면 유저 DB에 투자 성향(type_id) 업데이트
+        # 로그인 되어있다면 유저별 투자 성향(user_profile) DB에 업데이트
         if st.session_state.get('logged_in'):
             user_id = st.session_state.get('username')
             if user_id:
-                users = load_users()
-                if user_id in users and isinstance(users[user_id], dict):
-                    type_id_map = {
-                        '안정형': 1,
-                        '안정추구형': 2,
-                        '위험중립형': 3,
-                        '적극투자형': 4,
-                        '공격투자형': 5
-                    }
-                    users[user_id]['type_id'] = type_id_map.get(investor_type, None)
-                    save_users(users)
+                type_id_map = {
+                    '안정형': 1,
+                    '안정추구형': 2,
+                    '위험중립형': 3,
+                    '적극투자형': 4,
+                    '공격투자형': 5
+                }
+                type_id = type_id_map.get(investor_type)
+                if type_id:
+                    save_user_profile(user_id, type_id)
                     st.toast(f"✅ {user_id}님의 투자 성향({investor_type})이 저장되었습니다!")
 
         type_info = TYPE_DESCRIPTIONS[investor_type]
