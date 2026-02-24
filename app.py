@@ -430,7 +430,7 @@ with st.sidebar:
     def on_page_change():
         st.session_state['current_page'] = st.session_state['menu_radio']
 
-    page = st.radio(
+    st.radio(
         "메뉴 선택",
         menu_options,
         index=menu_options.index(st.session_state['current_page']) if st.session_state['current_page'] in menu_options else 0,
@@ -438,6 +438,8 @@ with st.sidebar:
         on_change=on_page_change,
         label_visibility="collapsed",
     )
+    
+    page = st.session_state['current_page']
 
     st.markdown("---")
     
