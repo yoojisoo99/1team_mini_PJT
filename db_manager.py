@@ -324,7 +324,19 @@ def load_users_from_db():
     if os.path.exists(csv_path):
         try:
             with open(csv_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                
+                # 새로운 포맷인 경우 {"users": [...], "user_type": [...]}
+                if isinstance(data, dict) and "users" in data:
+                    fallback_dict = {}
+                    for u in data["users"]:
+                        fallback_dict[u["user_id"]] = {
+                            "user_password": u.get("user_password", ""),
+                            "user_email": u.get("user_email", "")
+                        }
+                    return fallback_dict
+                else:
+                    return data # 구버전 호환
         except Exception as e:
             logger.error(f"users_db.json 로드 실패: {e}")
     return {}
@@ -334,9 +346,29 @@ def save_users_to_db(users_dict):
     """사용자 dict를 받아 users 테이블과 JSON 백업에 동시 저장합니다."""
     import json
     csv_path = os.path.join(DATA_DIR, 'users_db.json')
+    
+    # 기존 JSON 구조 읽어오기 (user_type 보존을 위해)
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            if not isinstance(data, dict) or "users" not in data:
+                data = {"users": [], "user_type": []}
+    except Exception:
+        data = {"users": [], "user_type": []}
+        
+    # users 배열 갱신
+    new_users_list = []
+    for uid, udata in users_dict.items():
+        new_users_list.append({
+            "user_id": uid,
+            "user_password": udata.get("user_password", ""),
+            "user_email": udata.get("user_email", "")
+        })
+    data["users"] = new_users_list
+
     try:
         with open(csv_path, 'w', encoding='utf-8') as f:
-            json.dump(users_dict, f, indent=4)
+            json.dump(data, f, indent=4, ensure_ascii=False)
     except Exception as e:
         logger.error(f"users_db.json 백업 저장 실패: {e}")
         
@@ -356,7 +388,51 @@ def save_users_to_db(users_dict):
 def save_user_profile(user_id, type_id):
     """
     사용자와 투자 성향(type_id) 매핑 정보를 user_profile 테이블에 저장합니다.
+    (요청된 JSON 스키마를 위해 users_db.json의 user_type 배열에도 저장합니다)
     """
+    import json
+    csv_path = os.path.join(DATA_DIR, 'users_db.json')
+    
+    # 1. JSON 구조 업데이트
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            if not isinstance(data, dict) or "user_type" not in data:
+                data = {"users": [], "user_type": []}
+    except Exception:
+        data = {"users": [], "user_type": []}
+        
+    type_names = {
+        1: "안정형", 2: "안정추구형", 3: "위험중립형", 4: "적극투자형", 5: "공격투자형"
+    }
+    
+    user_type_list = data.get("user_type", [])
+    found = False
+    for ut in user_type_list:
+        if ut.get("user_id") == user_id:
+            ut["type_id"] = type_id
+            ut["type_name"] = type_names.get(type_id, "Unknown Profile")
+            ut["description"] = f"User has been profiled as {ut['type_name']}."
+            found = True
+            break
+            
+    if not found:
+        user_type_list.append({
+            "user_id": user_id,
+            "type_id": type_id,
+            "type_name": type_names.get(type_id, "Unknown Profile"),
+            "description": f"User has been profiled as {type_names.get(type_id, 'Unknown Profile')}."
+        })
+        
+    data["user_type"] = user_type_list
+    
+    try:
+        with open(csv_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+    except Exception as e:
+        logger.error(f"users_db.json 백업 저장 실패: {e}")
+
+    # 2. 통합 DB (CSV Fallback 포함) 저장
     df = pd.DataFrame([{
         'user_id': user_id,
         'type_id': type_id
