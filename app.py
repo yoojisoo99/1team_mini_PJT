@@ -87,118 +87,299 @@ def load_latest_data():
 # ============================================================
 st.markdown("""
 <style>
-    /* 전체 배경색 — 깔끔한 다크 테마 */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+    /* 전체 배경 — 부드럽고 고급스러운 베이지/크림 다크톤 */
     .stApp {
-        background: linear-gradient(160deg, #0d1117 0%, #161b22 40%, #1a2332 100%);
+        background: linear-gradient(160deg, #2b2622 0%, #302b28 50%, #26221f 100%);
+        font-family: 'Noto Sans KR', sans-serif;
     }
 
     /* 사이드바 */
     [data-testid="stSidebar"] {
-        background: rgba(13, 17, 23, 0.97);
-        border-right: 1px solid rgba(255,255,255,0.08);
+        background: rgba(38, 34, 31, 0.98);
+        border-right: 1px solid rgba(220, 185, 140, 0.15);
     }
 
-    /* 메트릭 카드 */
+    /* 메트릭 카드 및 내부 텍스트 */
     [data-testid="stMetric"] {
-        background: rgba(22, 27, 34, 0.8);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(55, 50, 46, 0.7);
+        border: 1px solid rgba(220, 185, 140, 0.25);
         border-radius: 12px;
         padding: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    [data-testid="stMetricValue"] > div {
+        color: #f2ece4 !important;
+        font-weight: 700 !important;
+    }
+    [data-testid="stMetricLabel"] > div {
+        color: #dcb98c !important;
+        font-weight: 600 !important;
     }
 
-    /* 헤더 스타일 */
+    /* 헤더 */
     h1 {
-        background: linear-gradient(90deg, #58a6ff, #3fb950);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #dcb98c !important;
         font-weight: 800 !important;
+        font-family: 'Noto Sans KR', sans-serif !important;
     }
 
     h2, h3 {
-        color: #e6edf3 !important;
+        color: #f2ece4 !important;
+        font-weight: 600 !important;
     }
 
     /* 성향 결과 카드 */
     .investor-card {
-        background: rgba(22, 27, 34, 0.9);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(55, 50, 46, 0.85);
+        border: 1px solid rgba(220, 185, 140, 0.3);
         border-radius: 16px;
         padding: 24px;
         margin: 16px 0;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     .investor-card h2 {
         margin: 0 0 12px 0;
         font-size: 28px;
+        color: #dcb98c !important;
     }
 
     .investor-card p {
-        color: #8b949e;
-        line-height: 1.6;
+        color: #e5dac9;
+        line-height: 1.7;
     }
 
-    /* 추천 종목 카드 */
+    /* 종목 카드 */
     .stock-card {
-        background: rgba(22, 27, 34, 0.8);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(50, 45, 41, 0.8);
+        border: 1px solid rgba(220, 185, 140, 0.2);
         border-radius: 12px;
         padding: 16px;
         margin: 8px 0;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: all 0.2s ease-in-out;
     }
 
     .stock-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(88,166,255,0.15);
+        box-shadow: 0 8px 25px rgba(220, 185, 140, 0.15);
+        border-color: rgba(220, 185, 140, 0.5);
     }
 
     /* 점수 배지 */
     .score-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #238636, #2ea043);
+        background: linear-gradient(135deg, #a67c52, #c19b76);
         color: white;
         padding: 4px 12px;
         border-radius: 20px;
         font-weight: 700;
         font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
-    /* 탭 스타일 */
+    /* 탭 */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
     }
 
     .stTabs [data-baseweb="tab"] {
-        background: rgba(22, 27, 34, 0.8);
+        background: rgba(55, 50, 46, 0.7);
         border-radius: 8px;
-        color: #8b949e;
+        color: #a89f91;
         padding: 8px 24px;
+        font-weight: 500;
     }
 
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #238636, #2ea043) !important;
+        background: linear-gradient(135deg, #a67c52, #c19b76) !important;
         color: white !important;
     }
 
-    /* 설문 라디오 버튼 */
-    .stRadio label {
-        color: #c9d1d9 !important;
+    /* 위젯 라벨 (셀렉트박스, 라디오, 체크박스 등) */
+    .stSelectbox label, .stRadio label, .stMultiSelect label, 
+    .stNumberInput label, .stTextInput label, .stSlider label {
+        color: #dcb98c !important;
+        font-weight: 600 !important;
     }
 
-    /* 데이터프레임 */
-    .stDataFrame {
-        border-radius: 12px;
-        overflow: hidden;
+    /* 일반 텍스트 밝게 조정 (오류 방지를 위해 div 제외) */
+    p, span {
+        color: #f2ece4 !important;
+    }
+
+    /* 드롭다운 (셀렉트박스) 내부 텍스트 및 팝업창 스타일 */
+    .stSelectbox div[data-baseweb="select"] > div {
+        background-color: rgba(55, 50, 46, 0.9) !important;
+        color: #f2ece4 !important;
+    }
+    
+    div[role="listbox"] {
+        background-color: #302b28 !important;
+        border: 1px solid rgba(220, 185, 140, 0.3) !important;
+        border-radius: 8px !important;
+    }
+    
+    div[role="listbox"] ul li {
+        color: #f2ece4 !important;
+        background-color: transparent !important;
+    }
+    
+    div[role="listbox"] ul li:hover {
+        background-color: rgba(220, 185, 140, 0.2) !important;
+        color: #dcb98c !important;
+    }
+
+
+    table {
+        color: #f2ece4 !important;
+    }
+    
+    th, td {
+        border-bottom: 1px solid rgba(220, 185, 140, 0.2) !important;
+    }
+    
+    th {
+        color: #dcb98c !important;
+        font-weight: 700 !important;
+    }
+
+    /* 버튼 */
+    .stButton > button {
+        background: linear-gradient(135deg, #a67c52, #c19b76);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #c19b76, #dcb98c);
+        box-shadow: 0 4px 15px rgba(220, 185, 140, 0.3);
+    }
+
+    /* 익스팬더 (펼쳐보기) 스타일 수정 */
+    [data-testid="stExpander"] {
+        background-color: rgba(55, 50, 46, 0.7) !important;
+        border: 1px solid rgba(220, 185, 140, 0.25) !important;
+        border-radius: 12px !important;
+    }
+    [data-testid="stExpander"] summary {
+        color: #dcb98c !important;
+        font-weight: 600 !important;
+    }
+    [data-testid="stExpander"] summary:hover {
+        color: #f2ece4 !important;
+    }
+
+    /* 경고/정보 박스 */
+    .stWarning, .stInfo {
+        background: rgba(55, 50, 46, 0.9) !important;
+        border-left-color: #dcb98c !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 
 # ============================================================
-# 사이드바 네비게이션
+# 🔐 사용자 인증 시스템 (Phase 10)
+# ============================================================
+import json
+import bcrypt as _bcrypt  # passlib 대신 raw bcrypt 사용 (backend 호환 문제 해결)
+import os
+
+USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.json')
+
+def load_users():
+    if not os.path.exists(USERS_DB_FILE):
+        return {}
+    with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_users(users):
+    with open(USERS_DB_FILE, 'w', encoding='utf-8') as f:
+        json.dump(users, f, indent=4)
+
+# bcrypt는 최대 72바이트 제한 → raw bcrypt로 안전하게 처리
+def _safe_hash(password: str) -> str:
+    pw_bytes = password.encode('utf-8')[:72]
+    return _bcrypt.hashpw(pw_bytes, _bcrypt.gensalt()).decode('utf-8')
+
+def _safe_verify(password: str, hashed: str) -> bool:
+    pw_bytes = password.encode('utf-8')[:72]
+    return _bcrypt.checkpw(pw_bytes, hashed.encode('utf-8'))
+
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+if 'username' not in st.session_state:
+    st.session_state['username'] = ""
+
+# ============================================================
+# 사이드바 네비게이션 & 로그인 폼
 # ============================================================
 with st.sidebar:
     st.markdown("## 📊 주식 추천 시스템")
+    st.markdown("---")
+    
+    # 로그인 폼 구성
+    if not st.session_state['logged_in']:
+        tab_login, tab_signup = st.tabs(["🔑 로그인", "📝 회원가입"])
+        
+        with tab_login:
+            login_id = st.text_input("아이디", key="login_id")
+            login_pw = st.text_input("비밀번호", type="password", key="login_pw")
+            if st.button("로그인", use_container_width=True):
+                users = load_users()
+                if login_id in users:
+                    user_data = users[login_id]
+                    # 구버전 호환성 (단순 string 해시 비밀번호인 경우)
+                    if isinstance(user_data, str):
+                        hashed_pw = user_data
+                    else:
+                        hashed_pw = user_data.get("user_password", "")
+                        
+                    if _safe_verify(login_pw, hashed_pw):
+                        st.session_state['logged_in'] = True
+                        st.session_state['username'] = login_id
+                        st.success("로그인 성공!")
+                        st.rerun()
+                    else:
+                        st.error("아이디 또는 비밀번호가 틀렸습니다.")
+                else:
+                    st.error("아이디 또는 비밀번호가 틀렸습니다.")
+                    
+        with tab_signup:
+            new_id = st.text_input("새 아이디", key="new_id")
+            new_email = st.text_input("이메일 주소", key="new_email")
+            new_pw = st.text_input("새 비밀번호", type="password", key="new_pw")
+            new_pw_check = st.text_input("비밀번호 확인", type="password", key="new_pw_chk")
+            
+            if st.button("가입하기", use_container_width=True):
+                users = load_users()
+                if new_id in users:
+                    st.error("이미 존재하는 아이디입니다.")
+                elif new_pw != new_pw_check:
+                    st.error("비밀번호가 일치하지 않습니다.")
+                elif len(new_id) < 4 or len(new_pw) < 4:
+                    st.error("아이디와 비밀번호는 4자리 이상이어야 합니다.")
+                elif not new_email or "@" not in new_email:
+                    st.error("유효한 이메일 주소를 입력해주세요.")
+                else:
+                    users[new_id] = {
+                        "user_password": _safe_hash(new_pw),
+                        "user_email": new_email,
+                        "type_id": "미정" # 설문 전 기본값
+                    }
+                    save_users(users)
+                    st.success("회원가입이 완료되었습니다! 로그인해주세요.")
+    else:
+        st.success(f"👋 환영합니다, **{st.session_state['username']}**님!")
+        if st.button("로그아웃", use_container_width=True):
+            st.session_state['logged_in'] = False
+            st.session_state['username'] = ""
+            st.rerun()
+            
     st.markdown("---")
 
     page = st.radio(
@@ -209,8 +390,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-
-    # 데이터 새로고침 버튼
+    
     if st.button("🔄 데이터 새로고침", use_container_width=True):
         st.cache_data.clear()
         st.rerun()
@@ -242,6 +422,23 @@ stock_df, news_df, hist_df, signals_df = load_latest_data()
 if page == "🏠 메인 대시보드":
     st.markdown("# 🏠 시장 개요 대시보드")
 
+    # ── 초보자 용어 설명 ──
+    with st.expander("📖 처음 오셨나요? 주요 용어 설명 보기"):
+        st.markdown("""
+        | 용어 | 뜻 | 쉬운 설명 |
+        |------|----|-----------|
+        | **PER** | 주가수익비율 | 낮을수록 '저평가' 가능성. 보통 10~20이 적정 |
+        | **PBR** | 주가순자산비율 | 1 미만이면 회사 자산보다 주가가 낮음 (저평가) |
+        | **외국인 순매수** | 외국인 투자자 매수-매도 | (+)면 외국인이 사는 중, (-)면 파는 중 |
+        | **기관 순매수** | 연기금·펀드 등 매수-매도 | 기관이 사면 일반적으로 긍정 신호 |
+        | **거래대금** | 하루 총 거래 금액 | 클수록 많은 사람이 관심 갖는 종목 |
+        | **등락률** | 전날 대비 가격 변화 | (+)는 상승, (-)는 하락 |
+        | **🟢 BUY** | 매수 신호 | 여러 지표가 상승 가능성을 보임 |
+        | **🟡 HOLD** | 보유 신호 | 추세가 불분명, 지켜보는 것 권장 |
+        | **🔴 SELL** | 매도 신호 | 하락 지표가 나타남, 주의 필요 |
+        """)
+        st.info("⚠️ 본 서비스는 **투자 참고용**입니다. 실제 투자 결정은 전문가 상담을 권장합니다.")
+
     if stock_df.empty:
         st.warning(
             "⚠️ 데이터가 없습니다. 먼저 `python scraper.py`를 실행하여 "
@@ -249,6 +446,36 @@ if page == "🏠 메인 대시보드":
         )
         st.code("python scraper.py", language="bash")
         st.stop()
+
+    # ── 주요 종목 실시간 시세 (Top 50 Quick Glance) ──
+    st.markdown("### 🏆 당일 거래량 상위 50종목 현재가")
+    
+    top50_df = stock_df.sort_values(by='거래량', ascending=False).head(50)
+    
+    if not top50_df.empty:
+        # 화면을 너무 길게 차지하지 않도록 Expander 안에 넣기
+        with st.expander("👀 종목 리스트 펼쳐보기 (Top 50)", expanded=True):
+            # 5열 그리드로 배치
+            cols = st.columns(5)
+            for i, row in enumerate(top50_df.itertuples()):
+                col_idx = i % 5
+                price = f"{row.현재가:,}"
+                change = f"{row.등락률}"
+                
+                # 순위 표시 추가 (1~50)
+                rank = i + 1
+                label_with_rank = f"{rank}. {row.종목명}"
+                
+                cols[col_idx].metric(
+                    label=label_with_rank, 
+                    value=price, 
+                    delta=change,
+                    delta_color="normal"
+                )
+    else:
+        st.info("수집된 데이터가 없습니다.")
+        
+    st.markdown("---")
 
     # ── 요약 통계 ──
     summary = generate_analysis_summary(stock_df)
@@ -267,17 +494,14 @@ if page == "🏠 메인 대시보드":
     st.markdown("---")
 
     # ── 시장별 탭 ──
-    tab1, tab2, tab3 = st.tabs(["📊 거래량 차트", "🔥 외국인/기관 매매", "📋 전체 데이터"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 거래량 차트", "🔥 외국인/기관 매매", "📋 전체 데이터", "⏱️ 실시간 분석 (RTD)"])
 
     with tab1:
         st.markdown("### 거래량 상위 종목")
-
-        # KOSPI/KOSDAQ 선택
         market_filter = st.selectbox(
             "시장 선택", ["전체", "KOSPI", "KOSDAQ"], key="market_filter_vol"
         )
         filtered = stock_df if market_filter == "전체" else stock_df[stock_df['시장'] == market_filter]
-
         top20 = filtered.head(20)
 
         if not top20.empty:
@@ -286,7 +510,7 @@ if page == "🏠 메인 대시보드":
                 x='종목명',
                 y='거래량',
                 color='시장',
-                color_discrete_map={'KOSPI': '#667eea', 'KOSDAQ': '#764ba2'},
+                color_discrete_map={'KOSPI': '#dcb98c', 'KOSDAQ': '#8a735c'},
                 title='거래량 상위 종목',
                 template='plotly_dark',
             )
@@ -294,7 +518,7 @@ if page == "🏠 메인 대시보드":
                 xaxis_tickangle=-45,
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#e0e0ff'),
+                font=dict(color='#f2ece4'),
                 height=500,
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -327,26 +551,30 @@ if page == "🏠 메인 대시보드":
             inv_df = stock_df[['종목명', '외국인_순매수량', '기관_순매수량']].dropna()
 
             if not inv_df.empty:
+                # 상위 N개만 표시 (가독성 목적)
+                top_n_display = st.slider("표시할 종목 수 (외국인 순매수 기준)", 10, 50, 20)
+                inv_df_top = inv_df.sort_values('외국인_순매수량', ascending=False).head(top_n_display)
+
                 fig3 = go.Figure()
                 fig3.add_trace(go.Bar(
-                    x=inv_df['종목명'],
-                    y=inv_df['외국인_순매수량'],
+                    x=inv_df_top['종목명'],
+                    y=inv_df_top['외국인_순매수량'],
                     name='외국인',
-                    marker_color='#667eea',
+                    marker_color='#dcb98c',
                 ))
                 fig3.add_trace(go.Bar(
-                    x=inv_df['종목명'],
-                    y=inv_df['기관_순매수량'],
+                    x=inv_df_top['종목명'],
+                    y=inv_df_top['기관_순매수량'],
                     name='기관',
-                    marker_color='#764ba2',
+                    marker_color='#8a735c',
                 ))
                 fig3.update_layout(
-                    title='외국인/기관 순매수량 비교',
+                    title=f'외국인/기관 순매수량 비교 (상위 {top_n_display}종목)',
                     barmode='group',
                     template='plotly_dark',
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='#e0e0ff'),
+                    font=dict(color='#f2ece4'),
                     xaxis_tickangle=-45,
                     height=500,
                 )
@@ -364,18 +592,18 @@ if page == "🏠 메인 대시보드":
                     ).corr()
 
                     fig_heat, ax = plt.subplots(figsize=(10, 6))
-                    fig_heat.patch.set_facecolor('#1a1a2e')
-                    ax.set_facecolor('#1a1a2e')
+                    fig_heat.patch.set_facecolor('#2b2622')
+                    ax.set_facecolor('#2b2622')
                     sns.heatmap(
-                        corr_data, annot=True, cmap='coolwarm', fmt='.2f',
+                        corr_data, annot=True, cmap='YlOrBr', fmt='.2f',
                         ax=ax, linewidths=0.5,
-                        annot_kws={'color': 'white', 'fontsize': 9},
+                        annot_kws={'color': '#f2ece4', 'fontsize': 9},
                         cbar_kws={'label': '상관계수'},
                     )
-                    ax.tick_params(colors='white')
-                    ax.xaxis.label.set_color('white')
-                    ax.yaxis.label.set_color('white')
-                    plt.title('투자 지표 상관관계', color='white', fontsize=14)
+                    ax.tick_params(colors='#f2ece4')
+                    ax.xaxis.label.set_color('#f2ece4')
+                    ax.yaxis.label.set_color('#f2ece4')
+                    plt.title('투자 지표 상관관계', color='#dcb98c', fontsize=14)
                     plt.tight_layout()
                     st.pyplot(fig_heat)
                     plt.close()
@@ -411,6 +639,61 @@ if page == "🏠 메인 대시보드":
             height=600,
         )
 
+
+    with tab4:
+        st.markdown("### ⏱️ 시간대별 실시간 모멘텀 (RTD)")
+        st.info("💡 매 1시간 정각마다 누적되는 데이터를 비교하여, 가장 거래량이 가파르게 상승한 종목을 스캔합니다.")
+        
+        try:
+            from rtd_analyzer import load_realtime_market_data, analyze_volume_surge
+            rtd_df = load_realtime_market_data()
+            surge_df = analyze_volume_surge(rtd_df)
+            
+            if not surge_df.empty:
+                col1, col2 = st.columns([1, 1])
+                
+                with col1:
+                    st.markdown("#### 🚀 시간당 거래량 급증 TOP 10")
+                    fig_surge, ax_surge = plt.subplots(figsize=(8, 5))
+                    fig_surge.patch.set_facecolor('#2b2622')
+                    ax_surge.set_facecolor('#2b2622')
+                    sns.barplot(
+                        x='시간당_순거래량', y='종목명', data=surge_df, 
+                        palette='YlOrBr_r', ax=ax_surge
+                    )
+                    ax_surge.tick_params(colors='#f2ece4')
+                    ax_surge.xaxis.label.set_color('#f2ece4')
+                    ax_surge.yaxis.label.set_color('#f2ece4')
+                    plt.title('직전 시간 대비 거래량 순증가 TOP 10', color='#dcb98c', fontsize=12)
+                    plt.tight_layout()
+                    st.pyplot(fig_surge)
+                    plt.close()
+                    
+                with col2:
+                    st.markdown("#### 🎯 현재가 대비 거래대금 분포")
+                    latest_time = rtd_df['수집시간'].max()
+                    latest_df = rtd_df[rtd_df['수집시간'] == latest_time]
+                    
+                    fig_scatter, ax_scatter = plt.subplots(figsize=(8, 5))
+                    fig_scatter.patch.set_facecolor('#2b2622')
+                    ax_scatter.set_facecolor('#2b2622')
+                    ax_scatter.scatter(
+                        latest_df['현재가'], latest_df['거래대금'], 
+                        c='#dcb98c', alpha=0.6, edgecolors='none'
+                    )
+                    ax_scatter.tick_params(colors='#f2ece4')
+                    ax_scatter.xaxis.label.set_color('#f2ece4')
+                    ax_scatter.yaxis.label.set_color('#f2ece4')
+                    plt.xlabel("현재가 (원)", color='#f2ece4')
+                    plt.ylabel("거래대금", color='#f2ece4')
+                    plt.title(f'가격대별 거래대금 분산 ({pd.to_datetime(latest_time).strftime("%H:%M")} 기준)', color='#dcb98c', fontsize=12)
+                    plt.tight_layout()
+                    st.pyplot(fig_scatter)
+                    plt.close()
+            else:
+                st.warning("⚠️ 아직 2개 이상의 시간대 데이터가 누적되지 않아 실시간 비교를 할 수 없습니다. (매 정각 수집기 대기 중)")
+        except Exception as e:
+            st.error(f"실시간 분석 모듈 로딩 중 오류 발생: {e}") 
 
 # ============================================================
 # 📋 투자 성향 설문
@@ -449,6 +732,16 @@ elif page == "📋 투자 성향 설문":
         st.session_state['investor_type'] = investor_type
         st.session_state['survey_score'] = total_score
         st.session_state['survey_answers'] = answers
+        
+        # 로그인 되어있다면 유저 DB에 투자 성향(type_id) 업데이트
+        if st.session_state.get('logged_in'):
+            user_id = st.session_state.get('username')
+            if user_id:
+                users = load_users()
+                if user_id in users and isinstance(users[user_id], dict):
+                    users[user_id]['type_id'] = investor_type
+                    save_users(users)
+                    st.toast(f"✅ {user_id}님의 투자 성향({investor_type})이 저장되었습니다!")
 
         type_info = TYPE_DESCRIPTIONS[investor_type]
 
@@ -506,6 +799,11 @@ elif page == "📋 투자 성향 설문":
 # ============================================================
 elif page == "⭐ 맞춤 종목 추천":
     st.markdown("# ⭐ 맞춤 종목 추천")
+    
+    # 로그인 체크
+    if not st.session_state['logged_in']:
+        st.warning("⚠️ 맞춤 종목 추천 서비스는 로그인이 필요합니다. 좌측 메뉴에서 로그인해주세요.")
+        st.stop()
 
     if stock_df.empty:
         st.warning("⚠️ 주식 데이터가 없습니다. 먼저 `python scraper.py`를 실행해 주세요.")
@@ -977,6 +1275,11 @@ elif page == "📈 분석 신호":
 # ============================================================
 elif page == "📧 뉴스레터":
     st.markdown("# 📧 투자 뉴스레터 미리보기")
+    
+    # 로그인 체크
+    if not st.session_state['logged_in']:
+        st.warning("⚠️ 뉴스레터 구독 및 열람은 로그인이 필요합니다. 좌측 메뉴에서 로그인해주세요.")
+        st.stop()
 
     if stock_df.empty:
         st.warning("⚠️ 데이터가 없습니다.")

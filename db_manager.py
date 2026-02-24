@@ -57,7 +57,8 @@ def save_to_db(df, table_name, if_exists='replace'):
     """DataFrame을 MySQL 테이블에 저장합니다."""
     engine = get_engine()
     if engine is None:
-        logger.info(f"[DB] DB 미연결. '{table_name}' 저장 건너뜀.")
+        logger.info(f"[DB] DB 미연결. '{table_name}' CSV로 저장 대체.")
+        save_to_csv(df, f"{table_name}_fallback.csv")
         return False
 
     try:
@@ -66,6 +67,8 @@ def save_to_db(df, table_name, if_exists='replace'):
         return True
     except Exception as e:
         logger.error(f"[DB] '{table_name}' 저장 실패: {e}")
+        logger.info(f"  -> CSV 백업 저장 진행.")
+        save_to_csv(df, f"{table_name}_error_backup.csv")
         return False
 
 

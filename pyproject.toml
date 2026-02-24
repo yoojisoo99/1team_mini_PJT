@@ -25,4 +25,8 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     # 기타
     "pykrx>=1.2.4",
+    "apscheduler>=3.11.2",
+    "cryptography>=46.0.5",
+    "passlib>=1.7.4",
+    "bcrypt>=5.0.0",
 ]

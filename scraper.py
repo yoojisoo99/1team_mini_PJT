@@ -679,7 +679,7 @@ def scrape_historical_prices(tickers, days=5):
 # ============================================================
 # 7. 전체 파이프라인 실행 함수
 # ============================================================
-def run_full_pipeline(kospi_limit=20, kosdaq_limit=20):
+def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
     """
     전체 스크래핑 + 분석 + 저장 파이프라인을 실행합니다.
 
