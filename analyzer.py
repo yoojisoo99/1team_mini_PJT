@@ -281,13 +281,161 @@ def _normalize_series(s, ascending=True):
     return normalized
 
 
-def score_stocks(df, investor_type):
+# ============================================================
+# [Phase 1] 기술적 지표 계산 (RSI, MACD, 이동평균선)
+# ============================================================
+def calculate_technical_indicators(hist_df):
+    """
+    종목별 pykrx OHLCV 데이터에서 기술적 지표를 계산합니다.
+
+    Args:
+        hist_df: 과거 시세 DataFrame (컬럼: 종목코드, 날짜, 시가, 고가, 저가, 종가, 거래량)
+    Returns:
+        DataFrame: 종목코드별 기술적 지표 요약
+    """
+    if hist_df is None or hist_df.empty:
+        return pd.DataFrame()
+
+    close_col = '종가' if '종가' in hist_df.columns else 'Close'
+    code_col  = '종목코드' if '종목코드' in hist_df.columns else 'Ticker'
+
+    results = []
+
+    for code, group in hist_df.groupby(code_col):
+        group = group.sort_values('날짜' if '날짜' in group.columns else group.index.name)
+        closes = group[close_col].astype(float)
+
+        if len(closes) < 2:
+            continue
+
+        # ── RSI (14일, 데이터 부족 시 보유 데이터로 계산) ──
+        delta = closes.diff()
+        gain  = delta.clip(lower=0)
+        loss  = -delta.clip(upper=0)
+        avg_gain = gain.ewm(com=13, adjust=False).mean()
+        avg_loss = loss.ewm(com=13, adjust=False).mean()
+        rs = avg_gain / avg_loss.replace(0, 1e-9)
+        rsi = (100 - 100 / (1 + rs)).iloc[-1]
+
+        # ── MACD (12/26/9, 데이터 부족 시 사용 가능한 기간으로 계산) ──
+        span12 = min(12, len(closes))
+        span26 = min(26, len(closes))
+        span9  = min(9, len(closes))
+        ema12  = closes.ewm(span=span12, adjust=False).mean()
+        ema26  = closes.ewm(span=span26, adjust=False).mean()
+        macd_line   = ema12 - ema26
+        signal_line = macd_line.ewm(span=span9, adjust=False).mean()
+        macd_val    = macd_line.iloc[-1]
+        macd_signal = signal_line.iloc[-1]
+        macd_hist   = macd_val - macd_signal  # 양수: 상승 모멘텀
+
+        # ── 이동평균선 (MA5, MA20) ──
+        ma5  = closes.rolling(min(5,  len(closes))).mean().iloc[-1]
+        ma20 = closes.rolling(min(20, len(closes))).mean().iloc[-1]
+        current_price = closes.iloc[-1]
+
+        # 골든크로스 여부 (MA5 > MA20 = 단기 상승 추세)
+        golden_cross = 1 if ma5 > ma20 else 0
+
+        # ── 기술적 지표 점수화 (0~100) ──
+        # RSI: 30 이하 = 과매도(매수 신호) → 100점, 70 이상 = 과매수 → 0점
+        if rsi < 30:
+            rsi_score = 100
+        elif rsi > 70:
+            rsi_score = 0
+        else:
+            rsi_score = 100 - (rsi - 30) * (100 / 40)
+
+        # MACD: 히스토그램 양수(상승 모멘텀) = 높은 점수
+        macd_score = 100 if macd_hist > 0 else 30
+
+        # MA 점수: 골든크로스 + 현재가가 MA5 위에 있는지
+        ma_score = 70 * golden_cross + 30 * (1 if current_price > ma5 else 0)
+
+        results.append({
+            '종목코드':   code,
+            'RSI':        round(rsi, 2),
+            'MACD':       round(macd_val, 2),
+            'MACD_Signal':round(macd_signal, 2),
+            'MACD_Hist':  round(macd_hist, 2),
+            'MA5':        round(ma5, 2),
+            'MA20':       round(ma20, 2),
+            '골든크로스': golden_cross,
+            'RSI_점수':   round(rsi_score, 1),
+            'MACD_점수':  macd_score,
+            'MA_점수':    ma_score,
+            '기술점수':   round((rsi_score * 0.4 + macd_score * 0.35 + ma_score * 0.25), 1),
+        })
+
+    tech_df = pd.DataFrame(results)
+    if not tech_df.empty:
+        logger.info(f"[기술분석] {len(tech_df)}개 종목 RSI/MACD/MA 계산 완료")
+    return tech_df
+
+
+# ============================================================
+# [Phase 4] 뉴스 감성 분석 (키워드 기반)
+# ============================================================
+POSITIVE_KEYWORDS = ['상승', '호실적', '매수', '신고가', '흑자전환', '계약', '수주',
+                     '급등', '성장', '개선', '증가', '돌파', '상향', '호재', '회복']
+NEGATIVE_KEYWORDS = ['하락', '적자', '매도', '손실', '리콜', '제재', '소송',
+                     '급락', '감소', '부진', '하향', '악재', '위기', '우려', '최저']
+
+def analyze_news_sentiment(news_df, ticker=None):
+    """
+    뉴스 헤드라인의 긍정/부정 키워드를 분석하여 종목별 감성 점수를 계산합니다.
+
+    Args:
+        news_df: 뉴스 DataFrame (컬럼: 종목코드, title 또는 제목)
+        ticker: 특정 종목코드 (None이면 전체)
+    Returns:
+        DataFrame: 종목코드별 sentiment_score (-100~+100)
+    """
+    if news_df is None or news_df.empty:
+        return pd.DataFrame()
+
+    title_col = '제목' if '제목' in news_df.columns else 'title'
+    code_col  = '종목코드' if '종목코드' in news_df.columns else 'ticker'
+
+    if ticker:
+        news_df = news_df[news_df[code_col] == ticker]
+
+    results = []
+    for code, group in news_df.groupby(code_col):
+        headlines = ' '.join(group[title_col].fillna('').astype(str))
+        pos = sum(headlines.count(kw) for kw in POSITIVE_KEYWORDS)
+        neg = sum(headlines.count(kw) for kw in NEGATIVE_KEYWORDS)
+        total = pos + neg
+        if total == 0:
+            score = 0.0
+        else:
+            # -100(완전 부정) ~ +100(완전 긍정)
+            score = round((pos - neg) / total * 100, 1)
+
+        results.append({
+            '종목코드':         code,
+            '긍정_키워드_수':   pos,
+            '부정_키워드_수':   neg,
+            'sentiment_score':  score,
+            '감성_점수':        round((score + 100) / 2, 1),  # 0~100 변환
+        })
+
+    sent_df = pd.DataFrame(results)
+    if not sent_df.empty:
+        logger.info(f"[감성분석] {len(sent_df)}개 종목 뉴스 감성 점수 완료")
+    return sent_df
+
+
+def score_stocks(df, investor_type, tech_df=None, sentiment_df=None, analyst_df=None):
     """
     투자 성향에 따라 종목별 추천 점수를 계산합니다.
 
     Args:
         df: 통합 주식 데이터 DataFrame
         investor_type: 투자 성향 (5단계 중 하나)
+        tech_df: 기술적 지표 DataFrame (calculate_technical_indicators 결과)
+        sentiment_df: 감성 분석 DataFrame (analyze_news_sentiment 결과)
+        analyst_df: 증권사 목표주가 DataFrame (scrape_analyst_opinion 결과)
     Returns:
         DataFrame with '추천점수' and '추천이유' columns added
     """
@@ -296,6 +444,27 @@ def score_stocks(df, investor_type):
 
     result = df.copy()
     weights = WEIGHT_PROFILES.get(investor_type, WEIGHT_PROFILES['위험중립형'])
+
+    # ── 기술적 지표 병합 ──
+    if tech_df is not None and not tech_df.empty and '종목코드' in result.columns:
+        result = result.merge(
+            tech_df[['종목코드','RSI','MACD_Hist','골든크로스','기술점수']],
+            on='종목코드', how='left'
+        )
+
+    # ── 감성 분석 병합 ──
+    if sentiment_df is not None and not sentiment_df.empty and '종목코드' in result.columns:
+        result = result.merge(
+            sentiment_df[['종목코드','감성_점수','sentiment_score']],
+            on='종목코드', how='left'
+        )
+
+    # ── 증권사 목표주가 병합 ──
+    if analyst_df is not None and not analyst_df.empty and '종목코드' in result.columns:
+        result = result.merge(
+            analyst_df[['종목코드','목표가_괴리율','analyst_score']],
+            on='종목코드', how='left'
+        )
 
     # ── 지표별 점수 계산 ──
     scores = pd.DataFrame(index=result.index)
@@ -341,7 +510,6 @@ def score_stocks(df, investor_type):
     # PER 적정 (10~20 범위가 가장 높은 점수)
     if 'PER' in result.columns:
         per = pd.to_numeric(result['PER'], errors='coerce').fillna(0)
-        # PER이 10~20 사이면 100점, 멀어질수록 감소
         scores['PER_적정'] = per.apply(
             lambda x: max(0, 100 - abs(x - 15) * 5) if x > 0 else 0
         )
@@ -366,10 +534,26 @@ def score_stocks(df, investor_type):
     else:
         scores['등락률_절대값'] = 50
 
+    # [Phase 1] 기술적 지표 점수
+    if '기술점수' in result.columns:
+        scores['기술점수'] = result['기술점수'].fillna(50)
+    else:
+        scores['기술점수'] = 50
+
+    # [Phase 4] 뉴스 감성 점수
+    if '감성_점수' in result.columns:
+        scores['감성_점수'] = result['감성_점수'].fillna(50)
+    else:
+        scores['감성_점수'] = 50
+
+    # [Phase 3] 증권사 목표주가 점수
+    if 'analyst_score' in result.columns:
+        scores['analyst_score'] = result['analyst_score'].fillna(50)
+    else:
+        scores['analyst_score'] = 50
+
     # ── 가중치 적용 총점 계산 ──
     total = pd.Series(0.0, index=result.index)
-    reasons = []
-
     for metric, weight in weights.items():
         if metric in scores.columns:
             total += scores[metric] * weight
@@ -377,7 +561,7 @@ def score_stocks(df, investor_type):
     result['추천점수'] = total.round(2)
 
     # ── 추천 이유 생성 ──
-    def make_reason(row, idx):
+    def make_reason(idx):
         parts = []
         score_data = scores.loc[idx]
         top_metrics = sorted(weights.items(), key=lambda x: x[1], reverse=True)[:3]
@@ -387,25 +571,25 @@ def score_stocks(df, investor_type):
                 val = score_data[metric]
                 if val >= 70:
                     metric_names = {
-                        '배당수익률': '높은 배당수익률',
-                        '시가총액_순위': '대형 우량주',
-                        '변동폭_역순위': '낮은 변동성',
-                        '변동폭_순위': '높은 변동성(기회)',
-                        'PBR_역순위': '저평가(PBR)',
-                        '기관_순매수': '기관 순매수 양호',
-                        '외국인_순매수': '외국인 순매수 양호',
-                        'PER_적정': '적정 PER',
-                        '거래량_순위': '높은 거래량',
-                        '등락률_절대값': '높은 등락률',
+                        '배당수익률':   '높은 배당수익률',
+                        '시가총액_순위':'대형 우량주',
+                        '변동폭_역순위':'낮은 변동성',
+                        '변동폭_순위':  '높은 변동성(기회)',
+                        'PBR_역순위':   '저평가(PBR)',
+                        '기관_순매수':  '기관 순매수 양호',
+                        '외국인_순매수':'외국인 순매수 양호',
+                        'PER_적정':     '적정 PER',
+                        '거래량_순위':  '높은 거래량',
+                        '등락률_절대값':'높은 등락률',
+                        '기술점수':     '기술적 매수 신호',
+                        '감성_점수':    '긍정적 뉴스 감성',
+                        'analyst_score':'증권사 목표주가 상향',
                     }
                     parts.append(metric_names.get(metric, metric))
 
         return ' + '.join(parts) if parts else '종합 분석 추천'
 
-    result['추천이유'] = [make_reason(result.iloc[i], result.index[i])
-                        for i in range(len(result))]
-
-    # 추천 점수 기준 정렬
+    result['추천이유'] = [make_reason(result.index[i]) for i in range(len(result))]
     result = result.sort_values('추천점수', ascending=False).reset_index(drop=True)
 
     logger.info(f"[스코어링] {investor_type} 기준 {len(result)}개 종목 점수 계산 완료")

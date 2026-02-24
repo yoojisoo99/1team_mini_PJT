@@ -814,6 +814,142 @@ def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
     }
 
 
+
+# ============================================================
+# [Phase 2] pykrx 재무지표 수집 (PER, PBR, ROE, EPS, DIV)
+# ============================================================
+def scrape_fundamentals(tickers, date_str=None):
+    """
+    pykrx API를 통해 종목별 재무지표를 수집합니다.
+    (PER, PBR, EPS, DIV, BPS)
+
+    Args:
+        tickers: 종목코드 리스트
+        date_str: 기준일 (YYYYMMDD), None이면 오늘
+    Returns:
+        DataFrame: 재무지표
+    """
+    from pykrx import stock as pykrx_stock
+    if date_str is None:
+        from datetime import datetime
+        date_str = datetime.today().strftime('%Y%m%d')
+
+    logger.info(f"[재무지표] pykrx 재무지표 수집 시작 ({len(tickers)}종목, 기준일:{date_str})")
+
+    all_records = []
+    for ticker in tickers:
+        try:
+            df_fund = pykrx_stock.get_market_fundamental(date_str, date_str, ticker)
+            if df_fund is None or df_fund.empty:
+                continue
+            row = df_fund.iloc[-1]
+            all_records.append({
+                '종목코드': ticker,
+                'PER':  round(float(row.get('PER', 0) or 0), 2),
+                'PBR':  round(float(row.get('PBR', 0) or 0), 2),
+                'EPS':  int(row.get('EPS', 0) or 0),
+                'BPS':  int(row.get('BPS', 0) or 0),
+                'DIV':  round(float(row.get('DIV', 0) or 0), 2),   # 배당수익률
+                'DPS':  int(row.get('DPS', 0) or 0),
+            })
+            time.sleep(0.1)   # API 부하 방지
+        except Exception as e:
+            logger.warning(f"  [재무지표] {ticker} 수집 오류: {e}")
+            continue
+
+    fund_df = pd.DataFrame(all_records)
+    logger.info(f"[재무지표] 수집 완료: {len(fund_df)}건")
+    return fund_df
+
+
+# ============================================================
+# [Phase 3] 증권사 목표주가 수집 (네이버 금융 리서치)
+# ============================================================
+def scrape_analyst_opinion(tickers_names, session=None):
+    """
+    네이버 금융 리서치 페이지에서 증권사 투자의견과 목표주가를 수집합니다.
+
+    Args:
+        tickers_names: [(종목코드, 종목명), ...] 리스트 또는 dict
+        session: requests.Session
+    Returns:
+        DataFrame: 종목코드, 증권사, 투자의견, 목표주가, 현재가, 목표가_괴리율, analyst_score
+    """
+    if session is None:
+        session = create_session()
+
+    base_url = "https://finance.naver.com/research/company_list.naver"
+    records = []
+
+    logger.info("[리서치] 네이버 금융 증권사 리포트 수집 시작")
+
+    try:
+        resp = session.get(base_url, timeout=10)
+        resp.encoding = 'euc-kr'
+        soup = BeautifulSoup(resp.text, 'html.parser')
+
+        rows = soup.select('table.type_1 tr')
+        for row in rows:
+            cols = row.select('td')
+            if len(cols) < 6:
+                continue
+            try:
+                name_tag = cols[0].find('a')
+                if not name_tag:
+                    continue
+                stock_name = name_tag.text.strip()
+                opinion    = cols[1].text.strip()     # 투자의견 (매수/중립 등)
+                target_raw = cols[2].text.strip().replace(',', '')  # 목표주가
+                target_price = int(target_raw) if target_raw.isdigit() else 0
+                current_raw  = cols[3].text.strip().replace(',', '')
+                current_price = int(current_raw) if current_raw.isdigit() else 0
+
+                if target_price > 0 and current_price > 0:
+                    gap_pct = round((target_price - current_price) / current_price * 100, 1)
+                else:
+                    gap_pct = 0.0
+
+                # 투자의견 점수화: 매수=100, 매수(유지)=90, 중립=50, 매도=0
+                OPINION_SCORE = {'매수': 100, '강력매수': 100, '적극매수': 100,
+                                 '매수(유지)': 90, 'BUY': 100,
+                                 '중립': 50, 'HOLD': 50, '보유': 50,
+                                 '매도': 0,  'SELL': 0}
+                opinion_score = OPINION_SCORE.get(opinion, 60)
+
+                # 괴리율 점수 (괴리율 클수록 저평가 = 높은 점수)
+                gap_score = min(100, max(0, gap_pct + 50))
+
+                # 종합 analyst_score
+                analyst_score = round(opinion_score * 0.6 + gap_score * 0.4, 1)
+
+                # 종목명으로 종목코드 매핑
+                code_map = {v: k for k, v in tickers_names} if isinstance(tickers_names, list) else tickers_names
+                code = code_map.get(stock_name, '')
+
+                records.append({
+                    '종목코드':    code,
+                    '종목명':      stock_name,
+                    '투자의견':    opinion,
+                    '목표주가':    target_price,
+                    '현재가_리서치': current_price,
+                    '목표가_괴리율': gap_pct,
+                    'analyst_score': analyst_score,
+                })
+            except Exception as e:
+                logger.debug(f"  [리서치] 행 파싱 오류: {e}")
+                continue
+
+    except Exception as e:
+        logger.warning(f"[리서치] 수집 실패: {e}")
+
+    analyst_df = pd.DataFrame(records)
+    # 코드가 있는 것만 반환
+    if not analyst_df.empty and '종목코드' in analyst_df.columns:
+        analyst_df = analyst_df[analyst_df['종목코드'] != '']
+    logger.info(f"[리서치] 수집 완료: {len(analyst_df)}건")
+    return analyst_df
+
+
 # ============================================================
 # 8. 메인 실행
 # ============================================================

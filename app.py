@@ -845,8 +845,62 @@ elif page == "⭐ 맞춤 종목 추천":
     if market_sel != "전체":
         filtered_df = filtered_df[filtered_df['시장'] == market_sel]
 
-    # ── 추천 종목 계산 ──
-    recommendations = get_top_recommendations(filtered_df, investor_type, top_n)
+    # ── [Phase 1] 기술적 지표 계산 ──
+    tech_df = pd.DataFrame()
+    if not hist_df.empty:
+        try:
+            from analyzer import calculate_technical_indicators
+            tech_df = calculate_technical_indicators(hist_df)
+        except Exception as e:
+            st.caption(f"⚠️ 기술적 지표 계산 실패: {e}")
+
+    # ── [Phase 4] 뉴스 감성 분석 ──
+    sentiment_df = pd.DataFrame()
+    if not news_df.empty:
+        try:
+            from analyzer import analyze_news_sentiment
+            sentiment_df = analyze_news_sentiment(news_df)
+        except Exception as e:
+            st.caption(f"⚠️ 감성 분석 실패: {e}")
+
+    # ── [Phase 2] pykrx 재무지표 (캐시 처리로 반복 호출 방지) ──
+    @st.cache_data(ttl=3600, show_spinner=False)
+    def load_fundamentals(tickers_tuple):
+        try:
+            from scraper import scrape_fundamentals
+            return scrape_fundamentals(list(tickers_tuple))
+        except Exception:
+            return pd.DataFrame()
+
+    fund_df = pd.DataFrame()
+    if '종목코드' in filtered_df.columns:
+        tickers_tuple = tuple(filtered_df['종목코드'].tolist())
+        with st.spinner("📊 재무지표 불러오는 중..."):
+            fund_df = load_fundamentals(tickers_tuple)
+        if not fund_df.empty:
+            filtered_df = filtered_df.merge(fund_df, on='종목코드', how='left')
+
+    # ── [Phase 3] 증권사 목표주가 (캐시 처리) ──
+    @st.cache_data(ttl=3600, show_spinner=False)
+    def load_analyst():
+        try:
+            from scraper import scrape_analyst_opinion
+            name_map = dict(zip(stock_df['종목코드'], stock_df['종목명'])) if '종목코드' in stock_df.columns else {}
+            return scrape_analyst_opinion({v: k for k, v in name_map.items()})
+        except Exception:
+            return pd.DataFrame()
+
+    analyst_df = load_analyst()
+
+    # ── 추천 종목 계산 (모든 지표 통합) ──
+    from analyzer import score_stocks
+    scored = score_stocks(
+        filtered_df, investor_type,
+        tech_df=tech_df if not tech_df.empty else None,
+        sentiment_df=sentiment_df if not sentiment_df.empty else None,
+        analyst_df=analyst_df if not analyst_df.empty else None,
+    )
+    recommendations = scored.head(top_n)
 
     if recommendations.empty:
         st.warning("추천 가능한 종목이 없습니다.")
@@ -864,6 +918,28 @@ elif page == "⭐ 맞춤 종목 추천":
                 medals = ['🥇', '🥈', '🥉']
                 medal = medals[i] if i < 3 else ''
                 change_color = '#3fb950' if row.get('전일비', 0) > 0 else '#f85149'
+
+                # 기술적 지표 배지 생성
+                rsi_val   = row.get('RSI', None)
+                macd_hist = row.get('MACD_Hist', None)
+                golden    = row.get('골든크로스', None)
+                sentiment = row.get('sentiment_score', None)
+
+                badges = ""
+                if rsi_val is not None:
+                    rsi_color = '#3fb950' if rsi_val < 30 else ('#f85149' if rsi_val > 70 else '#8b949e')
+                    badges += f"<span style='background:{rsi_color}22; color:{rsi_color}; padding:2px 8px; border-radius:10px; font-size:11px; margin-right:4px;'>RSI {rsi_val:.0f}</span>"
+                if macd_hist is not None:
+                    m_color = '#3fb950' if macd_hist > 0 else '#f85149'
+                    m_label = '▲MACD' if macd_hist > 0 else '▼MACD'
+                    badges += f"<span style='background:{m_color}22; color:{m_color}; padding:2px 8px; border-radius:10px; font-size:11px; margin-right:4px;'>{m_label}</span>"
+                if golden == 1:
+                    badges += "<span style='background:#dcb98c22; color:#dcb98c; padding:2px 8px; border-radius:10px; font-size:11px; margin-right:4px;'>⭐골든크로스</span>"
+                if sentiment is not None and sentiment > 20:
+                    badges += "<span style='background:#3fb95022; color:#3fb950; padding:2px 8px; border-radius:10px; font-size:11px;'>😀긍정뉴스</span>"
+                elif sentiment is not None and sentiment < -20:
+                    badges += "<span style='background:#f8514922; color:#f85149; padding:2px 8px; border-radius:10px; font-size:11px;'>😟부정뉴스</span>"
+
                 st.markdown(
                     f"""
                     <div class="stock-card">
@@ -879,7 +955,8 @@ elif page == "⭐ 맞춤 종목 추천":
                                 {row.get('등락률', 'N/A')}
                             </span>
                         </div>
-                        <div style="margin-top:4px; color:#8b949e; font-size:13px;">
+                        <div style="margin-top:6px;">{badges}</div>
+                        <div style="margin-top:6px; color:#8b949e; font-size:13px;">
                             {row.get('추천이유', '')}
                         </div>
                         <div style="margin-top:4px; color:#6e7681; font-size:12px;">
@@ -889,6 +966,7 @@ elif page == "⭐ 맞춤 종목 추천":
                     """,
                     unsafe_allow_html=True,
                 )
+
 
     st.markdown("")
 
