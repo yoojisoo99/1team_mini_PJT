@@ -25,6 +25,7 @@ from analyzer import (
     SURVEY_QUESTIONS, classify_investor_type, score_stocks,
     get_top_recommendations, generate_analysis_summary,
     TYPE_DESCRIPTIONS, WEIGHT_PROFILES,
+    generate_analysis_signals, generate_newsletter,
 )
 
 # ── 한글 폰트 설정 (matplotlib) ──
@@ -50,6 +51,8 @@ def load_latest_data():
     """data/ 디렉토리에서 최신 CSV 파일을 로드합니다."""
     stock_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv')))
     news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
+    hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
+    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.csv')))
 
     # data/ 폴더에 없으면 프로젝트 루트에서도 탐색
     if not stock_files:
@@ -59,14 +62,24 @@ def load_latest_data():
 
     stock_df = pd.DataFrame()
     news_df = pd.DataFrame()
+    hist_df = pd.DataFrame()
+    signals_df = pd.DataFrame()
 
     if stock_files:
         stock_df = pd.read_csv(stock_files[-1])
         st.session_state['data_file'] = os.path.basename(stock_files[-1])
     if news_files:
         news_df = pd.read_csv(news_files[-1])
+    if hist_files:
+        hist_df = pd.read_csv(hist_files[-1])
+    if signal_files:
+        signals_df = pd.read_csv(signal_files[-1])
 
-    return stock_df, news_df
+    # signals가 없으면 실시간 생성
+    if signals_df.empty and not stock_df.empty:
+        signals_df = generate_analysis_signals(stock_df, '1D')
+
+    return stock_df, news_df, hist_df, signals_df
 
 
 # ============================================================
@@ -74,46 +87,44 @@ def load_latest_data():
 # ============================================================
 st.markdown("""
 <style>
-    /* 전체 배경색 */
+    /* 전체 배경색 — 깔끔한 다크 테마 */
     .stApp {
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        background: linear-gradient(160deg, #0d1117 0%, #161b22 40%, #1a2332 100%);
     }
 
     /* 사이드바 */
     [data-testid="stSidebar"] {
-        background: rgba(15, 12, 41, 0.95);
-        border-right: 1px solid rgba(255,255,255,0.1);
+        background: rgba(13, 17, 23, 0.97);
+        border-right: 1px solid rgba(255,255,255,0.08);
     }
 
     /* 메트릭 카드 */
     [data-testid="stMetric"] {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(22, 27, 34, 0.8);
+        border: 1px solid rgba(255,255,255,0.08);
         border-radius: 12px;
         padding: 16px;
-        backdrop-filter: blur(10px);
     }
 
     /* 헤더 스타일 */
     h1 {
-        background: linear-gradient(90deg, #667eea, #764ba2);
+        background: linear-gradient(90deg, #58a6ff, #3fb950);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800 !important;
     }
 
     h2, h3 {
-        color: #e0e0ff !important;
+        color: #e6edf3 !important;
     }
 
     /* 성향 결과 카드 */
     .investor-card {
-        background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
-        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(22, 27, 34, 0.9);
+        border: 1px solid rgba(255,255,255,0.1);
         border-radius: 16px;
         padding: 24px;
         margin: 16px 0;
-        backdrop-filter: blur(10px);
     }
 
     .investor-card h2 {
@@ -122,14 +133,14 @@ st.markdown("""
     }
 
     .investor-card p {
-        color: #b0b0d0;
+        color: #8b949e;
         line-height: 1.6;
     }
 
     /* 추천 종목 카드 */
     .stock-card {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(22, 27, 34, 0.8);
+        border: 1px solid rgba(255,255,255,0.08);
         border-radius: 12px;
         padding: 16px;
         margin: 8px 0;
@@ -138,13 +149,13 @@ st.markdown("""
 
     .stock-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+        box-shadow: 0 8px 25px rgba(88,166,255,0.15);
     }
 
     /* 점수 배지 */
     .score-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #238636, #2ea043);
         color: white;
         padding: 4px 12px;
         border-radius: 20px;
@@ -158,20 +169,20 @@ st.markdown("""
     }
 
     .stTabs [data-baseweb="tab"] {
-        background: rgba(255,255,255,0.05);
+        background: rgba(22, 27, 34, 0.8);
         border-radius: 8px;
-        color: #b0b0d0;
+        color: #8b949e;
         padding: 8px 24px;
     }
 
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        background: linear-gradient(135deg, #238636, #2ea043) !important;
         color: white !important;
     }
 
     /* 설문 라디오 버튼 */
     .stRadio label {
-        color: #d0d0f0 !important;
+        color: #c9d1d9 !important;
     }
 
     /* 데이터프레임 */
@@ -192,7 +203,8 @@ with st.sidebar:
 
     page = st.radio(
         "메뉴 선택",
-        ["🏠 메인 대시보드", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천", "📰 종목 뉴스"],
+        ["🏠 메인 대시보드", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
+         "📈 분석 신호", "📰 종목 뉴스", "📧 뉴스레터"],
         label_visibility="collapsed",
     )
 
@@ -221,7 +233,7 @@ with st.sidebar:
 # ============================================================
 # 📌 데이터 로드
 # ============================================================
-stock_df, news_df = load_latest_data()
+stock_df, news_df, hist_df, signals_df = load_latest_data()
 
 
 # ============================================================
@@ -551,26 +563,28 @@ elif page == "⭐ 맞춤 종목 추천":
         if i < len(recommendations):
             row = recommendations.iloc[i]
             with col:
-                change_color = '#4CAF50' if row.get('전일비', 0) > 0 else '#F44336'
+                medals = ['🥇', '🥈', '🥉']
+                medal = medals[i] if i < 3 else ''
+                change_color = '#3fb950' if row.get('전일비', 0) > 0 else '#f85149'
                 st.markdown(
                     f"""
                     <div class="stock-card">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:18px; font-weight:700; color:#e0e0ff;">
-                                🥇🥈🥉{''[i] if i < 3 else ''} {row['종목명']}
+                            <span style="font-size:18px; font-weight:700; color:#e6edf3;">
+                                {medal} {row['종목명']}
                             </span>
                             <span class="score-badge">{row.get('추천점수', 0):.1f}점</span>
                         </div>
-                        <div style="margin-top:8px; color:#b0b0d0;">
+                        <div style="margin-top:8px; color:#8b949e;">
                             현재가: <strong style="color:white;">{row['현재가']:,}원</strong>
                             <span style="color:{change_color}; margin-left:8px;">
                                 {row.get('등락률', 'N/A')}
                             </span>
                         </div>
-                        <div style="margin-top:4px; color:#888; font-size:13px;">
+                        <div style="margin-top:4px; color:#8b949e; font-size:13px;">
                             {row.get('추천이유', '')}
                         </div>
-                        <div style="margin-top:4px; color:#666; font-size:12px;">
+                        <div style="margin-top:4px; color:#6e7681; font-size:12px;">
                             거래량: {row['거래량']:,} | {row['시장']}
                         </div>
                     </div>
@@ -581,7 +595,7 @@ elif page == "⭐ 맞춤 종목 추천":
     st.markdown("")
 
     # ── 추천 점수 차트 ──
-    tab_a, tab_b, tab_c = st.tabs(["📊 추천 점수 차트", "📈 종목 비교", "📋 상세 데이터"])
+    tab_a, tab_b, tab_c, tab_d = st.tabs(["📊 추천 점수 차트", "📈 캔들스틱 차트", "📈 종목 비교", "📋 상세 데이터"])
 
     with tab_a:
         fig_score = px.bar(
@@ -651,6 +665,65 @@ elif page == "⭐ 맞춤 종목 추천":
                 st.plotly_chart(fig_radar, use_container_width=True)
 
     with tab_b:
+        st.markdown("### 📈 개별 종목 캔들스틱 차트")
+
+        if hist_df.empty:
+            st.info("⏳ 과거 시세 데이터가 없습니다. `python scraper.py`를 실행하면 pykrx로 5일캡 데이터를 수집합니다.")
+        else:
+            # 추천 종목 중 선택
+            rec_tickers = recommendations['종목코드'].tolist() if '종목코드' in recommendations.columns else []
+            rec_names = recommendations['종목명'].tolist() if '종목명' in recommendations.columns else []
+
+            available_tickers = [t for t in rec_tickers if t in hist_df['종목코드'].values]
+            if available_tickers:
+                ticker_name_map = dict(zip(rec_tickers, rec_names))
+                display_options = [f"{ticker_name_map.get(t, t)} ({t})" for t in available_tickers]
+
+                selected_display = st.selectbox("종목 선택", display_options, key="candle_stock")
+                selected_ticker = available_tickers[display_options.index(selected_display)]
+
+                stock_hist = hist_df[hist_df['종목코드'] == selected_ticker].sort_values('날짜')
+
+                if not stock_hist.empty:
+                    # 캔들스틱 차트
+                    fig_candle = go.Figure(data=[go.Candlestick(
+                        x=stock_hist['날짜'],
+                        open=stock_hist['시가'],
+                        high=stock_hist['고가'],
+                        low=stock_hist['저가'],
+                        close=stock_hist['종가'],
+                        increasing_line_color='#3fb950',
+                        decreasing_line_color='#f85149',
+                    )])
+                    fig_candle.update_layout(
+                        title=f"{ticker_name_map.get(selected_ticker, selected_ticker)} 5일 캔들스틱",
+                        template='plotly_dark',
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        font=dict(color='#e6edf3'),
+                        height=450,
+                        xaxis_rangeslider_visible=False,
+                    )
+                    st.plotly_chart(fig_candle, use_container_width=True)
+
+                    # 거래량 차트
+                    fig_vol = px.bar(
+                        stock_hist, x='날짜', y='거래량',
+                        title=f"{ticker_name_map.get(selected_ticker, '')} 거래량 추이",
+                        template='plotly_dark',
+                        color_discrete_sequence=['#58a6ff'],
+                    )
+                    fig_vol.update_layout(
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        font=dict(color='#e6edf3'),
+                        height=300,
+                    )
+                    st.plotly_chart(fig_vol, use_container_width=True)
+            else:
+                st.info("추천 종목의 과거 시세 데이터가 없습니다.")
+
+    with tab_c:
         st.markdown("### 추천 종목 등락률 비교")
         if '등락률(숫자)' in recommendations.columns:
             fig_change = px.bar(
@@ -701,7 +774,7 @@ elif page == "⭐ 맞춤 종목 추천":
             st.pyplot(fig_pp)
             plt.close()
 
-    with tab_c:
+    with tab_d:
         st.markdown("### 추천 종목 상세 데이터")
         display_cols = [
             '종목명', '시장', '현재가', '등락률', '거래량', '거래대금',
@@ -745,24 +818,213 @@ elif page == "📰 종목 뉴스":
     # 뉴스 카드형 표시
     for _, row in display_news.iterrows():
         stock_name = row.get('종목명', row.get('종목코드', ''))
-        title = row.get('뉴스제목', '')
-        date = row.get('뉴스날짜', row.get('수집시간', ''))
-        source = row.get('뉴스출처', '')
+        title = row.get('제목', row.get('뉴스제목', ''))
+        date = row.get('날짜', row.get('뉴스날짜', row.get('수집시간', '')))
+        source = row.get('출처', row.get('뉴스출처', ''))
 
         st.markdown(
             f"""
             <div class="stock-card">
                 <div style="display:flex; justify-content:space-between;">
-                    <span style="color:#667eea; font-weight:700;">{stock_name}</span>
-                    <span style="color:#888; font-size:13px;">{date}</span>
+                    <span style="color:#58a6ff; font-weight:700;">{stock_name}</span>
+                    <span style="color:#8b949e; font-size:13px;">{date}</span>
                 </div>
-                <div style="margin-top:8px; color:#e0e0ff; font-size:15px;">
+                <div style="margin-top:8px; color:#e6edf3; font-size:15px;">
                     📰 {title}
                 </div>
-                <div style="margin-top:4px; color:#666; font-size:12px;">
+                <div style="margin-top:4px; color:#6e7681; font-size:12px;">
                     {source}
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
+
+
+# ============================================================
+# 📈 분석 신호 (BUY / HOLD / SELL)
+# ============================================================
+elif page == "📈 분석 신호":
+    st.markdown("# 📈 종목별 분석 신호")
+
+    if signals_df.empty:
+        st.warning("⚠️ 분석 신호 데이터가 없습니다. `python scraper.py`를 실행해 주세요.")
+        st.stop()
+
+    # 종목명 매핑
+    if not stock_df.empty and '종목코드' in stock_df.columns:
+        name_map = dict(zip(stock_df['종목코드'].astype(str), stock_df['종목명']))
+        signals_df['종목명'] = signals_df['ticker'].astype(str).map(name_map).fillna(signals_df['ticker'])
+    else:
+        signals_df['종목명'] = signals_df['ticker']
+
+    # 신호 요약 카드
+    col1, col2, col3, col4 = st.columns(4)
+    buy_cnt = (signals_df['signal'] == 'BUY').sum()
+    hold_cnt = (signals_df['signal'] == 'HOLD').sum()
+    sell_cnt = (signals_df['signal'] == 'SELL').sum()
+    with col1:
+        st.metric("📊 총 분석", f"{len(signals_df)}개")
+    with col2:
+        st.metric("🟢 매수(BUY)", f"{buy_cnt}개")
+    with col3:
+        st.metric("🟡 보유(HOLD)", f"{hold_cnt}개")
+    with col4:
+        st.metric("🔴 매도(SELL)", f"{sell_cnt}개")
+
+    st.markdown("---")
+
+    # 신호 필터
+    signal_filter = st.selectbox("신호 필터", ['전체', 'BUY', 'HOLD', 'SELL'], key='sig_filter')
+    display_signals = signals_df if signal_filter == '전체' else signals_df[signals_df['signal'] == signal_filter]
+
+    # 추세 점수 바 차트
+    color_map = {'BUY': '#3fb950', 'HOLD': '#d29922', 'SELL': '#f85149'}
+    display_signals = display_signals.sort_values('trend_score', ascending=False)
+
+    fig_sig = px.bar(
+        display_signals,
+        x='종목명',
+        y='trend_score',
+        color='signal',
+        color_discrete_map=color_map,
+        title='종목별 추세 점수 및 매매 신호',
+        template='plotly_dark',
+        text='trend_score',
+    )
+    fig_sig.update_traces(texttemplate='%{text:.0f}', textposition='outside')
+    fig_sig.update_layout(
+        xaxis_tickangle=-45,
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#e6edf3'),
+        height=500,
+    )
+    # 기준선 추가
+    fig_sig.add_hline(y=60, line_dash='dash', line_color='#3fb950',
+                      annotation_text='BUY 기준(60)', annotation_position='top left')
+    fig_sig.add_hline(y=40, line_dash='dash', line_color='#f85149',
+                      annotation_text='SELL 기준(40)', annotation_position='bottom left')
+    st.plotly_chart(fig_sig, use_container_width=True)
+
+    # 신호 분포 파이 차트
+    col_a, col_b = st.columns(2)
+    with col_a:
+        fig_pie = px.pie(
+            signals_df, names='signal',
+            color='signal',
+            color_discrete_map=color_map,
+            title='신호 분포',
+            template='plotly_dark',
+        )
+        fig_pie.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#e6edf3'),
+        )
+        st.plotly_chart(fig_pie, use_container_width=True)
+
+    with col_b:
+        st.markdown("### 📊 추세 점수 범위 설명")
+        st.markdown("""
+        | 점수 | 신호 | 의미 |
+        |------|------|------|
+        | **≥ 60** | 🟢 **BUY** | 등락률 + 거래량 + 외국인/기관 추세 양호 |
+        | **40~59** | 🟡 **HOLD** | 동향 혼재, 관망 유지 |
+        | **< 40** | 🔴 **SELL** | 하락 추세 또는 외국인/기관 순매도 |
+        """)
+        st.markdown("""
+        **추세 점수 산출:**
+        - 등락률 (40%) + 거래량 (20%) + 외국인 (20%) + 기관 (20%)
+        """)
+
+    # 신호별 종목 카드
+    st.markdown("---")
+    st.markdown("### 종목별 신호 카드")
+    for _, row in display_signals.iterrows():
+        sig = row['signal']
+        sig_emoji = '🟢' if sig == 'BUY' else '🟡' if sig == 'HOLD' else '🔴'
+        sig_color = color_map[sig]
+        st.markdown(
+            f"""
+            <div class="stock-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:16px; font-weight:700; color:#e6edf3;">
+                        {row['종목명']}
+                    </span>
+                    <span style="background:{sig_color}; color:white; padding:4px 14px;
+                           border-radius:20px; font-weight:700; font-size:14px;">
+                        {sig_emoji} {sig}
+                    </span>
+                </div>
+                <div style="margin-top:8px;">
+                    <span style="color:#8b949e;">추세 점수:</span>
+                    <strong style="color:white; font-size:18px; margin-left:4px;">
+                        {row['trend_score']:.1f}
+                    </strong>
+                    <span style="color:#6e7681; margin-left:12px;">
+                        기간: {row.get('window', '1D')}
+                    </span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+# ============================================================
+# 📧 뉴스레터 미리보기
+# ============================================================
+elif page == "📧 뉴스레터":
+    st.markdown("# 📧 투자 뉴스레터 미리보기")
+
+    if stock_df.empty:
+        st.warning("⚠️ 데이터가 없습니다.")
+        st.stop()
+
+    # 성향 선택
+    inv_type = st.selectbox(
+        "투자 성향 선택",
+        ['안정형', '안정추구형', '위험중립형', '적극투자형', '공격투자형'],
+        index=2,
+        key='newsletter_type'
+    )
+
+    type_info = TYPE_DESCRIPTIONS[inv_type]
+    st.markdown(
+        f"**{type_info['emoji']} {type_info['title']}** — _{type_info['strategy']}_"
+    )
+
+    # 뉴스레터 생성
+    scored = score_stocks(stock_df, inv_type)
+    newsletter = generate_newsletter(
+        stock_df=stock_df,
+        scored_df=scored,
+        signals_df=signals_df,
+        investor_type=inv_type,
+        user_id=1,
+        news_df=news_df,
+    )
+
+    st.markdown("---")
+    st.markdown(f"### {newsletter['title']}")
+
+    # 뉴스레터 본문 표시
+    st.markdown(
+        f"""
+        <div style="background:rgba(22,27,34,0.9); border:1px solid rgba(255,255,255,0.1);
+             border-radius:12px; padding:24px; font-family:monospace;
+             white-space:pre-wrap; color:#c9d1d9; line-height:1.8; font-size:14px;">
+{newsletter['content']}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # 다운로드 버튼
+    st.download_button(
+        label="💾 뉴스레터 다운로드 (.txt)",
+        data=newsletter['content'],
+        file_name=f"newsletter_{inv_type}_{datetime.now().strftime('%Y%m%d')}.txt",
+        mime='text/plain',
+    )

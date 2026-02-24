@@ -624,6 +624,59 @@ def save_to_csv(df, filename, directory=None, encoding='utf-8-sig'):
 
 
 # ============================================================
+# 6-1. [pykrx] 과거 시세 데이터 수집
+# ============================================================
+def scrape_historical_prices(tickers, days=5):
+    """
+    pykrx를 활용하여 과거 시세(OHLCV) 데이터를 수집합니다.
+
+    Args:
+        tickers: 종목코드 리스트
+        days: 수집 일수 (기본 5일)
+    Returns:
+        DataFrame - 날짜, 종목코드, 시가, 고가, 저가, 종가, 거래량, 등락률
+    """
+    try:
+        from pykrx import stock as pykrx_stock
+    except ImportError:
+        logger.warning("[pykrx] pykrx 라이브러리 미설치. 과거 시세 수집 건너뜀.")
+        return pd.DataFrame()
+
+    from datetime import timedelta
+
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=days + 10)  # 영업일 감안 여유
+    start_str = start_date.strftime('%Y%m%d')
+    end_str = end_date.strftime('%Y%m%d')
+
+    all_data = []
+    logger.info(f"[pykrx] {len(tickers)}개 종목 과거 시세 수집 ({start_str}~{end_str})...")
+
+    for ticker in tickers:
+        try:
+            df = pykrx_stock.get_market_ohlcv(start_str, end_str, ticker)
+            if df.empty:
+                continue
+
+            # 최근 N일만
+            df = df.tail(days)
+            df = df.reset_index()
+            df.columns = ['날짜', '시가', '고가', '저가', '종가', '거래량', '등락률']
+            df['종목코드'] = ticker
+            df['날짜'] = df['날짜'].dt.strftime('%Y-%m-%d')
+            all_data.append(df)
+            time.sleep(0.2)  # API 부하 방지
+        except Exception as e:
+            logger.warning(f"  [pykrx] {ticker} 시세 수집 실패: {e}")
+
+    if all_data:
+        result = pd.concat(all_data, ignore_index=True)
+        logger.info(f"  -> pykrx 시세 수집 완료: {len(result)}건 ({len(all_data)}종목)")
+        return result
+    return pd.DataFrame()
+
+
+# ============================================================
 # 7. 전체 파이프라인 실행 함수
 # ============================================================
 def run_full_pipeline(kospi_limit=20, kosdaq_limit=20):
@@ -688,6 +741,13 @@ def run_full_pipeline(kospi_limit=20, kosdaq_limit=20):
     # ─── STEP 5: 데이터 통합 & 정제 ───
     final_df = merge_and_clean(volume_df, detail_df, investor_df)
 
+    # ─── STEP 5-1: [pykrx] 과거 시세 수집 ───
+    logger.info("[pykrx] 과거 5일 시세 데이터 수집 중...")
+    historical_df = scrape_historical_prices(tickers, days=5)
+    if not historical_df.empty:
+        name_map = dict(zip(volume_df['종목코드'], volume_df['종목명']))
+        historical_df['종목명'] = historical_df['종목코드'].map(name_map)
+
     # ─── STEP 6: (E) 분석 신호 생성 ───
     logger.info("[분석] 분석 신호 생성 중...")
     signals_df = generate_analysis_signals(final_df, window='1D')
@@ -716,6 +776,8 @@ def run_full_pipeline(kospi_limit=20, kosdaq_limit=20):
     save_to_csv(volume_df, f"top_volume_{today}.csv")
     if not news_df.empty:
         save_to_csv(news_df, f"stock_news_{today}.csv")
+    if not historical_df.empty:
+        save_to_csv(historical_df, f"historical_{today}.csv")
 
     # DB 형식 저장 (C~G 테이블)
     save_all_to_db(
@@ -739,11 +801,13 @@ def run_full_pipeline(kospi_limit=20, kosdaq_limit=20):
     logger.info(f"   (F) recommendations   : {len(recs_df)}건")
     logger.info(f"   (G) newsletters       : 1건")
     logger.info(f"   뉴스                  : {len(news_df)}건")
+    logger.info(f"   과거 시세(pykrx)      : {len(historical_df)}건")
     logger.info(f"{'='*60}")
 
     return {
         'stock_df': final_df,
         'news_df': news_df,
+        'historical_df': historical_df,
         'signals_df': signals_df,
         'recs_df': recs_df,
         'newsletter': newsletter,
