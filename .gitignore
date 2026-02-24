@@ -18,6 +18,8 @@ data/*.csv
 #사용자 정보
 users.json
 
+# 개인 보고서 (로컬 전용)
+REPORT.md
 # IDE
 .idea/
 .vscode/
