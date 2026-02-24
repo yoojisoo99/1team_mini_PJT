@@ -1,39 +1,39 @@
 {
     "users": [
         {
-            "user_id": "user_001",
-            "user_password": "hashed_pw_A1b2",
-            "user_email": "user.one@example.com"
+            "user_id": "user1",
+            "user_password": "$2b$12$6lIvY3m//alJUQGgdvWB0eVDJYcJkRBt3/OFaoIyVRZI9Xqx5Poo6",
+            "user_email": "user1@example.com"
         },
         {
-            "user_id": "user_002",
-            "user_password": "hashed_pw_C3d4",
-            "user_email": "admin.smith@example.com"
+            "user_id": "user2",
+            "user_password": "$2b$12$6lIvY3m//alJUQGgdvWB0eVDJYcJkRBt3/OFaoIyVRZI9Xqx5Poo6",
+            "user_email": "user2@example.com"
         },
         {
-            "user_id": "user_003",
-            "user_password": "hashed_pw_E5f6",
-            "user_email": "guest.visitor@example.com"
+            "user_id": "user3",
+            "user_password": "$2b$12$6lIvY3m//alJUQGgdvWB0eVDJYcJkRBt3/OFaoIyVRZI9Xqx5Poo6",
+            "user_email": "user3@example.com"
         }
     ],
     "user_type": [
         {
-            "user_id": "user_001",
-            "type_id": 10,
-            "type_name": "Basic User",
-            "description": "Standard account with access to basic features and standard support."
+            "user_id": "user1",
+            "type_id": 1,
+            "type_name": "안정형",
+            "description": "User has been profiled as 안정형."
         },
         {
-            "user_id": "user_002",
-            "type_id": 99,
-            "type_name": "Administrator",
-            "description": "System administrator with full access to all dashboard controls and user data."
+            "user_id": "user2",
+            "type_id": 3,
+            "type_name": "위험중립형",
+            "description": "User has been profiled as 위험중립형."
         },
         {
-            "user_id": "user_003",
+            "user_id": "user3",
             "type_id": 5,
-            "type_name": "Guest Analyst",
-            "description": "Temporary account with read-only access to specific analysis modules."
+            "type_name": "공격투자형",
+            "description": "User has been profiled as 공격투자형."
         }
     ]
 }
