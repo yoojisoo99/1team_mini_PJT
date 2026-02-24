@@ -326,7 +326,7 @@ def load_users_from_db():
             with open(csv_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 
-                # 새로운 포맷인 경우 {"users": [...], "user_type": [...]}
+                # 새로운 포맷인 경우 {"users": [...]}
                 if isinstance(data, dict) and "users" in data:
                     fallback_dict = {}
                     for u in data["users"]:
@@ -347,14 +347,14 @@ def save_users_to_db(users_dict):
     import json
     csv_path = os.path.join(DATA_DIR, 'users_db.json')
     
-    # 기존 JSON 구조 읽어오기 (user_type 보존을 위해)
+    # 기존 JSON 구조 읽어오기
     try:
         with open(csv_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            if not isinstance(data, dict) or "users" not in data:
-                data = {"users": [], "user_type": []}
+            if not isinstance(data, dict):
+                data = {"users": []}
     except Exception:
-        data = {"users": [], "user_type": []}
+        data = {"users": []}
         
     # users 배열 갱신
     new_users_list = []
@@ -388,19 +388,19 @@ def save_users_to_db(users_dict):
 def save_user_profile(user_id, type_id):
     """
     사용자와 투자 성향(type_id) 매핑 정보를 user_profile 테이블에 저장합니다.
-    (요청된 JSON 스키마를 위해 users_db.json의 user_type 배열에도 저장합니다)
+    (요청된 JSON 스키마를 위해 user_type_db.json 파일로 분리하여 저장합니다)
     """
     import json
-    csv_path = os.path.join(DATA_DIR, 'users_db.json')
+    type_csv_path = os.path.join(DATA_DIR, 'user_type_db.json')
     
-    # 1. JSON 구조 업데이트
+    # 1. JSON 구조 업데이트 (user_type 독립 파일)
     try:
-        with open(csv_path, 'r', encoding='utf-8') as f:
+        with open(type_csv_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             if not isinstance(data, dict) or "user_type" not in data:
-                data = {"users": [], "user_type": []}
+                data = {"user_type": []}
     except Exception:
-        data = {"users": [], "user_type": []}
+        data = {"user_type": []}
         
     type_names = {
         1: "안정형", 2: "안정추구형", 3: "위험중립형", 4: "적극투자형", 5: "공격투자형"
@@ -427,10 +427,10 @@ def save_user_profile(user_id, type_id):
     data["user_type"] = user_type_list
     
     try:
-        with open(csv_path, 'w', encoding='utf-8') as f:
+        with open(type_csv_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
     except Exception as e:
-        logger.error(f"users_db.json 백업 저장 실패: {e}")
+        logger.error(f"user_type_db.json 백업 저장 실패: {e}")
 
     # 2. 통합 DB (CSV Fallback 포함) 저장
     df = pd.DataFrame([{
