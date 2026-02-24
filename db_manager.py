@@ -306,7 +306,7 @@ def init_user_type_table():
 
 def load_users_from_db():
     """DB에서 사용자 정보를 가져와 dict로 반환합니다."""
-    query = "SELECT user_id, user_password, user_email, type_id FROM users"
+    query = "SELECT user_id, user_password, user_email FROM users"
     df = load_from_db(query)
     
     users_dict = {}
@@ -314,8 +314,7 @@ def load_users_from_db():
         for _, row in df.iterrows():
             users_dict[row['user_id']] = {
                 'user_password': row['user_password'],
-                'user_email': row.get('user_email', ''),
-                'type_id': pd.NA if pd.isna(row.get('type_id')) else int(row['type_id'])
+                'user_email': row.get('user_email', '')
             }
         return users_dict
         
@@ -348,8 +347,20 @@ def save_users_to_db(users_dict):
             records.append({
                 'user_id': uid,
                 'user_password': data.get('user_password', ''),
-                'user_email': data.get('user_email', ''),
-                'type_id': data.get('type_id', None)
+                'user_email': data.get('user_email', '')
             })
         df = pd.DataFrame(records)
         save_to_db(df, 'users', if_exists='replace')
+
+
+def save_user_profile(user_id, type_id):
+    """
+    사용자와 투자 성향(type_id) 매핑 정보를 user_profile 테이블에 저장합니다.
+    """
+    df = pd.DataFrame([{
+        'user_id': user_id,
+        'type_id': type_id
+    }])
+    # append로 누적하거나 로직에 맞게 업데이트 (단순화를 위해 append 후 최신 사용)
+    save_to_db(df, 'user_profile', if_exists='append')
+    logger.info(f"[DB] '{user_id}' 투자 성향({type_id}) 프로필 저장 완료")
