@@ -638,8 +638,14 @@ def generate_analysis_summary(df):
         summary['KOSDAQ 종목 수'] = len(kosdaq)
 
     # 등락 통계
+    pct = None
     if '등락률(숫자)' in df.columns:
         pct = pd.to_numeric(df['등락률(숫자)'], errors='coerce')
+    elif '등락률' in df.columns:
+        from scraper import parse_change_pct
+        pct = df['등락률'].apply(parse_change_pct)
+
+    if pct is not None:
         summary['상승 종목 수'] = int((pct > 0).sum())
         summary['하락 종목 수'] = int((pct < 0).sum())
         summary['보합 종목 수'] = int((pct == 0).sum())
