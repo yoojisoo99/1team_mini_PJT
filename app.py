@@ -408,7 +408,12 @@ with st.sidebar:
                     st.error("아이디 또는 비밀번호가 틀렸습니다.")
             else:
                 st.error("아이디 또는 비밀번호가 틀렸습니다.")
-    else:
+                
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("📝 회원가입 하기", use_container_width=True):
+            st.session_state['current_page'] = "📝 회원가입"
+            st.session_state['menu_radio'] = "🏠 메인 대시보드" # 라디오 버튼 선택 해제 효과를 위해 기본값 유지
+            st.rerun()
         st.success(f"👋 환영합니다, **{st.session_state['username']}**님!")
         if st.button("로그아웃", use_container_width=True):
             st.session_state['logged_in'] = False
@@ -417,12 +422,8 @@ with st.sidebar:
             
     st.markdown("---")
 
-    menu_options = ["🏠 메인 대시보드", "📝 회원가입", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
+    menu_options = ["🏠 메인 대시보드", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
                     "📈 분석 신호", "📰 종목 뉴스", "📧 뉴스레터"]
-    
-    # 로그인 상태면 회원가입 메뉴 숨기기
-    if st.session_state['logged_in']:
-        menu_options.remove("📝 회원가입")
 
     # 콜백 함수를 통해 session state 수동 업데이트 우회
     def on_page_change():
