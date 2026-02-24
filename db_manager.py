@@ -285,3 +285,71 @@ def save_all_to_db(stock_df, signals_df=None, recs_df=None,
         save_newsletter(newsletter_dict)
 
     logger.info("[DB] 전체 데이터 저장 완료")
+
+
+# ============================================================
+# (H) users & user_type — 사용자 및 성향 마스터
+# ============================================================
+def init_user_type_table():
+    """사용자 유형 마스터(user_type) 테이블을 초기화합니다."""
+    types = [
+        {'type_id': 1, 'type_name': '안정형', 'description': '원금 손실을 최소화하고 안정적인 수익을 추구합니다.'},
+        {'type_id': 2, 'type_name': '안정추구형', 'description': '원금 보전을 중시하되, 약간의 위험을 감수하여 추가 수익을 노립니다.'},
+        {'type_id': 3, 'type_name': '위험중립형', 'description': '수익과 위험을 균형 있게 고려합니다.'},
+        {'type_id': 4, 'type_name': '적극투자형', 'description': '수익 달성을 위해 어느 정도의 위험을 감수합니다.'},
+        {'type_id': 5, 'type_name': '공격투자형', 'description': '고수익을 위해 높은 위험을 적극적으로 감수합니다.'},
+    ]
+    df = pd.DataFrame(types)
+    save_to_db(df, 'user_type', if_exists='replace')
+    logger.info("[DB] 'user_type' 마스터 테이블 초기화 완료")
+
+
+def load_users_from_db():
+    """DB에서 사용자 정보를 가져와 dict로 반환합니다."""
+    query = "SELECT user_id, user_password, user_email, type_id FROM users"
+    df = load_from_db(query)
+    
+    users_dict = {}
+    if df is not None and not df.empty:
+        for _, row in df.iterrows():
+            users_dict[row['user_id']] = {
+                'user_password': row['user_password'],
+                'user_email': row.get('user_email', ''),
+                'type_id': pd.NA if pd.isna(row.get('type_id')) else int(row['type_id'])
+            }
+        return users_dict
+        
+    # DB 조회 실패 시 CSV (JSON) 폴백
+    import json
+    csv_path = os.path.join(DATA_DIR, 'users_db.json')
+    if os.path.exists(csv_path):
+        try:
+            with open(csv_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"users_db.json 로드 실패: {e}")
+    return {}
+
+
+def save_users_to_db(users_dict):
+    """사용자 dict를 받아 users 테이블과 JSON 백업에 동시 저장합니다."""
+    import json
+    csv_path = os.path.join(DATA_DIR, 'users_db.json')
+    try:
+        with open(csv_path, 'w', encoding='utf-8') as f:
+            json.dump(users_dict, f, indent=4)
+    except Exception as e:
+        logger.error(f"users_db.json 백업 저장 실패: {e}")
+        
+    # DataFrame 변환 후 DB 저장
+    if users_dict:
+        records = []
+        for uid, data in users_dict.items():
+            records.append({
+                'user_id': uid,
+                'user_password': data.get('user_password', ''),
+                'user_email': data.get('user_email', ''),
+                'type_id': data.get('type_id', None)
+            })
+        df = pd.DataFrame(records)
+        save_to_db(df, 'users', if_exists='replace')
