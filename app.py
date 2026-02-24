@@ -204,15 +204,33 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* 일반 텍스트 밝게 조정 (오류 방지를 위해 div 제외) */
-    p, span {
-        color: #f2ece4 !important;
+    /* 일반 텍스트 — 밝게 유지 */
+    p, span, li {
+        color: #f0e8dc !important;
+    }
+
+    /* Streamlit markdown 본문 */
+    .stMarkdown p, .stMarkdown span {
+        color: #f0e8dc !important;
+    }
+
+    /* 입력 위젯 내부 값 텍스트 */
+    input, textarea {
+        color: #f0e8dc !important;
+        background-color: rgba(55, 50, 46, 0.9) !important;
+    }
+
+    /* 라디오/체크박스 옵션 글씨 */
+    .stRadio div[role="radiogroup"] label p,
+    .stCheckbox label p {
+        color: #f0e8dc !important;
+        font-size: 14px;
     }
 
     /* 드롭다운 (셀렉트박스) 내부 텍스트 및 팝업창 스타일 */
     .stSelectbox div[data-baseweb="select"] > div {
         background-color: rgba(55, 50, 46, 0.9) !important;
-        color: #f2ece4 !important;
+        color: #f0e8dc !important;
     }
     
     div[role="listbox"] {
@@ -222,7 +240,7 @@ st.markdown("""
     }
     
     div[role="listbox"] ul li {
-        color: #f2ece4 !important;
+        color: #f0e8dc !important;
         background-color: transparent !important;
     }
     
@@ -231,18 +249,41 @@ st.markdown("""
         color: #dcb98c !important;
     }
 
-
+    /* 데이터프레임 / 테이블 */
     table {
-        color: #f2ece4 !important;
+        color: #f0e8dc !important;
     }
     
     th, td {
         border-bottom: 1px solid rgba(220, 185, 140, 0.2) !important;
+        color: #f0e8dc !important;
     }
     
     th {
-        color: #dcb98c !important;
+        color: #e8c87e !important;
         font-weight: 700 !important;
+        background-color: rgba(55, 50, 46, 0.7) !important;
+    }
+
+    /* 추천 이유 테이블 셀 */
+    .reason-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+    .reason-table th {
+        background: rgba(166, 124, 82, 0.3) !important;
+        color: #e8c87e !important;
+        padding: 10px 12px;
+        text-align: left;
+    }
+    .reason-table td {
+        padding: 9px 12px;
+        color: #f0e8dc !important;
+        border-bottom: 1px solid rgba(220,185,140,0.15) !important;
+    }
+    .reason-table tr:hover td {
+        background: rgba(220, 185, 140, 0.08);
     }
 
     /* 버튼 */
@@ -259,18 +300,37 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(220, 185, 140, 0.3);
     }
 
-    /* 익스팬더 (펼쳐보기) 스타일 수정 */
+    /* 익스팬더 (펼쳐보기) 스타일 수정 — 열렸을 때도 다크 유지 */
     [data-testid="stExpander"] {
         background-color: rgba(55, 50, 46, 0.7) !important;
         border: 1px solid rgba(220, 185, 140, 0.25) !important;
         border-radius: 12px !important;
     }
+    [data-testid="stExpander"] > details {
+        background-color: rgba(55, 50, 46, 0.7) !important;
+    }
+    [data-testid="stExpander"] > details > div {
+        background-color: rgba(50, 45, 41, 0.9) !important;
+        border-radius: 0 0 12px 12px !important;
+    }
     [data-testid="stExpander"] summary {
         color: #dcb98c !important;
         font-weight: 600 !important;
+        background-color: rgba(55, 50, 46, 0.7) !important;
     }
     [data-testid="stExpander"] summary:hover {
         color: #f2ece4 !important;
+    }
+    /* streamlit 버전별 펼쳐진 내용 영역 */
+    .streamlit-expanderContent {
+        background-color: rgba(50, 45, 41, 0.95) !important;
+        border-radius: 0 0 12px 12px !important;
+    }
+    .streamlit-expanderContent p,
+    .streamlit-expanderContent span,
+    .streamlit-expanderContent td,
+    .streamlit-expanderContent th {
+        color: #f0e8dc !important;
     }
 
     /* 경고/정보 박스 */
@@ -288,18 +348,19 @@ st.markdown("""
 import json
 import bcrypt as _bcrypt  # passlib 대신 raw bcrypt 사용 (backend 호환 문제 해결)
 import os
+from db_manager import load_users_from_db, save_users_to_db, init_user_type_table
+
+if 'user_type_init' not in st.session_state:
+    init_user_type_table()
+    st.session_state['user_type_init'] = True
 
 USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.json')
 
 def load_users():
-    if not os.path.exists(USERS_DB_FILE):
-        return {}
-    with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    return load_users_from_db()
 
 def save_users(users):
-    with open(USERS_DB_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users, f, indent=4)
+    save_users_to_db(users)
 
 # bcrypt는 최대 72바이트 제한 → raw bcrypt로 안전하게 처리
 def _safe_hash(password: str) -> str:
@@ -369,7 +430,7 @@ with st.sidebar:
                     users[new_id] = {
                         "user_password": _safe_hash(new_pw),
                         "user_email": new_email,
-                        "type_id": "미정" # 설문 전 기본값
+                        "type_id": None # 설문 전 기본값
                     }
                     save_users(users)
                     st.success("회원가입이 완료되었습니다! 로그인해주세요.")
@@ -739,7 +800,14 @@ elif page == "📋 투자 성향 설문":
             if user_id:
                 users = load_users()
                 if user_id in users and isinstance(users[user_id], dict):
-                    users[user_id]['type_id'] = investor_type
+                    type_id_map = {
+                        '안정형': 1,
+                        '안정추구형': 2,
+                        '위험중립형': 3,
+                        '적극투자형': 4,
+                        '공격투자형': 5
+                    }
+                    users[user_id]['type_id'] = type_id_map.get(investor_type, None)
                     save_users(users)
                     st.toast(f"✅ {user_id}님의 투자 성향({investor_type})이 저장되었습니다!")
 
@@ -916,6 +984,63 @@ elif page == "⭐ 맞춤 종목 추천":
             showlegend=False,
         )
         st.plotly_chart(fig_score, use_container_width=True)
+
+        # ── 추천 이유 설명 테이블 ──
+        st.markdown("### 📋 추천 이유 상세 설명")
+
+        reason_rows = ""
+        for i, row in recommendations.iterrows():
+            rsi_val   = row.get('RSI', None)
+            macd_hist = row.get('MACD_Hist', None)
+            golden    = row.get('골든크로스', None)
+            sentiment = row.get('sentiment_score', None)
+
+            rsi_txt = "-"
+            if rsi_val is not None:
+                rsi_color = '#3fb950' if rsi_val < 30 else ('#f85149' if rsi_val > 70 else '#ccc')
+                rsi_txt = f"<span style='color:{rsi_color}'>RSI {rsi_val:.0f}</span>"
+
+            macd_txt = "-"
+            if macd_hist is not None:
+                mc = '#3fb950' if macd_hist > 0 else '#f85149'
+                ml = '▲상승' if macd_hist > 0 else '▼하락'
+                macd_txt = f"<span style='color:{mc}'>{ml}</span>"
+
+            golden_txt = "<span style='color:#dcb98c'>⭐발생</span>" if golden == 1 else "<span style='color:#555'>-</span>"
+
+            sent_txt = "-"
+            if sentiment is not None:
+                sc = '#3fb950' if sentiment > 20 else ('#f85149' if sentiment < -20 else '#ccc')
+                sl = '긍정' if sentiment > 20 else ('부정' if sentiment < -20 else '중립')
+                sent_txt = f"<span style='color:{sc}'>{sl}({sentiment:+.0f})</span>"
+
+            reason = row.get('추천이유', '-')
+            name   = row.get('종목명', '')
+            score  = row.get('추천점수', 0)
+            # 줄바꿈 없이 한 줄로 이어붙임 → 마크다운 코드블록 방지
+            reason_rows += (f"<tr>"
+                f"<td style='font-weight:700;color:#dcb98c'>#{i+1}</td>"
+                f"<td style='font-weight:600;color:#f0e8dc'>{name}</td>"
+                f"<td style='text-align:center;font-weight:700;color:#c19b76'>{score:.1f}</td>"
+                f"<td>{rsi_txt}</td>"
+                f"<td>{macd_txt}</td>"
+                f"<td>{golden_txt}</td>"
+                f"<td>{sent_txt}</td>"
+                f"<td style='color:#ccc;font-size:13px'>{reason}</td>"
+                f"</tr>")
+
+        # unsafe_allow_html=True + HTML 앞 공백 없애야 마크다운 코드블록 오파싱 방지
+        table_html = (
+            "<table class='reason-table'>"
+            "<thead><tr>"
+            "<th>순위</th><th>종목명</th><th>점수</th>"
+            "<th>RSI</th><th>MACD</th><th>골든크로스</th><th>뉴스감성</th><th>추천이유</th>"
+            "</tr></thead>"
+            f"<tbody>{reason_rows}</tbody>"
+            "</table>"
+        )
+        st.markdown(table_html, unsafe_allow_html=True)
+        st.markdown("&nbsp;", unsafe_allow_html=True)
 
         # 레이더 차트 (상위 5개 종목)
         if len(recommendations) >= 3:
