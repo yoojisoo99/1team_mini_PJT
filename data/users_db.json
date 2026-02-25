@@ -1,19 +1,9 @@
 {
     "users": [
         {
-            "user_id": "user1",
-            "user_password": "$2b$12$6lIvY3m//alJUQGgdvWB0eVDJYcJkRBt3/OFaoIyVRZI9Xqx5Poo6",
-            "user_email": "user1@example.com"
-        },
-        {
-            "user_id": "user2",
-            "user_password": "$2b$12$6lIvY3m//alJUQGgdvWB0eVDJYcJkRBt3/OFaoIyVRZI9Xqx5Poo6",
-            "user_email": "user2@example.com"
-        },
-        {
-            "user_id": "user3",
-            "user_password": "$2b$12$6lIvY3m//alJUQGgdvWB0eVDJYcJkRBt3/OFaoIyVRZI9Xqx5Poo6",
-            "user_email": "user3@example.com"
+            "user_id": "testusr",
+            "user_password": "hashed_password_mock",
+            "user_email": "test@example.com"
         }
     ]
 }
