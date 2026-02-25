@@ -501,7 +501,21 @@ with st.sidebar:
     # ── 로고 이미지 삽입 ──
     logo_path = os.path.join(os.path.dirname(__file__), 'assets', 'logo.jpg')
     if os.path.exists(logo_path):
-        st.image(logo_path, use_container_width=True)
+        import base64
+        with open(logo_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+        # 마크만 동그랗게 자르고(누끼) 크기 축소 + 확대(클릭) 방지 HTML 구성
+        st.markdown(
+            f'''
+            <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+                <img src="data:image/jpeg;base64,{encoded_string}" 
+                     style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; 
+                            box-shadow: 0 4px 15px rgba(220,185,140,0.2); pointer-events: none;">
+                <h2 style="color: #dcb98c; margin-top: 15px; font-weight: 800; font-size: 22px; letter-spacing: 1px;">LUMINA CAPITAL</h2>
+            </div>
+            ''', 
+            unsafe_allow_html=True
+        )
     else:
         st.markdown("## 📊 LUMINA CAPITAL")
     st.markdown("---")
