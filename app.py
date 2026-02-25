@@ -591,51 +591,118 @@ elif page == "🏠 메인 대시보드":
 
     with tab1:
         st.markdown("### 거래량 상위 종목")
+        st.markdown("""
+        <style>
+        /* 1. 드롭다운이 펼쳐졌을 때 각 항목의 글자색 변경 */
+        div[data-baseweb="popover"] li {
+            color: #000000 !important; /* 글자색을 검정으로 강제 */
+            background-color: transparent !important;
+        }
+        /* 2. 이미 선택되어 박스에 표시되는 글자색 (가독성 확보) */
+        div[data-baseweb="select"] > div:first-child {
+            color: #ffffff !important; /* 이 부분은 배경이 어두우면 흰색, 밝으면 검정으로 조절하세요 */
+        }
+        </style>
+        """, unsafe_allow_html=True)
         market_filter = st.selectbox(
             "시장 선택", ["전체", "KOSPI", "KOSDAQ"], key="market_filter_vol"
         )
-        filtered = stock_df if market_filter == "전체" else stock_df[stock_df['시장'] == market_filter]
-        top20 = filtered.head(20)
+    # 1. 먼저 시장 필터링 적용
+    if market_filter == "전체":
+        filtered_df = stock_df.copy()
+    else:
+        filtered_df = stock_df[stock_df['시장'] == market_filter].copy()
 
-        if not top20.empty:
-            fig = px.bar(
+    # 2. 거래량 기준으로 내림차순 정렬
+    filtered_df = filtered_df.sort_values(by='거래량', ascending=False)
+
+    # 3. 정렬된 데이터에서 상위 20개 추출
+    top20 = filtered_df.head(20)
+
+    if not top20.empty:
+        # 막대 그래프 (Bar Chart)
+        fig = px.bar(
+            top20,
+            x='종목명',
+            y='거래량',
+            color='시장',
+            # 전체 선택 시 두 시장이 모두 보일 수 있도록 카테고리별 색상 지정
+            color_discrete_map={'KOSPI': '#dcb98c', 'KOSDAQ': "#4a3728"},
+            title=f'거래량 상위 종목 ({market_filter})',
+            template='plotly_dark',
+            # 범례 제목(시장) 표시 설정
+            #labels={'시장': '시장 구분'}
+        )
+        
+        # X축 순서가 거래량 순으로 유지되도록 설정
+        fig.update_layout(
+            # 타이틀 색상 변경
+            title={
+            'font': {'color': "#ffffff", 'size': 20}
+            },
+            # 각 색상별 어떤 시장인지 표시
+            showlegend=True,
+            legend=dict(
+                title_text='시장',
+                font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+                orientation="v", # 세로로 나열
+                yanchor="top",
+                y=0.99,
+                xanchor="left",
+                x=1.02 # 차트 오른쪽에 범례 표시
+            ),
+            #xaxis={'categoryorder':'total descending'},
+            xaxis_tickangle=-45,
+            xaxis=dict(
+                {'categoryorder':'total descending'},
+                title_font=dict(color="#ffffff"),   # 축 이름 색상
+                tickfont=dict(color="#ffffff")   # 축 숫자 색상
+            ),
+            yaxis=dict(
+                title_font=dict(color="#ffffff"),  # 축 이름 색상
+                tickfont=dict(color="#ffffff")    # 축 숫자 색상
+            ),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color="#ffffff"),
+            height=500,
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+        # 등락률 산점도 (Scatter Chart)
+        if '등락률(숫자)' in top20.columns:
+            fig2 = px.scatter(
                 top20,
-                x='종목명',
-                y='거래량',
+                x='거래량',
+                y='등락률(숫자)',
+                size='거래대금',
                 color='시장',
-                color_discrete_map={'KOSPI': '#dcb98c', 'KOSDAQ': '#8a735c'},
-                title='거래량 상위 종목',
+                hover_name='종목명',
+                color_discrete_map={'KOSPI': '#667eea', 'KOSDAQ': '#764ba2'},
+                title='거래량 vs 등락률 (버블 크기 = 거래대금)',
                 template='plotly_dark',
             )
-            fig.update_layout(
-                xaxis_tickangle=-45,
+            fig2.update_layout(
+                title={
+                'font': {'color': "#ffffff", 'size': 20}
+                },
+                # 각 색상별 어떤 시장인지 표시
+                showlegend=True,
+                legend=dict(
+                title_text='시장',
+                font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+                orientation="v", # 세로로 나열
+                yanchor="top",
+                y=0.99,
+                xanchor="left",
+                x=1.02 # 차트 오른쪽에 범례 표시
+                ),
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#f2ece4'),
+                font=dict(color='#e0e0ff'),
                 height=500,
             )
-            st.plotly_chart(fig, use_container_width=True)
-
-            # 등락률 산점도
-            if '등락률(숫자)' in top20.columns:
-                fig2 = px.scatter(
-                    top20,
-                    x='거래량',
-                    y='등락률(숫자)',
-                    size='거래대금',
-                    color='시장',
-                    hover_name='종목명',
-                    color_discrete_map={'KOSPI': '#667eea', 'KOSDAQ': '#764ba2'},
-                    title='거래량 vs 등락률 (버블 크기 = 거래대금)',
-                    template='plotly_dark',
-                )
-                fig2.update_layout(
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='#e0e0ff'),
-                    height=500,
-                )
-                st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True)
 
     with tab2:
         st.markdown("### 외국인/기관 매매 동향")
