@@ -677,6 +677,77 @@ def scrape_historical_prices(tickers, days=5):
 
 
 # ============================================================
+# 6.5 신규 추가: JSON 저장 전용 함수
+# ============================================================
+def save_all_to_json(stock_df, signals_df=None, recs_df=None, newsletter_dict=None):
+    import json
+    import os
+    from datetime import datetime
+    
+    os.makedirs('data', exist_ok=True)
+    today = datetime.now().strftime('%Y%m%d')
+    time_suffix = datetime.now().strftime('%Y%m%d_%H%M%S')
+    
+    def _write_json(data_dict, filename):
+        filepath = os.path.join('data', filename)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data_dict, f, ensure_ascii=False, indent=2)
+        logger.info(f"  -> JSON 저장 완료: {filepath}")
+
+    # (1) stocks.json
+    if not stock_df.empty:
+        master = stock_df[['종목코드', '종목명', '시장']].drop_duplicates(subset='종목코드')
+        master = master.rename(columns={'종목코드': 'ticker', '종목명': 'name', '시장': 'market'})
+        _write_json({"stocks": master.to_dict(orient='records')}, f"stocks_{today}.json")
+        
+    # (2) price_snapshots.json
+    if not stock_df.empty:
+        required = ['종목코드', '수집시간', '현재가', '거래량', '거래대금']
+        available = [c for c in required if c in stock_df.columns]
+        if len(available) == len(required):
+            snap = stock_df[['종목명'] + required].copy() if '종목명' in stock_df.columns else stock_df[required].copy()
+            if '종목명' in snap.columns:
+                snap.rename(columns={'종목명': 'id'}, inplace=True)
+            else:
+                snap['id'] = snap['종목코드']
+            snap.rename(columns={'종목코드': 'ticker', '수집시간': 'captured_at', '현재가': 'price', '거래량': 'volume', '거래대금': 'trade_value'}, inplace=True)
+            
+            if pd.api.types.is_datetime64_any_dtype(snap['captured_at']):
+                snap['captured_at'] = snap['captured_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+            snap['price'] = snap['price'].fillna(0).astype('int64')
+            snap['volume'] = snap['volume'].fillna(0).astype('int64')
+            snap['trade_value'] = snap['trade_value'].fillna(0).astype('int64')
+            _write_json({"price_snapshots": snap.to_dict(orient='records')}, f"price_snapshots_{time_suffix}.json")
+
+    # (3) analysis_signals.json
+    if signals_df is not None and not signals_df.empty:
+        sign = signals_df.copy()
+        if '종목명' in sign.columns: sign.rename(columns={'종목명': 'id'}, inplace=True)
+        elif 'name' in sign.columns: sign.rename(columns={'name': 'id'}, inplace=True)
+        else: sign['id'] = sign['ticker']
+        
+        if pd.api.types.is_datetime64_any_dtype(sign['as_of']):
+            sign['as_of'] = sign['as_of'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+        _write_json({"analysis_signals": sign.to_dict(orient='records')}, f"analysis_signals_{today}.json")
+
+    # (4) recommendations.json
+    if recs_df is not None and not recs_df.empty:
+        recs = recs_df.copy()
+        if pd.api.types.is_datetime64_any_dtype(recs['as_of']):
+            recs['as_of'] = recs['as_of'].dt.strftime('%Y-%m-%d')
+        if 'id' not in recs.columns:
+            recs.insert(0, 'id', range(1, len(recs) + 1))
+        _write_json({"recommendations": recs.to_dict(orient='records')}, f"recommendations_{today}.json")
+
+    # (5) newsletters.json
+    if newsletter_dict:
+        news_df = pd.DataFrame([newsletter_dict])
+        if 'id' not in news_df.columns: news_df.insert(0, 'id', [101])
+        if pd.api.types.is_datetime64_any_dtype(news_df['created_at']):
+            news_df['created_at'] = news_df['created_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+        _write_json({"newsletters": news_df.to_dict(orient='records')}, f"newsletters_{today}.json")
+
+# ============================================================
 # 7. 전체 파이프라인 실행 함수
 # ============================================================
 def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
@@ -701,7 +772,6 @@ def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
         generate_analysis_signals, score_stocks,
         build_recommendations_df, generate_newsletter,
     )
-    from db_manager import save_all_to_db
 
     logger.info("=" * 60)
     logger.info(" 네이버 증권 데이터 수집 & 분석 시스템")
@@ -768,24 +838,28 @@ def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
         news_df=news_df,
     )
 
-    # ─── STEP 9: 전체 저장 (C~G) ───
-    logger.info("[저장] 전체 데이터 저장 중...")
+    # ─── STEP 9: 전체 저장 (C~G) JSON ───
+    logger.info("[저장] 전체 데이터 JSON 파일로 저장 중...")
 
-    # 기존 CSV도 저장 (호환성 유지)
-    save_to_csv(final_df, f"stock_data_{today}.csv")
-    save_to_csv(volume_df, f"top_volume_{today}.csv")
-    if not news_df.empty:
-        save_to_csv(news_df, f"stock_news_{today}.csv")
-    if not historical_df.empty:
-        save_to_csv(historical_df, f"historical_{today}.csv")
-
-    # DB 형식 저장 (C~G 테이블)
-    save_all_to_db(
+    # save_all_to_json 내부 로직 실행
+    save_all_to_json(
         stock_df=final_df,
         signals_df=signals_df,
         recs_df=recs_df,
         newsletter_dict=newsletter,
     )
+
+    # 기존 CSV도 저장 (호환성 유지)
+    # db_manager의 save_to_csv 대신 간단한 로컬 구문 사용 또는 기본 저장
+    import os
+    os.makedirs('data', exist_ok=True)
+    final_df.to_csv(f"data/stock_data_{today}.csv", index=False, encoding='utf-8-sig')
+    volume_df.to_csv(f"data/top_volume_{today}.csv", index=False, encoding='utf-8-sig')
+    if not news_df.empty:
+        news_df.to_csv(f"data/stock_news_{today}.csv", index=False, encoding='utf-8-sig')
+    if not historical_df.empty:
+        historical_df.to_csv(f"data/historical_{today}.csv", index=False, encoding='utf-8-sig')
+
 
     # ─── 결과 요약 ───
     buy_cnt = (signals_df['signal'] == 'BUY').sum() if not signals_df.empty else 0
@@ -832,6 +906,9 @@ if __name__ == "__main__":
 
     newsletter = result['newsletter']
     if newsletter:
-        print(f"\n[뉴스레터] {newsletter['title']}")
-        print(newsletter['content'][:500] + '...')
+        try:
+            print(f"\n[뉴스레터] {newsletter['title']}")
+            print(newsletter['content'][:500] + '...')
+        except UnicodeEncodeError:
+            print("\n[뉴스레터] (터미널 인코딩 문제로 내용을 표시할 수 없습니다. JSON 파일을 확인해주세요.)")
 

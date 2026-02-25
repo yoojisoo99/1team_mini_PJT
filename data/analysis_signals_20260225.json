@@ -1,0 +1,1604 @@
+{
+  "analysis_signals": [
+    {
+      "ticker": "252670",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 62.01,
+      "signal": "BUY",
+      "id": "252670"
+    },
+    {
+      "ticker": "004410",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 72.05,
+      "signal": "BUY",
+      "id": "004410"
+    },
+    {
+      "ticker": "114800",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 62.98,
+      "signal": "BUY",
+      "id": "114800"
+    },
+    {
+      "ticker": "007460",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 66.81,
+      "signal": "BUY",
+      "id": "007460"
+    },
+    {
+      "ticker": "092220",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 94.14,
+      "signal": "BUY",
+      "id": "092220"
+    },
+    {
+      "ticker": "452260",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 70.48,
+      "signal": "BUY",
+      "id": "452260"
+    },
+    {
+      "ticker": "018880",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 49.24,
+      "signal": "HOLD",
+      "id": "018880"
+    },
+    {
+      "ticker": "004060",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 49.66,
+      "signal": "HOLD",
+      "id": "004060"
+    },
+    {
+      "ticker": "006340",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 61.44,
+      "signal": "BUY",
+      "id": "006340"
+    },
+    {
+      "ticker": "047040",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 84.61,
+      "signal": "BUY",
+      "id": "047040"
+    },
+    {
+      "ticker": "500027",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 79.36,
+      "signal": "BUY",
+      "id": "500027"
+    },
+    {
+      "ticker": "462330",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 76.18,
+      "signal": "BUY",
+      "id": "462330"
+    },
+    {
+      "ticker": "233740",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 58.93,
+      "signal": "HOLD",
+      "id": "233740"
+    },
+    {
+      "ticker": "152550",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.5,
+      "signal": "HOLD",
+      "id": "152550"
+    },
+    {
+      "ticker": "252710",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 37.86,
+      "signal": "SELL",
+      "id": "252710"
+    },
+    {
+      "ticker": "251340",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 54.93,
+      "signal": "HOLD",
+      "id": "251340"
+    },
+    {
+      "ticker": "229200",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 53.23,
+      "signal": "HOLD",
+      "id": "229200"
+    },
+    {
+      "ticker": "012200",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 88.77,
+      "signal": "BUY",
+      "id": "012200"
+    },
+    {
+      "ticker": "088350",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 35.69,
+      "signal": "SELL",
+      "id": "088350"
+    },
+    {
+      "ticker": "005930",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.84,
+      "signal": "HOLD",
+      "id": "005930"
+    },
+    {
+      "ticker": "034220",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 71.57,
+      "signal": "BUY",
+      "id": "034220"
+    },
+    {
+      "ticker": "122630",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.97,
+      "signal": "HOLD",
+      "id": "122630"
+    },
+    {
+      "ticker": "069500",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.77,
+      "signal": "HOLD",
+      "id": "069500"
+    },
+    {
+      "ticker": "003060",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 32.14,
+      "signal": "SELL",
+      "id": "003060"
+    },
+    {
+      "ticker": "396500",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.22,
+      "signal": "HOLD",
+      "id": "396500"
+    },
+    {
+      "ticker": "006200",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 67.88,
+      "signal": "BUY",
+      "id": "006200"
+    },
+    {
+      "ticker": "003620",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 57.37,
+      "signal": "HOLD",
+      "id": "003620"
+    },
+    {
+      "ticker": "034830",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.17,
+      "signal": "HOLD",
+      "id": "034830"
+    },
+    {
+      "ticker": "001510",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 30.82,
+      "signal": "SELL",
+      "id": "001510"
+    },
+    {
+      "ticker": "412570",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 64.73,
+      "signal": "BUY",
+      "id": "412570"
+    },
+    {
+      "ticker": "379800",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 32.87,
+      "signal": "SELL",
+      "id": "379800"
+    },
+    {
+      "ticker": "0091P0",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 35.62,
+      "signal": "SELL",
+      "id": "0091P0"
+    },
+    {
+      "ticker": "001440",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 50.04,
+      "signal": "HOLD",
+      "id": "001440"
+    },
+    {
+      "ticker": "530107",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.91,
+      "signal": "BUY",
+      "id": "530107"
+    },
+    {
+      "ticker": "0117V0",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 33.59,
+      "signal": "SELL",
+      "id": "0117V0"
+    },
+    {
+      "ticker": "487240",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 33.3,
+      "signal": "SELL",
+      "id": "487240"
+    },
+    {
+      "ticker": "123310",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 30.52,
+      "signal": "SELL",
+      "id": "123310"
+    },
+    {
+      "ticker": "091180",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 68.13,
+      "signal": "BUY",
+      "id": "091180"
+    },
+    {
+      "ticker": "003520",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 35.56,
+      "signal": "SELL",
+      "id": "003520"
+    },
+    {
+      "ticker": "498400",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 48.29,
+      "signal": "HOLD",
+      "id": "498400"
+    },
+    {
+      "ticker": "395160",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.97,
+      "signal": "HOLD",
+      "id": "395160"
+    },
+    {
+      "ticker": "003530",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 29.93,
+      "signal": "SELL",
+      "id": "003530"
+    },
+    {
+      "ticker": "0148J0",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 48.78,
+      "signal": "HOLD",
+      "id": "0148J0"
+    },
+    {
+      "ticker": "360750",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.3,
+      "signal": "HOLD",
+      "id": "360750"
+    },
+    {
+      "ticker": "012160",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 70.2,
+      "signal": "BUY",
+      "id": "012160"
+    },
+    {
+      "ticker": "011930",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.75,
+      "signal": "HOLD",
+      "id": "011930"
+    },
+    {
+      "ticker": "102970",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.85,
+      "signal": "HOLD",
+      "id": "102970"
+    },
+    {
+      "ticker": "144600",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.21,
+      "signal": "BUY",
+      "id": "144600"
+    },
+    {
+      "ticker": "003490",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.37,
+      "signal": "HOLD",
+      "id": "003490"
+    },
+    {
+      "ticker": "012030",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 33.62,
+      "signal": "SELL",
+      "id": "012030"
+    },
+    {
+      "ticker": "102110",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.51,
+      "signal": "HOLD",
+      "id": "102110"
+    },
+    {
+      "ticker": "003280",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.49,
+      "signal": "HOLD",
+      "id": "003280"
+    },
+    {
+      "ticker": "001620",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.98,
+      "signal": "HOLD",
+      "id": "001620"
+    },
+    {
+      "ticker": "006800",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 34.57,
+      "signal": "SELL",
+      "id": "006800"
+    },
+    {
+      "ticker": "530036",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.29,
+      "signal": "HOLD",
+      "id": "530036"
+    },
+    {
+      "ticker": "329200",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.58,
+      "signal": "HOLD",
+      "id": "329200"
+    },
+    {
+      "ticker": "009310",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 66.24,
+      "signal": "BUY",
+      "id": "009310"
+    },
+    {
+      "ticker": "005880",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 44.83,
+      "signal": "HOLD",
+      "id": "005880"
+    },
+    {
+      "ticker": "118000",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 59.48,
+      "signal": "HOLD",
+      "id": "118000"
+    },
+    {
+      "ticker": "017040",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.47,
+      "signal": "HOLD",
+      "id": "017040"
+    },
+    {
+      "ticker": "462010",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.85,
+      "signal": "HOLD",
+      "id": "462010"
+    },
+    {
+      "ticker": "305720",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.81,
+      "signal": "HOLD",
+      "id": "305720"
+    },
+    {
+      "ticker": "379810",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.58,
+      "signal": "HOLD",
+      "id": "379810"
+    },
+    {
+      "ticker": "472150",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.81,
+      "signal": "HOLD",
+      "id": "472150"
+    },
+    {
+      "ticker": "448330",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.24,
+      "signal": "HOLD",
+      "id": "448330"
+    },
+    {
+      "ticker": "011500",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 65.13,
+      "signal": "BUY",
+      "id": "011500"
+    },
+    {
+      "ticker": "005380",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.68,
+      "signal": "HOLD",
+      "id": "005380"
+    },
+    {
+      "ticker": "232080",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 29.9,
+      "signal": "SELL",
+      "id": "232080"
+    },
+    {
+      "ticker": "495050",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.06,
+      "signal": "HOLD",
+      "id": "495050"
+    },
+    {
+      "ticker": "489790",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 61.2,
+      "signal": "BUY",
+      "id": "489790"
+    },
+    {
+      "ticker": "000270",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 54.82,
+      "signal": "HOLD",
+      "id": "000270"
+    },
+    {
+      "ticker": "395270",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.63,
+      "signal": "HOLD",
+      "id": "395270"
+    },
+    {
+      "ticker": "010100",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.7,
+      "signal": "HOLD",
+      "id": "010100"
+    },
+    {
+      "ticker": "530111",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 42.17,
+      "signal": "HOLD",
+      "id": "530111"
+    },
+    {
+      "ticker": "157500",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.36,
+      "signal": "HOLD",
+      "id": "157500"
+    },
+    {
+      "ticker": "520055",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 43.62,
+      "signal": "HOLD",
+      "id": "520055"
+    },
+    {
+      "ticker": "487230",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.76,
+      "signal": "BUY",
+      "id": "487230"
+    },
+    {
+      "ticker": "005935",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 62.12,
+      "signal": "BUY",
+      "id": "005935"
+    },
+    {
+      "ticker": "0098F0",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 32.69,
+      "signal": "SELL",
+      "id": "0098F0"
+    },
+    {
+      "ticker": "130660",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.39,
+      "signal": "HOLD",
+      "id": "130660"
+    },
+    {
+      "ticker": "138540",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.3,
+      "signal": "HOLD",
+      "id": "138540"
+    },
+    {
+      "ticker": "010820",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.02,
+      "signal": "HOLD",
+      "id": "010820"
+    },
+    {
+      "ticker": "000400",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 27.74,
+      "signal": "SELL",
+      "id": "000400"
+    },
+    {
+      "ticker": "034020",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.9,
+      "signal": "HOLD",
+      "id": "034020"
+    },
+    {
+      "ticker": "488080",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 62.78,
+      "signal": "BUY",
+      "id": "488080"
+    },
+    {
+      "ticker": "000720",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 54.21,
+      "signal": "HOLD",
+      "id": "000720"
+    },
+    {
+      "ticker": "002630",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 27.83,
+      "signal": "SELL",
+      "id": "002630"
+    },
+    {
+      "ticker": "091160",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 29.93,
+      "signal": "SELL",
+      "id": "091160"
+    },
+    {
+      "ticker": "292150",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.72,
+      "signal": "HOLD",
+      "id": "292150"
+    },
+    {
+      "ticker": "011300",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.19,
+      "signal": "BUY",
+      "id": "011300"
+    },
+    {
+      "ticker": "117700",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 48.61,
+      "signal": "HOLD",
+      "id": "117700"
+    },
+    {
+      "ticker": "001210",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 31.08,
+      "signal": "SELL",
+      "id": "001210"
+    },
+    {
+      "ticker": "009830",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.57,
+      "signal": "HOLD",
+      "id": "009830"
+    },
+    {
+      "ticker": "012800",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 44.39,
+      "signal": "HOLD",
+      "id": "012800"
+    },
+    {
+      "ticker": "455850",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 61.52,
+      "signal": "BUY",
+      "id": "455850"
+    },
+    {
+      "ticker": "003000",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 43.53,
+      "signal": "HOLD",
+      "id": "003000"
+    },
+    {
+      "ticker": "010690",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 50.19,
+      "signal": "HOLD",
+      "id": "010690"
+    },
+    {
+      "ticker": "445290",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 62.97,
+      "signal": "BUY",
+      "id": "445290"
+    },
+    {
+      "ticker": "004540",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 64.43,
+      "signal": "BUY",
+      "id": "004540"
+    },
+    {
+      "ticker": "364980",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.09,
+      "signal": "HOLD",
+      "id": "364980"
+    },
+    {
+      "ticker": "900300",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 67.91,
+      "signal": "BUY",
+      "id": "900300"
+    },
+    {
+      "ticker": "012860",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 73.78,
+      "signal": "BUY",
+      "id": "012860"
+    },
+    {
+      "ticker": "038530",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 57.95,
+      "signal": "HOLD",
+      "id": "038530"
+    },
+    {
+      "ticker": "242040",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 75.18,
+      "signal": "BUY",
+      "id": "242040"
+    },
+    {
+      "ticker": "039860",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.25,
+      "signal": "HOLD",
+      "id": "039860"
+    },
+    {
+      "ticker": "076610",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 80.23,
+      "signal": "BUY",
+      "id": "076610"
+    },
+    {
+      "ticker": "083640",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 66.47,
+      "signal": "BUY",
+      "id": "083640"
+    },
+    {
+      "ticker": "078860",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 42.86,
+      "signal": "HOLD",
+      "id": "078860"
+    },
+    {
+      "ticker": "317240",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 61.8,
+      "signal": "BUY",
+      "id": "317240"
+    },
+    {
+      "ticker": "115530",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 78.95,
+      "signal": "BUY",
+      "id": "115530"
+    },
+    {
+      "ticker": "053950",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 62.88,
+      "signal": "BUY",
+      "id": "053950"
+    },
+    {
+      "ticker": "357880",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 69.83,
+      "signal": "BUY",
+      "id": "357880"
+    },
+    {
+      "ticker": "010170",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 34.07,
+      "signal": "SELL",
+      "id": "010170"
+    },
+    {
+      "ticker": "008290",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 59.71,
+      "signal": "HOLD",
+      "id": "008290"
+    },
+    {
+      "ticker": "032820",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 34.81,
+      "signal": "SELL",
+      "id": "032820"
+    },
+    {
+      "ticker": "101400",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 61.86,
+      "signal": "BUY",
+      "id": "101400"
+    },
+    {
+      "ticker": "032680",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 60.48,
+      "signal": "BUY",
+      "id": "032680"
+    },
+    {
+      "ticker": "042040",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 55.09,
+      "signal": "HOLD",
+      "id": "042040"
+    },
+    {
+      "ticker": "101330",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 57.16,
+      "signal": "HOLD",
+      "id": "101330"
+    },
+    {
+      "ticker": "044480",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.19,
+      "signal": "BUY",
+      "id": "044480"
+    },
+    {
+      "ticker": "476060",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 54.57,
+      "signal": "HOLD",
+      "id": "476060"
+    },
+    {
+      "ticker": "205470",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 53.78,
+      "signal": "HOLD",
+      "id": "205470"
+    },
+    {
+      "ticker": "079190",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 49.05,
+      "signal": "HOLD",
+      "id": "079190"
+    },
+    {
+      "ticker": "054220",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.8,
+      "signal": "BUY",
+      "id": "054220"
+    },
+    {
+      "ticker": "417200",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 66.56,
+      "signal": "BUY",
+      "id": "417200"
+    },
+    {
+      "ticker": "340930",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 43.88,
+      "signal": "HOLD",
+      "id": "340930"
+    },
+    {
+      "ticker": "250930",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.15,
+      "signal": "HOLD",
+      "id": "250930"
+    },
+    {
+      "ticker": "006910",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 49.37,
+      "signal": "HOLD",
+      "id": "006910"
+    },
+    {
+      "ticker": "024840",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 32.98,
+      "signal": "SELL",
+      "id": "024840"
+    },
+    {
+      "ticker": "159910",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 53.72,
+      "signal": "HOLD",
+      "id": "159910"
+    },
+    {
+      "ticker": "024060",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 32.67,
+      "signal": "SELL",
+      "id": "024060"
+    },
+    {
+      "ticker": "090710",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.97,
+      "signal": "HOLD",
+      "id": "090710"
+    },
+    {
+      "ticker": "047770",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 35.63,
+      "signal": "SELL",
+      "id": "047770"
+    },
+    {
+      "ticker": "113810",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.36,
+      "signal": "HOLD",
+      "id": "113810"
+    },
+    {
+      "ticker": "307180",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.85,
+      "signal": "HOLD",
+      "id": "307180"
+    },
+    {
+      "ticker": "038060",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 57.26,
+      "signal": "HOLD",
+      "id": "038060"
+    },
+    {
+      "ticker": "049630",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 55.67,
+      "signal": "HOLD",
+      "id": "049630"
+    },
+    {
+      "ticker": "0015G0",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.51,
+      "signal": "BUY",
+      "id": "0015G0"
+    },
+    {
+      "ticker": "048410",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 42.94,
+      "signal": "HOLD",
+      "id": "048410"
+    },
+    {
+      "ticker": "085810",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 48.16,
+      "signal": "HOLD",
+      "id": "085810"
+    },
+    {
+      "ticker": "097800",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 57.86,
+      "signal": "HOLD",
+      "id": "097800"
+    },
+    {
+      "ticker": "018000",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 49.26,
+      "signal": "HOLD",
+      "id": "018000"
+    },
+    {
+      "ticker": "413630",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 57.04,
+      "signal": "HOLD",
+      "id": "413630"
+    },
+    {
+      "ticker": "377030",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 40.54,
+      "signal": "HOLD",
+      "id": "377030"
+    },
+    {
+      "ticker": "347700",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 33.98,
+      "signal": "SELL",
+      "id": "347700"
+    },
+    {
+      "ticker": "012340",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 48.99,
+      "signal": "HOLD",
+      "id": "012340"
+    },
+    {
+      "ticker": "052770",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.42,
+      "signal": "HOLD",
+      "id": "052770"
+    },
+    {
+      "ticker": "288980",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.07,
+      "signal": "BUY",
+      "id": "288980"
+    },
+    {
+      "ticker": "290660",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 42.32,
+      "signal": "HOLD",
+      "id": "290660"
+    },
+    {
+      "ticker": "092040",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.88,
+      "signal": "HOLD",
+      "id": "092040"
+    },
+    {
+      "ticker": "038500",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.9,
+      "signal": "HOLD",
+      "id": "038500"
+    },
+    {
+      "ticker": "319400",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.53,
+      "signal": "HOLD",
+      "id": "319400"
+    },
+    {
+      "ticker": "222080",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 44.38,
+      "signal": "HOLD",
+      "id": "222080"
+    },
+    {
+      "ticker": "017510",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 53.82,
+      "signal": "HOLD",
+      "id": "017510"
+    },
+    {
+      "ticker": "298830",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 34.48,
+      "signal": "SELL",
+      "id": "298830"
+    },
+    {
+      "ticker": "396300",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 63.04,
+      "signal": "BUY",
+      "id": "396300"
+    },
+    {
+      "ticker": "036170",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 41.57,
+      "signal": "HOLD",
+      "id": "036170"
+    },
+    {
+      "ticker": "270520",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 42.66,
+      "signal": "HOLD",
+      "id": "270520"
+    },
+    {
+      "ticker": "038880",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.05,
+      "signal": "HOLD",
+      "id": "038880"
+    },
+    {
+      "ticker": "069540",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 38.7,
+      "signal": "SELL",
+      "id": "069540"
+    },
+    {
+      "ticker": "067390",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 30.51,
+      "signal": "SELL",
+      "id": "067390"
+    },
+    {
+      "ticker": "078590",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 36.46,
+      "signal": "SELL",
+      "id": "078590"
+    },
+    {
+      "ticker": "056090",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 47.5,
+      "signal": "HOLD",
+      "id": "056090"
+    },
+    {
+      "ticker": "033340",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 50.09,
+      "signal": "HOLD",
+      "id": "033340"
+    },
+    {
+      "ticker": "016600",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 29.46,
+      "signal": "SELL",
+      "id": "016600"
+    },
+    {
+      "ticker": "238120",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 71.73,
+      "signal": "BUY",
+      "id": "238120"
+    },
+    {
+      "ticker": "049180",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.44,
+      "signal": "HOLD",
+      "id": "049180"
+    },
+    {
+      "ticker": "900070",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 33.26,
+      "signal": "SELL",
+      "id": "900070"
+    },
+    {
+      "ticker": "464080",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 54.27,
+      "signal": "HOLD",
+      "id": "464080"
+    },
+    {
+      "ticker": "267320",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 29.63,
+      "signal": "SELL",
+      "id": "267320"
+    },
+    {
+      "ticker": "412350",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 51.9,
+      "signal": "HOLD",
+      "id": "412350"
+    },
+    {
+      "ticker": "035290",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 54.49,
+      "signal": "HOLD",
+      "id": "035290"
+    },
+    {
+      "ticker": "321370",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 44.75,
+      "signal": "HOLD",
+      "id": "321370"
+    },
+    {
+      "ticker": "036090",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 53.92,
+      "signal": "HOLD",
+      "id": "036090"
+    },
+    {
+      "ticker": "317120",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 59.67,
+      "signal": "HOLD",
+      "id": "317120"
+    },
+    {
+      "ticker": "255220",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 27.78,
+      "signal": "SELL",
+      "id": "255220"
+    },
+    {
+      "ticker": "417010",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 38.89,
+      "signal": "SELL",
+      "id": "417010"
+    },
+    {
+      "ticker": "417840",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 42.34,
+      "signal": "HOLD",
+      "id": "417840"
+    },
+    {
+      "ticker": "046120",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 60.92,
+      "signal": "BUY",
+      "id": "046120"
+    },
+    {
+      "ticker": "403870",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.97,
+      "signal": "HOLD",
+      "id": "403870"
+    },
+    {
+      "ticker": "125020",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 29.73,
+      "signal": "SELL",
+      "id": "125020"
+    },
+    {
+      "ticker": "068240",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 41.4,
+      "signal": "HOLD",
+      "id": "068240"
+    },
+    {
+      "ticker": "380540",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 50.88,
+      "signal": "HOLD",
+      "id": "380540"
+    },
+    {
+      "ticker": "030530",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 48.36,
+      "signal": "HOLD",
+      "id": "030530"
+    },
+    {
+      "ticker": "036540",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 44.66,
+      "signal": "HOLD",
+      "id": "036540"
+    },
+    {
+      "ticker": "225190",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 38.18,
+      "signal": "SELL",
+      "id": "225190"
+    },
+    {
+      "ticker": "019570",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 48.99,
+      "signal": "HOLD",
+      "id": "019570"
+    },
+    {
+      "ticker": "306620",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 25.64,
+      "signal": "SELL",
+      "id": "306620"
+    },
+    {
+      "ticker": "065170",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 46.57,
+      "signal": "HOLD",
+      "id": "065170"
+    },
+    {
+      "ticker": "214150",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 38.1,
+      "signal": "SELL",
+      "id": "214150"
+    },
+    {
+      "ticker": "083660",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 53.38,
+      "signal": "HOLD",
+      "id": "083660"
+    },
+    {
+      "ticker": "246690",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 26.82,
+      "signal": "SELL",
+      "id": "246690"
+    },
+    {
+      "ticker": "033540",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 36.5,
+      "signal": "SELL",
+      "id": "033540"
+    },
+    {
+      "ticker": "388050",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 57.98,
+      "signal": "HOLD",
+      "id": "388050"
+    },
+    {
+      "ticker": "289080",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 41.68,
+      "signal": "HOLD",
+      "id": "289080"
+    },
+    {
+      "ticker": "027360",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 45.24,
+      "signal": "HOLD",
+      "id": "027360"
+    },
+    {
+      "ticker": "229000",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 81.07,
+      "signal": "BUY",
+      "id": "229000"
+    },
+    {
+      "ticker": "0004V0",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 52.88,
+      "signal": "HOLD",
+      "id": "0004V0"
+    },
+    {
+      "ticker": "064260",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 59.39,
+      "signal": "HOLD",
+      "id": "064260"
+    },
+    {
+      "ticker": "293580",
+      "as_of": "2026-02-25 10:37:30",
+      "window": "1D",
+      "trend_score": 44.15,
+      "signal": "HOLD",
+      "id": "293580"
+    }
+  ]
+}

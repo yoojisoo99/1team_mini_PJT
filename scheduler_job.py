@@ -3,8 +3,9 @@ import logging
 import pandas as pd
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from scraper import create_session, scrape_top_volume
-from db_manager import save_to_db
+from scraper import run_full_pipeline
+import subprocess
+import os
 
 # 로깅 설정
 logging.basicConfig(
@@ -15,45 +16,40 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def job_realtime_market_data():
-    """매 정시 KOSPI/KOSDAQ 거래량 상위 종목을 수집하여 DB에 누적 저장합니다."""
-    logger.info("=== [스케줄링] 1시간 단위 주식 시세 수집 시작 ===")
-    session = create_session()
-    
+    """매 정시 전체 파이프라인(스크래핑 -> JSON 저장 -> DB C~G 갱신)을 실행합니다."""
+    logger.info("=== [스케줄링] 1시간 단위 주식 시세 전체 수집 및 DB 동기화 파이프라인 시작 ===")
     try:
-        # KOSPI 100 + KOSDAQ 100 수집
-        kospi = scrape_top_volume('KOSPI', limit=100, session=session)
-        kosdaq = scrape_top_volume('KOSDAQ', limit=100, session=session)
+        # 1. 스크래퍼 전체 파이프라인 실행 (JSON 파일들 생성됨)
+        logger.info("1. Scraper run_full_pipeline() 실행 중...")
+        result = run_full_pipeline()
+        logger.info("-> 스크래핑 및 JSON 저장 완료.")
         
-        # 병합
-        df = pd.concat([kospi, kosdaq], ignore_index=True)
+        # 2. 생성된 JSON 들을 DB에 반영하는 C ~ G 스크립트 순차 실행
+        scripts_to_run = [
+            'C_stocks_table.py',
+            'D_price_snapshots_table.py',
+            'E_analysis_signals.py',
+            'F_recommendations.py',
+            'G_newsletters.py'
+        ]
         
-        if df.empty:
-            logger.warning("[실패] 수집된 데이터가 없습니다.")
-            return
-
-        # DB 형식 매핑 (필요한 핵심 데이터만)
-        now = datetime.now()
-        df['수집시간'] = now.replace(minute=0, second=0, microsecond=0) # 정시 기준으로 통일
+        script_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database_script')
         
-        # 문자열 숫자로 변환
-        for col in ['현재가', '전일비', '거래량', '거래대금']:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype('int64')
-            
-        # 등락률 % 제거 후 float 변환
-        df['등락률_num'] = df['등락률'].astype(str).str.replace('%', '').str.replace('+', '').str.replace(',', '')
-        df['등락률_num'] = pd.to_numeric(df['등락률_num'], errors='coerce').fillna(0.0)
+        logger.info("2. Database Scripts (C~G) 순차 실행 중...")
+        for script_name in scripts_to_run:
+            script_path = os.path.join(script_dir, script_name)
+            if os.path.exists(script_path):
+                logger.info(f" -> 실행: {script_name}")
+                res = subprocess.run(['python', script_path], capture_output=True, text=True)
+                if res.returncode == 0:
+                    logger.info(f"    [성공] {script_name}")
+                else:
+                    logger.error(f"    [실패] {script_name}\nError: {res.stderr}")
+            else:
+                logger.warning(f" -> 경고: {script_path} 파일을 찾을 수 없습니다.")
+                
+        logger.info("=== [완료] 전체 파이프라인 스케줄링 정상 종료 ===")
         
-        # DB 저장용 최종 데이터셋
-        db_df = df[['종목코드', '종목명', '시장', '현재가', '전일비', '등락률', '등락률_num', '거래량', '거래대금', '수집시간']]
-        
-        # MySQL stock_market_data 테이블에 누적(append) 저장
-        success = save_to_db(db_df, 'stock_market_data', if_exists='append')
-        
-        if success:
-            logger.info(f"=== [성공] {len(db_df)}종목 시세 DB 저장 완료 ({now.strftime('%H:%M')}) ===")
-        else:
-            logger.error("=== [실패] DB 저장 실패 ===")
-            
     except Exception as e:
         logger.error(f"=== [오류] 스케줄링 작업 중 예외 발생: {e} ===")
 
