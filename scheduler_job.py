@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from scraper import create_session, scrape_top_volume
-from db_manager import save_to_db
 
 # 로깅 설정
 logging.basicConfig(
@@ -40,10 +39,9 @@ def job_realtime_market_data():
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype('int64')
             
         # 등락률 % 제거 후 float 변환
-        df['등락률_num'] = df['등락률'].astype(str).str.replace('%', '').str.replace('+', '').str.replace(',', '')
         df['등락률_num'] = pd.to_numeric(df['등락률_num'], errors='coerce').fillna(0.0)
         
-        # DB 저장용 최종 데이터셋
+        # JSON 저장용 최종 데이터셋
         db_df = df[['종목코드', '종목명', '시장', '현재가', '전일비', '등락률', '등락률_num', '거래량', '거래대금', '수집시간']]
         
         # 1. JSON 변환 및 저장
@@ -54,20 +52,15 @@ def job_realtime_market_data():
         json_data = {"stock_market_data": data_records}
         
         time_suffix = now.strftime('%Y%m%d_%H%M%S')
-        from db_manager import save_json, sync_json_to_db
-        json_filepath = save_json(json_data, f'scheduler_market_data_{time_suffix}.json')
-
-        # 2. MySQL 테이블에 누적(append) 동기화
-        if json_filepath:
-            success = sync_json_to_db(json_filepath, 'stock_market_data', if_exists='append')
-        else:
-            success = False
         
-        if success:
-            logger.info(f"=== [성공] {len(db_df)}종목 시세 DB 동기화 완료 ({now.strftime('%H:%M')}) ===")
-        else:
-            logger.error("=== [실패] JSON DB 동기화 실패 ===")
+        import os, json
+        os.makedirs('data', exist_ok=True)
+        filepath = os.path.join('data', f'scheduler_market_data_{time_suffix}.json')
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, ensure_ascii=False, indent=2)
             
+        logger.info(f"=== [성공] {len(db_df)}종목 시세 JSON 저장 완료 ({now.strftime('%H:%M')}) ===")
+        
     except Exception as e:
         logger.error(f"=== [오류] 스케줄링 작업 중 예외 발생: {e} ===")
 

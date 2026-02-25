@@ -351,19 +351,87 @@ st.markdown("""
 import json
 import bcrypt as _bcrypt  # passlib 대신 raw bcrypt 사용 (backend 호환 문제 해결)
 import os
-from db_manager import load_users_from_db, save_users_to_db, init_user_type_table, save_user_profile
+
+USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.json')
+USER_TYPE_DB_FILE = os.path.join(DATA_DIR, 'user_type_db.json')
+
+def init_user_type_table():
+    pass # 파일 기반 관리로 변경되었으므로 별도의 초기화 불필요
+
+def load_users():
+    if os.path.exists(USERS_DB_FILE):
+        try:
+            with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, dict) and "users" in data:
+                    fallback_dict = {}
+                    for u in data["users"]:
+                        fallback_dict[u["user_id"]] = {
+                            "user_password": u.get("user_password", ""),
+                            "user_email": u.get("user_email", "")
+                        }
+                    return fallback_dict
+                return data
+        except:
+            pass
+    return {}
+
+def save_users(users_dict):
+    try:
+        with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            if not isinstance(data, dict):
+                data = {"users": []}
+    except:
+        data = {"users": []}
+        
+    new_users = []
+    for uid, udata in users_dict.items():
+        new_users.append({
+            "user_id": uid,
+            "user_password": udata.get("user_password", ""),
+            "user_email": udata.get("user_email", "")
+        })
+    data["users"] = new_users
+    
+    with open(USERS_DB_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+def save_user_profile(user_id, type_id):
+    try:
+        with open(USER_TYPE_DB_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            if not isinstance(data, dict) or "user_type" not in data:
+                data = {"user_type": []}
+    except:
+        data = {"user_type": []}
+        
+    type_names = {1: "안정형", 2: "안정추구형", 3: "위험중립형", 4: "적극투자형", 5: "공격투자형"}
+    user_type_list = data.get("user_type", [])
+    found = False
+    for ut in user_type_list:
+        if ut.get("user_id") == user_id:
+            ut["type_id"] = type_id
+            ut["type_name"] = type_names.get(type_id, "Unknown Profile")
+            ut["description"] = f"User has been profiled as {ut['type_name']}."
+            found = True
+            break
+            
+    if not found:
+        user_type_list.append({
+            "user_id": user_id,
+            "type_id": type_id,
+            "type_name": type_names.get(type_id, "Unknown Profile"),
+            "description": f"User has been profiled as {type_names.get(type_id, 'Unknown Profile')}."
+        })
+        
+    data["user_type"] = user_type_list
+    with open(USER_TYPE_DB_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
 if 'user_type_init' not in st.session_state:
     init_user_type_table()
     st.session_state['user_type_init'] = True
-
-USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.json')
-
-def load_users():
-    return load_users_from_db()
-
-def save_users(users):
-    save_users_to_db(users)
 
 # bcrypt는 최대 72바이트 제한 → raw bcrypt로 안전하게 처리
 def _safe_hash(password: str) -> str:
