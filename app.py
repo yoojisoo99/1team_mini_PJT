@@ -1,5 +1,5 @@
 """
-📊 투자 성향별 주식 추천 시스템
+📊 LUMINA CAPITAL - 투자 성향 맞춤형 자산관리
 ================================
 Streamlit 기반 대시보드 웹앱
 
@@ -34,7 +34,7 @@ matplotlib.rcParams['axes.unicode_minus'] = False
 
 # ── 페이지 설정 ──
 st.set_page_config(
-    page_title="📊 투자 성향별 주식 추천 시스템",
+    page_title="LUMINA CAPITAL | 맞춤형 알고리즘 주식 추천",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -498,7 +498,12 @@ if 'current_page' not in st.session_state:
 # 사이드바 네비게이션 & 로그인 폼
 # ============================================================
 with st.sidebar:
-    st.markdown("## 📊 주식 추천 시스템")
+    # ── 로고 이미지 삽입 ──
+    logo_path = os.path.join(os.path.dirname(__file__), 'assets', 'logo.jpg')
+    if os.path.exists(logo_path):
+        st.image(logo_path, use_container_width=True)
+    else:
+        st.markdown("## 📊 LUMINA CAPITAL")
     st.markdown("---")
     
     # 로그인 폼 구성
@@ -570,7 +575,7 @@ with st.sidebar:
     st.markdown("---")
     st.markdown(
         "<div style='color:#888; font-size:12px; text-align:center;'>"
-        "네이버 증권 데이터 기반<br>"
+        "LUMINA CAPITAL 알고리즘 기반<br>"
         "투자 성향 5단계 분류<br>"
         "© 2026 Stock Recommender"
         "</div>",
@@ -590,7 +595,7 @@ stock_df, news_df, hist_df, signals_df = load_latest_data()
 # ============================================================
 if page == "📝 회원가입":
     st.markdown("# 📝 회원가입")
-    st.markdown("주식 추천 시스템의 모든 기능을 이용하시려면 회원가입을 진행해주세요.")
+    st.markdown("LUMINA CAPITAL의 모든 프리미엄 자산관리 기능을 이용하시려면 회원가입을 진행해주세요.")
     st.markdown("---")
     
     col1, col2 = st.columns([1, 1])
