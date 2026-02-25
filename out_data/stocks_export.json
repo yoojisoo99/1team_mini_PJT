@@ -1,0 +1,1004 @@
+{
+    "stocks": [
+        {
+            "ticker": "0001A0",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "000370",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "000400",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "000660",
+            "name": "SK????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "001200",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "001210",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "001440",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "001510",
+            "name": "SK??",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "001620",
+            "name": "?????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "001740",
+            "name": "SK????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "002630",
+            "name": "???????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003000",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003060",
+            "name": "???????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003280",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003380",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "003530",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "004060",
+            "name": "SG????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "004410",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "0053L0",
+            "name": "TIGER ??????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "005440",
+            "name": "????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "005880",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "005930",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "005935",
+            "name": "?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "006200",
+            "name": "???????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "006340",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "006345",
+            "name": "?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "006800",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "006910",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "0072R0",
+            "name": "TIGER KRX???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "007460",
+            "name": "?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "008290",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "008930",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "0091P0",
+            "name": "TIGER ??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "009290",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "009460",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "009830",
+            "name": "?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "010170",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "010820",
+            "name": "???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "011000",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "011300",
+            "name": "???????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "011500",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "0117V0",
+            "name": "TIGER ???AI????TOP3???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "011930",
+            "name": "?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "012030",
+            "name": "DB",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "012800",
+            "name": "??",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "0148J0",
+            "name": "TIGER ????????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "015260",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "016600",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "018000",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "018880",
+            "name": "?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "024060",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "024840",
+            "name": "KBI??",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "027710",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "031820",
+            "name": "????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "032680",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "032820",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "033230",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "033340",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "034020",
+            "name": "???????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "034220",
+            "name": "LG?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "034830",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "035620",
+            "name": "???????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "035810",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "036120",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "036170",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "036540",
+            "name": "SFA???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "038500",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "038530",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "038880",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "039860",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "046120",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "046890",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "047040",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "048410",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "049080",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "049630",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "050890",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "054210",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "054220",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "056090",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "065170",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "065500",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "066360",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "067310",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "067390",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "068240",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "069460",
+            "name": "?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "069500",
+            "name": "KODEX 200",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "069540",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "076610",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "077360",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "078590",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "079190",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "080220",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "083640",
+            "name": "??",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "083660",
+            "name": "CSA ???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "085620",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "088350",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "090710",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "091160",
+            "name": "KODEX ???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "092040",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "092220",
+            "name": "KEC",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "096350",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "102110",
+            "name": "TIGER 200",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "102970",
+            "name": "KODEX ??",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "103840",
+            "name": "??",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "109960",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "114800",
+            "name": "KODEX ???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "118000",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "122630",
+            "name": "KODEX ????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "123310",
+            "name": "TIGER ???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "123890",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "125020",
+            "name": "???????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "131180",
+            "name": "??",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "131400",
+            "name": "???????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "144600",
+            "name": "KODEX ???(H)",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "147830",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "152550",
+            "name": "??ANKOR??",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "157500",
+            "name": "TIGER ??",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "161510",
+            "name": "PLUS ????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "187660",
+            "name": "??ADM",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "206650",
+            "name": "???????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "208370",
+            "name": "???????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "220260",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "221800",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "222080",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "225430",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "227950",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "228790",
+            "name": "TIGER ???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "229000",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "229200",
+            "name": "KODEX ???150",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "232080",
+            "name": "TIGER ???150",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "233740",
+            "name": "KODEX ???150????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "241520",
+            "name": "DSC??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "242040",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "246690",
+            "name": "TS??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "251340",
+            "name": "KODEX ???150?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "252670",
+            "name": "KODEX 200?????2X",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "252710",
+            "name": "TIGER 200?????2X",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "252990",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "253590",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "254490",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "255220",
+            "name": "SG",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "267320",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "270520",
+            "name": "??",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "288980",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "289080",
+            "name": "SV??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "290550",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "290660",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "292150",
+            "name": "TIGER ???TOP10",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "293580",
+            "name": "??IB",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "304840",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "305720",
+            "name": "KODEX 2?????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "306620",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "307180",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "317240",
+            "name": "TS????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "319400",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "321370",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "328380",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "329200",
+            "name": "TIGER ????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "340930",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "357880",
+            "name": "SKAI",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "360750",
+            "name": "TIGER ??S&P500",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "363260",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "364980",
+            "name": "TIGER 2???TOP10",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "373200",
+            "name": "?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "377030",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "379800",
+            "name": "KODEX ??S&P500",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "379810",
+            "name": "KODEX ?????100",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "388050",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "395160",
+            "name": "KODEX AI???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "395270",
+            "name": "HANARO Fn K-???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "396300",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "396500",
+            "name": "TIGER ???TOP10",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "403870",
+            "name": "HPSP",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "411060",
+            "name": "ACE KRX???",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "412350",
+            "name": "????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "412570",
+            "name": "TIGER 2???TOP10????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "417010",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "417200",
+            "name": "LS?????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "417840",
+            "name": "???",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "448330",
+            "name": "KODEX ????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "452260",
+            "name": "??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "462010",
+            "name": "TIGER 2?????Fn",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "462330",
+            "name": "KODEX 2?????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "472150",
+            "name": "TIGER ?????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "476060",
+            "name": "????????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "487240",
+            "name": "KODEX AI??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "488080",
+            "name": "TIGER ???TOP10????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "489790",
+            "name": "????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "495050",
+            "name": "RISE ??????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "498400",
+            "name": "KODEX 200?????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "498410",
+            "name": "KODEX ?????TOP10?????????",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "500027",
+            "name": "?? ??? 2X WTI?? ?? ETN(H)",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "520057",
+            "name": "???? ??? 2X ???150 ?? ETN",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "530036",
+            "name": "?? ??? 2X WTI?? ?? ETN",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "530107",
+            "name": "?? ??? 2X ???150 ?? ETN",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "550043",
+            "name": "N2 ??? ???? WTI?? ?? ETN(H)",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "900070",
+            "name": "??????",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "900300",
+            "name": "????????",
+            "market": "KOSDAQ"
+        }
+    ]
+}
