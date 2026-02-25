@@ -1,0 +1,1604 @@
+{
+  "price_snapshots": [
+    {
+      "id": "KODEX 200선물인버스2X",
+      "ticker": "252670",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 258,
+      "volume": -1404583597,
+      "trade_value": 750913
+    },
+    {
+      "id": "KODEX 인버스",
+      "ticker": "114800",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1599,
+      "volume": 262366740,
+      "trade_value": 421019
+    },
+    {
+      "id": "서울식품",
+      "ticker": "004410",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 268,
+      "volume": 215323646,
+      "trade_value": 57171
+    },
+    {
+      "id": "에이프로젠",
+      "ticker": "007460",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 463,
+      "volume": 109025891,
+      "trade_value": 61952
+    },
+    {
+      "id": "SG세계물산",
+      "ticker": "004060",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 711,
+      "volume": 82188726,
+      "trade_value": 59914
+    },
+    {
+      "id": "KEC",
+      "ticker": "092220",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1192,
+      "volume": 64282223,
+      "trade_value": 80782
+    },
+    {
+      "id": "KODEX 2차전지산업레버리지",
+      "ticker": "462330",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2305,
+      "volume": 61479785,
+      "trade_value": 138651
+    },
+    {
+      "id": "한화갤러리아",
+      "ticker": "452260",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 3305,
+      "volume": 52212935,
+      "trade_value": 182326
+    },
+    {
+      "id": "한온시스템",
+      "ticker": "018880",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 4530,
+      "volume": 52109965,
+      "trade_value": 245261
+    },
+    {
+      "id": "한화생명",
+      "ticker": "088350",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 5205,
+      "volume": 45063510,
+      "trade_value": 243471
+    },
+    {
+      "id": "롯데손해보험",
+      "ticker": "000400",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2630,
+      "volume": 42837073,
+      "trade_value": 118821
+    },
+    {
+      "id": "대우건설",
+      "ticker": "047040",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 8770,
+      "volume": 41489252,
+      "trade_value": 363229
+    },
+    {
+      "id": "TIGER 200선물인버스2X",
+      "ticker": "252710",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 275,
+      "volume": 38967892,
+      "trade_value": 10780
+    },
+    {
+      "id": "KODEX 코스닥150레버리지",
+      "ticker": "233740",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 18745,
+      "volume": 38348920,
+      "trade_value": 717211
+    },
+    {
+      "id": "신한 인버스 2X WTI원유 선물 ETN(H)",
+      "ticker": "500027",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 54,
+      "volume": 34824841,
+      "trade_value": 1846
+    },
+    {
+      "id": "대원전선",
+      "ticker": "006340",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 6190,
+      "volume": 33526093,
+      "trade_value": 219250
+    },
+    {
+      "id": "KODEX 코스닥150",
+      "ticker": "229200",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 20155,
+      "volume": 28828078,
+      "trade_value": 580436
+    },
+    {
+      "id": "KODEX 코스닥150선물인버스",
+      "ticker": "251340",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2150,
+      "volume": 26880595,
+      "trade_value": 57838
+    },
+    {
+      "id": "한국ANKOR유전",
+      "ticker": "152550",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 257,
+      "volume": 25877776,
+      "trade_value": 6840
+    },
+    {
+      "id": "삼성전자",
+      "ticker": "005930",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 204500,
+      "volume": 24368608,
+      "trade_value": 4956743
+    },
+    {
+      "id": "KODEX 200",
+      "ticker": "069500",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 90915,
+      "volume": 22410444,
+      "trade_value": 2031909
+    },
+    {
+      "id": "KODEX 레버리지",
+      "ticker": "122630",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 104125,
+      "volume": 22091523,
+      "trade_value": 2284343
+    },
+    {
+      "id": "SK증권",
+      "ticker": "001510",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1813,
+      "volume": 21787970,
+      "trade_value": 39377
+    },
+    {
+      "id": "TIGER 반도체TOP10",
+      "ticker": "396500",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 31920,
+      "volume": 17304765,
+      "trade_value": 552019
+    },
+    {
+      "id": "LG디스플레이",
+      "ticker": "034220",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 14820,
+      "volume": 15689398,
+      "trade_value": 232572
+    },
+    {
+      "id": "삼성 인버스 2X WTI원유 선물 ETN",
+      "ticker": "530036",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 67,
+      "volume": 14798081,
+      "trade_value": 1000
+    },
+    {
+      "id": "TIGER 2차전지TOP10레버리지",
+      "ticker": "412570",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2055,
+      "volume": 13533868,
+      "trade_value": 27176
+    },
+    {
+      "id": "KG모빌리티",
+      "ticker": "003620",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 4270,
+      "volume": 13260338,
+      "trade_value": 58430
+    },
+    {
+      "id": "한국토지신탁",
+      "ticker": "034830",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1700,
+      "volume": 12173365,
+      "trade_value": 21001
+    },
+    {
+      "id": "KODEX 미국S&P500",
+      "ticker": "379800",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 22335,
+      "volume": 12145671,
+      "trade_value": 272795
+    },
+    {
+      "id": "에이프로젠바이오로직스",
+      "ticker": "003060",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 359,
+      "volume": 12026979,
+      "trade_value": 4849
+    },
+    {
+      "id": "TIGER 인버스",
+      "ticker": "123310",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1790,
+      "volume": 11914488,
+      "trade_value": 21394
+    },
+    {
+      "id": "TIGER 코리아휴머노이드로봇산업",
+      "ticker": "0148J0",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 14715,
+      "volume": 11561543,
+      "trade_value": 165968
+    },
+    {
+      "id": "계양전기",
+      "ticker": "012200",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 9170,
+      "volume": 11512353,
+      "trade_value": 100694
+    },
+    {
+      "id": "TIGER 미국S&P500",
+      "ticker": "360750",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 24435,
+      "volume": 10844895,
+      "trade_value": 266492
+    },
+    {
+      "id": "대한항공",
+      "ticker": "003490",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 29000,
+      "volume": 10116925,
+      "trade_value": 290576
+    },
+    {
+      "id": "KODEX 2차전지산업",
+      "ticker": "305720",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 18950,
+      "volume": 9854934,
+      "trade_value": 185236
+    },
+    {
+      "id": "삼성 인버스 2X 코스닥150 선물 ETN",
+      "ticker": "530107",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1806,
+      "volume": 9804872,
+      "trade_value": 17767
+    },
+    {
+      "id": "KODEX 200타겟위클리커버드콜",
+      "ticker": "498400",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 19175,
+      "volume": 9593614,
+      "trade_value": 183343
+    },
+    {
+      "id": "신성이엔지",
+      "ticker": "011930",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2080,
+      "volume": 9566789,
+      "trade_value": 20178
+    },
+    {
+      "id": "흥국화재",
+      "ticker": "000540",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 5930,
+      "volume": 9544652,
+      "trade_value": 58650
+    },
+    {
+      "id": "한국전자홀딩스",
+      "ticker": "006200",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 873,
+      "volume": 9256658,
+      "trade_value": 8885
+    },
+    {
+      "id": "한화투자증권",
+      "ticker": "003530",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 8200,
+      "volume": 8879386,
+      "trade_value": 73688
+    },
+    {
+      "id": "미래에셋증권",
+      "ticker": "006800",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 72900,
+      "volume": 8540295,
+      "trade_value": 617777
+    },
+    {
+      "id": "KODEX 증권",
+      "ticker": "102970",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 29460,
+      "volume": 8425719,
+      "trade_value": 246753
+    },
+    {
+      "id": "KODEX 은선물(H)",
+      "ticker": "144600",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 15090,
+      "volume": 8369702,
+      "trade_value": 123828
+    },
+    {
+      "id": "TIGER 코리아원자력",
+      "ticker": "0091P0",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 19385,
+      "volume": 8219988,
+      "trade_value": 158325
+    },
+    {
+      "id": "TIGER 2차전지소재Fn",
+      "ticker": "462010",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 7630,
+      "volume": 7988438,
+      "trade_value": 60380
+    },
+    {
+      "id": "KODEX AI전력핵심설비",
+      "ticker": "487240",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 34110,
+      "volume": 7754741,
+      "trade_value": 268354
+    },
+    {
+      "id": "대한전선",
+      "ticker": "001440",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 34050,
+      "volume": 7668063,
+      "trade_value": 266120
+    },
+    {
+      "id": "TIGER 코리아AI전력기기TOP3플러스",
+      "ticker": "0117V0",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 18130,
+      "volume": 7632491,
+      "trade_value": 140628
+    },
+    {
+      "id": "KODEX 미국나스닥100",
+      "ticker": "379810",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 23715,
+      "volume": 6944049,
+      "trade_value": 165943
+    },
+    {
+      "id": "TIGER 리츠부동산인프라",
+      "ticker": "329200",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 4650,
+      "volume": 6827459,
+      "trade_value": 31729
+    },
+    {
+      "id": "흥아해운",
+      "ticker": "003280",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1885,
+      "volume": 6672302,
+      "trade_value": 12735
+    },
+    {
+      "id": "TIGER 200",
+      "ticker": "102110",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 90870,
+      "volume": 6556732,
+      "trade_value": 593449
+    },
+    {
+      "id": "명신산업",
+      "ticker": "009900",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 10990,
+      "volume": 6525597,
+      "trade_value": 71542
+    },
+    {
+      "id": "KODEX 자동차",
+      "ticker": "091180",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 36225,
+      "volume": 6368682,
+      "trade_value": 228150
+    },
+    {
+      "id": "TIGER 배당커버드콜액티브",
+      "ticker": "472150",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 18985,
+      "volume": 6051702,
+      "trade_value": 114479
+    },
+    {
+      "id": "한신기계",
+      "ticker": "011700",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 5280,
+      "volume": 6042974,
+      "trade_value": 33246
+    },
+    {
+      "id": "KODEX AI반도체",
+      "ticker": "395160",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 26600,
+      "volume": 5951877,
+      "trade_value": 158215
+    },
+    {
+      "id": "미래에셋 인버스 2X 코스피200 선물 ETN",
+      "ticker": "520055",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1467,
+      "volume": 5688723,
+      "trade_value": 8414
+    },
+    {
+      "id": "TIGER 코스닥150",
+      "ticker": "232080",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 20555,
+      "volume": 5673509,
+      "trade_value": 116529
+    },
+    {
+      "id": "DB",
+      "ticker": "012030",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2130,
+      "volume": 5522573,
+      "trade_value": 11990
+    },
+    {
+      "id": "영진약품",
+      "ticker": "003520",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2170,
+      "volume": 5424678,
+      "trade_value": 12087
+    },
+    {
+      "id": "RISE 코리아밸류업",
+      "ticker": "495050",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 26725,
+      "volume": 5222942,
+      "trade_value": 139260
+    },
+    {
+      "id": "KODEX 미국AI전력핵심인프라",
+      "ticker": "487230",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 20165,
+      "volume": 5159102,
+      "trade_value": 104644
+    },
+    {
+      "id": "성문전자",
+      "ticker": "014910",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2035,
+      "volume": 5057769,
+      "trade_value": 10387
+    },
+    {
+      "id": "KODEX 삼성전자채권혼합",
+      "ticker": "448330",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 15695,
+      "volume": 4950143,
+      "trade_value": 77578
+    },
+    {
+      "id": "삼성 레버리지 천연가스 선물 ETN C",
+      "ticker": "530111",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1722,
+      "volume": 4823284,
+      "trade_value": 8410
+    },
+    {
+      "id": "TIGER 코리아TOP10",
+      "ticker": "292150",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 32840,
+      "volume": 4713362,
+      "trade_value": 154429
+    },
+    {
+      "id": "대한해운",
+      "ticker": "005880",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 2255,
+      "volume": 4705087,
+      "trade_value": 10599
+    },
+    {
+      "id": "HANARO Fn K-반도체",
+      "ticker": "395270",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 34295,
+      "volume": 4651607,
+      "trade_value": 159089
+    },
+    {
+      "id": "영흥",
+      "ticker": "012160",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 707,
+      "volume": 4647029,
+      "trade_value": 3443
+    },
+    {
+      "id": "유화증권",
+      "ticker": "003460",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 3795,
+      "volume": 4590846,
+      "trade_value": 18272
+    },
+    {
+      "id": "삼성전자우",
+      "ticker": "005935",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 142300,
+      "volume": 4589378,
+      "trade_value": 652544
+    },
+    {
+      "id": "부광약품",
+      "ticker": "003000",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 5360,
+      "volume": 4582099,
+      "trade_value": 25607
+    },
+    {
+      "id": "TIGER 증권",
+      "ticker": "157500",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 20280,
+      "volume": 4491864,
+      "trade_value": 90281
+    },
+    {
+      "id": "메타케어",
+      "ticker": "118000",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 349,
+      "volume": 4414488,
+      "trade_value": 1540
+    },
+    {
+      "id": "KODEX 반도체",
+      "ticker": "091160",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 96215,
+      "volume": 4339196,
+      "trade_value": 418192
+    },
+    {
+      "id": "현대지에프홀딩스",
+      "ticker": "005440",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 18230,
+      "volume": 4280520,
+      "trade_value": 80084
+    },
+    {
+      "id": "케이비아이동국실업",
+      "ticker": "001620",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 774,
+      "volume": 4221049,
+      "trade_value": 3398
+    },
+    {
+      "id": "TIGER 화장품",
+      "ticker": "228790",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 3700,
+      "volume": 4216602,
+      "trade_value": 15595
+    },
+    {
+      "id": "한화솔루션",
+      "ticker": "009830",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 51600,
+      "volume": 4165783,
+      "trade_value": 214736
+    },
+    {
+      "id": "현대차",
+      "ticker": "005380",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 573000,
+      "volume": 4070539,
+      "trade_value": 2298289
+    },
+    {
+      "id": "두산에너빌리티",
+      "ticker": "034020",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 103100,
+      "volume": 4052780,
+      "trade_value": 418093
+    },
+    {
+      "id": "퍼스텍",
+      "ticker": "010820",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 7240,
+      "volume": 3874703,
+      "trade_value": 28307
+    },
+    {
+      "id": "한화손해보험",
+      "ticker": "000370",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 7990,
+      "volume": 3765087,
+      "trade_value": 30745
+    },
+    {
+      "id": "미래에셋 인버스 2X 코스닥150 선물 ETN",
+      "ticker": "520057",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1809,
+      "volume": 3764699,
+      "trade_value": 6830
+    },
+    {
+      "id": "TIGER 2차전지TOP10",
+      "ticker": "364980",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 11610,
+      "volume": 3761118,
+      "trade_value": 43282
+    },
+    {
+      "id": "팬오션",
+      "ticker": "028670",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 5360,
+      "volume": 3688137,
+      "trade_value": 19820
+    },
+    {
+      "id": "기아",
+      "ticker": "000270",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 196900,
+      "volume": 3674860,
+      "trade_value": 715143
+    },
+    {
+      "id": "대호에이엘",
+      "ticker": "069460",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 670,
+      "volume": 3665081,
+      "trade_value": 2484
+    },
+    {
+      "id": "ACE 미국30년국채액티브(H)",
+      "ticker": "453850",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 7805,
+      "volume": 3621511,
+      "trade_value": 28272
+    },
+    {
+      "id": "TIGER 반도체TOP10레버리지",
+      "ticker": "488080",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 42100,
+      "volume": 3619967,
+      "trade_value": 152577
+    },
+    {
+      "id": "삼성 인버스 2X 코스피200 선물 ETN",
+      "ticker": "530105",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 1475,
+      "volume": 3607021,
+      "trade_value": 5337
+    },
+    {
+      "id": "한농화성",
+      "ticker": "011500",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 26650,
+      "volume": 3587846,
+      "trade_value": 98907
+    },
+    {
+      "id": "KODEX 로봇액티브",
+      "ticker": "445290",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 37155,
+      "volume": 3576395,
+      "trade_value": 130627
+    },
+    {
+      "id": "ACE KRX금현물",
+      "ticker": "411060",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 33515,
+      "volume": 3451548,
+      "trade_value": 115877
+    },
+    {
+      "id": "RISE 200위클리커버드콜",
+      "ticker": "475720",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 13815,
+      "volume": 3380710,
+      "trade_value": 46606
+    },
+    {
+      "id": "한화비전",
+      "ticker": "489790",
+      "captured_at": "2026-02-25 15:27:54",
+      "price": 75500,
+      "volume": 3364447,
+      "trade_value": 262300
+    },
+    {
+      "id": "오가닉티코스메틱",
+      "ticker": "900300",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 132,
+      "volume": 67691235,
+      "trade_value": 9126
+    },
+    {
+      "id": "TS트릴리온",
+      "ticker": "317240",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 417,
+      "volume": 40611630,
+      "trade_value": 18505
+    },
+    {
+      "id": "케이바이오",
+      "ticker": "038530",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 426,
+      "volume": 40348355,
+      "trade_value": 17652
+    },
+    {
+      "id": "해성옵틱스",
+      "ticker": "076610",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1419,
+      "volume": 26016742,
+      "trade_value": 41318
+    },
+    {
+      "id": "인콘",
+      "ticker": "083640",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 498,
+      "volume": 25266452,
+      "trade_value": 12714
+    },
+    {
+      "id": "나무기술",
+      "ticker": "242040",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4800,
+      "volume": 25043065,
+      "trade_value": 115374
+    },
+    {
+      "id": "모베이스전자",
+      "ticker": "012860",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 5000,
+      "volume": 24211966,
+      "trade_value": 116678
+    },
+    {
+      "id": "나노엔텍",
+      "ticker": "039860",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 7450,
+      "volume": 22750425,
+      "trade_value": 183637
+    },
+    {
+      "id": "리메드",
+      "ticker": "302550",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 3675,
+      "volume": 21570186,
+      "trade_value": 82276
+    },
+    {
+      "id": "스테이지원엔터",
+      "ticker": "078860",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 459,
+      "volume": 21008919,
+      "trade_value": 9934
+    },
+    {
+      "id": "대한광통신",
+      "ticker": "010170",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4140,
+      "volume": 18687108,
+      "trade_value": 83198
+    },
+    {
+      "id": "LK삼양",
+      "ticker": "225190",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2475,
+      "volume": 18289114,
+      "trade_value": 45953
+    },
+    {
+      "id": "SKAI",
+      "ticker": "357880",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2815,
+      "volume": 15537071,
+      "trade_value": 46347
+    },
+    {
+      "id": "비엘팜텍",
+      "ticker": "065170",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4835,
+      "volume": 15342202,
+      "trade_value": 74557
+    },
+    {
+      "id": "위더스제약",
+      "ticker": "330350",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 11940,
+      "volume": 14606083,
+      "trade_value": 160264
+    },
+    {
+      "id": "지아이텍",
+      "ticker": "382480",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2700,
+      "volume": 13920251,
+      "trade_value": 39106
+    },
+    {
+      "id": "우리기술",
+      "ticker": "032820",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 17240,
+      "volume": 13385842,
+      "trade_value": 230881
+    },
+    {
+      "id": "빌리언스",
+      "ticker": "044480",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 256,
+      "volume": 12303651,
+      "trade_value": 3259
+    },
+    {
+      "id": "모베이스",
+      "ticker": "101330",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 6970,
+      "volume": 12260876,
+      "trade_value": 82303
+    },
+    {
+      "id": "원풍물산",
+      "ticker": "008290",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 371,
+      "volume": 11438332,
+      "trade_value": 5169
+    },
+    {
+      "id": "씨엔플러스",
+      "ticker": "115530",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 341,
+      "volume": 11352504,
+      "trade_value": 3748
+    },
+    {
+      "id": "엔시트론",
+      "ticker": "101400",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 544,
+      "volume": 11125001,
+      "trade_value": 6646
+    },
+    {
+      "id": "비츠로시스",
+      "ticker": "054220",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 793,
+      "volume": 11063037,
+      "trade_value": 9780
+    },
+    {
+      "id": "경남제약",
+      "ticker": "053950",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 819,
+      "volume": 10972684,
+      "trade_value": 8385
+    },
+    {
+      "id": "우리산업홀딩스",
+      "ticker": "072470",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4665,
+      "volume": 10924085,
+      "trade_value": 47044
+    },
+    {
+      "id": "흥구석유",
+      "ticker": "024060",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 21350,
+      "volume": 10678017,
+      "trade_value": 233934
+    },
+    {
+      "id": "자연과환경",
+      "ticker": "043910",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 560,
+      "volume": 10504455,
+      "trade_value": 6450
+    },
+    {
+      "id": "소프트센",
+      "ticker": "032680",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 296,
+      "volume": 10234889,
+      "trade_value": 3095
+    },
+    {
+      "id": "재영솔루텍",
+      "ticker": "049630",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4345,
+      "volume": 10020616,
+      "trade_value": 43025
+    },
+    {
+      "id": "케이피엠테크",
+      "ticker": "042040",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 175,
+      "volume": 9962841,
+      "trade_value": 1851
+    },
+    {
+      "id": "온코닉테라퓨틱스",
+      "ticker": "476060",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 26200,
+      "volume": 9060002,
+      "trade_value": 245744
+    },
+    {
+      "id": "휴림로봇",
+      "ticker": "090710",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 15250,
+      "volume": 8837723,
+      "trade_value": 134201
+    },
+    {
+      "id": "슈어소프트테크",
+      "ticker": "298830",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 8700,
+      "volume": 8781350,
+      "trade_value": 77264
+    },
+    {
+      "id": "아이엘",
+      "ticker": "307180",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 7350,
+      "volume": 8382797,
+      "trade_value": 59497
+    },
+    {
+      "id": "휴마시스",
+      "ticker": "205470",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 850,
+      "volume": 8363681,
+      "trade_value": 7608
+    },
+    {
+      "id": "예선테크",
+      "ticker": "250930",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 472,
+      "volume": 8227708,
+      "trade_value": 4477
+    },
+    {
+      "id": "보성파워텍",
+      "ticker": "006910",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 11440,
+      "volume": 7955290,
+      "trade_value": 94268
+    },
+    {
+      "id": "케스피온",
+      "ticker": "079190",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 459,
+      "volume": 7806976,
+      "trade_value": 4059
+    },
+    {
+      "id": "LS머트리얼즈",
+      "ticker": "417200",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 18010,
+      "volume": 7799764,
+      "trade_value": 143958
+    },
+    {
+      "id": "엠에스오토텍",
+      "ticker": "123040",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2990,
+      "volume": 7784205,
+      "trade_value": 22168
+    },
+    {
+      "id": "비트맥스",
+      "ticker": "377030",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1131,
+      "volume": 7678676,
+      "trade_value": 8301
+    },
+    {
+      "id": "유일에너테크",
+      "ticker": "340930",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1279,
+      "volume": 7391056,
+      "trade_value": 9559
+    },
+    {
+      "id": "KBI메탈",
+      "ticker": "024840",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2480,
+      "volume": 7175001,
+      "trade_value": 18571
+    },
+    {
+      "id": "그린광학",
+      "ticker": "0015G0",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 42800,
+      "volume": 6779441,
+      "trade_value": 298523
+    },
+    {
+      "id": "유투바이오",
+      "ticker": "221800",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 25950,
+      "volume": 6732161,
+      "trade_value": 146343
+    },
+    {
+      "id": "에코글로우",
+      "ticker": "159910",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 600,
+      "volume": 6337463,
+      "trade_value": 4110
+    },
+    {
+      "id": "앱튼",
+      "ticker": "270520",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 218,
+      "volume": 6114120,
+      "trade_value": 1447
+    },
+    {
+      "id": "현대바이오",
+      "ticker": "048410",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 19070,
+      "volume": 5854481,
+      "trade_value": 113318
+    },
+    {
+      "id": "디젠스",
+      "ticker": "113810",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 808,
+      "volume": 5744159,
+      "trade_value": 4934
+    },
+    {
+      "id": "코데즈컴바인",
+      "ticker": "047770",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 5110,
+      "volume": 5737135,
+      "trade_value": 29901
+    },
+    {
+      "id": "스피어",
+      "ticker": "347700",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 43100,
+      "volume": 5651416,
+      "trade_value": 234539
+    },
+    {
+      "id": "제이씨현시스템",
+      "ticker": "033320",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4700,
+      "volume": 5596927,
+      "trade_value": 28054
+    },
+    {
+      "id": "네오펙트",
+      "ticker": "290660",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 912,
+      "volume": 5530196,
+      "trade_value": 5364
+    },
+    {
+      "id": "유니슨",
+      "ticker": "018000",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1304,
+      "volume": 5369540,
+      "trade_value": 7022
+    },
+    {
+      "id": "씨아이에스",
+      "ticker": "222080",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 14410,
+      "volume": 5361279,
+      "trade_value": 78550
+    },
+    {
+      "id": "윈팩",
+      "ticker": "097800",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 503,
+      "volume": 5140359,
+      "trade_value": 2649
+    },
+    {
+      "id": "아미코젠",
+      "ticker": "092040",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1246,
+      "volume": 5003755,
+      "trade_value": 6396
+    },
+    {
+      "id": "화신정공",
+      "ticker": "126640",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1561,
+      "volume": 4947514,
+      "trade_value": 7919
+    },
+    {
+      "id": "삼표시멘트",
+      "ticker": "038500",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 16150,
+      "volume": 4910184,
+      "trade_value": 78776
+    },
+    {
+      "id": "경창산업",
+      "ticker": "024910",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2170,
+      "volume": 4811642,
+      "trade_value": 11086
+    },
+    {
+      "id": "알티캐스트",
+      "ticker": "085810",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 633,
+      "volume": 4769245,
+      "trade_value": 3129
+    },
+    {
+      "id": "시지메드텍",
+      "ticker": "056090",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2595,
+      "volume": 4751818,
+      "trade_value": 12516
+    },
+    {
+      "id": "LS증권",
+      "ticker": "078020",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 8190,
+      "volume": 4706471,
+      "trade_value": 39771
+    },
+    {
+      "id": "아이톡시",
+      "ticker": "052770",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 610,
+      "volume": 4650716,
+      "trade_value": 3286
+    },
+    {
+      "id": "뉴인텍",
+      "ticker": "012340",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 731,
+      "volume": 4600234,
+      "trade_value": 3492
+    },
+    {
+      "id": "SG",
+      "ticker": "255220",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2765,
+      "volume": 4599437,
+      "trade_value": 12900
+    },
+    {
+      "id": "씨피시스템",
+      "ticker": "413630",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4765,
+      "volume": 4540589,
+      "trade_value": 22847
+    },
+    {
+      "id": "좋은사람들",
+      "ticker": "033340",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2150,
+      "volume": 4473626,
+      "trade_value": 9763
+    },
+    {
+      "id": "모아데이타",
+      "ticker": "288980",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 698,
+      "volume": 4357526,
+      "trade_value": 3306
+    },
+    {
+      "id": "유바이오로직스",
+      "ticker": "206650",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 15980,
+      "volume": 4270496,
+      "trade_value": 70888
+    },
+    {
+      "id": "큐캐피탈",
+      "ticker": "016600",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 393,
+      "volume": 4264739,
+      "trade_value": 1693
+    },
+    {
+      "id": "현대무벡스",
+      "ticker": "319400",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 35650,
+      "volume": 4255358,
+      "trade_value": 152839
+    },
+    {
+      "id": "루멘스",
+      "ticker": "038060",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 860,
+      "volume": 4206115,
+      "trade_value": 3437
+    },
+    {
+      "id": "아스트",
+      "ticker": "067390",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 928,
+      "volume": 4202920,
+      "trade_value": 3922
+    },
+    {
+      "id": "빛과전자",
+      "ticker": "069540",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1207,
+      "volume": 4177830,
+      "trade_value": 5129
+    },
+    {
+      "id": "아이에이",
+      "ticker": "038880",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 136,
+      "volume": 4113384,
+      "trade_value": 573
+    },
+    {
+      "id": "나인테크",
+      "ticker": "267320",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 3880,
+      "volume": 4086633,
+      "trade_value": 16188
+    },
+    {
+      "id": "KH바텍",
+      "ticker": "060720",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 17800,
+      "volume": 4085705,
+      "trade_value": 72961
+    },
+    {
+      "id": "저스템",
+      "ticker": "417840",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 7650,
+      "volume": 3974319,
+      "trade_value": 31553
+    },
+    {
+      "id": "옵티코어",
+      "ticker": "380540",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 3985,
+      "volume": 3892181,
+      "trade_value": 15504
+    },
+    {
+      "id": "네오셈",
+      "ticker": "253590",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 17830,
+      "volume": 3881177,
+      "trade_value": 69839
+    },
+    {
+      "id": "에이치엠넥스",
+      "ticker": "036170",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2690,
+      "volume": 3855026,
+      "trade_value": 10107
+    },
+    {
+      "id": "얼라인드",
+      "ticker": "238120",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 6050,
+      "volume": 3808180,
+      "trade_value": 22491
+    },
+    {
+      "id": "휴림에이텍",
+      "ticker": "078590",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 728,
+      "volume": 3649639,
+      "trade_value": 2764
+    },
+    {
+      "id": "세아메카닉스",
+      "ticker": "396300",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4945,
+      "volume": 3567737,
+      "trade_value": 18265
+    },
+    {
+      "id": "센서뷰",
+      "ticker": "321370",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 2355,
+      "volume": 3529669,
+      "trade_value": 8498
+    },
+    {
+      "id": "위지트",
+      "ticker": "036090",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 708,
+      "volume": 3386066,
+      "trade_value": 2442
+    },
+    {
+      "id": "원익홀딩스",
+      "ticker": "030530",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 36750,
+      "volume": 3362821,
+      "trade_value": 122447
+    },
+    {
+      "id": "티씨머티리얼즈",
+      "ticker": "125020",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 5890,
+      "volume": 3358103,
+      "trade_value": 20122
+    },
+    {
+      "id": "나노팀",
+      "ticker": "417010",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 12170,
+      "volume": 3349996,
+      "trade_value": 42229
+    },
+    {
+      "id": "세명전기",
+      "ticker": "017510",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 11660,
+      "volume": 3322263,
+      "trade_value": 40785
+    },
+    {
+      "id": "원익",
+      "ticker": "032940",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 12790,
+      "volume": 3284182,
+      "trade_value": 44533
+    },
+    {
+      "id": "글로벌에스엠",
+      "ticker": "900070",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 660,
+      "volume": 3279549,
+      "trade_value": 2264
+    },
+    {
+      "id": "씨유메디칼",
+      "ticker": "115480",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 545,
+      "volume": 3225493,
+      "trade_value": 1764
+    },
+    {
+      "id": "셀루메드",
+      "ticker": "049180",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 1469,
+      "volume": 3220079,
+      "trade_value": 4834
+    },
+    {
+      "id": "레이저쎌",
+      "ticker": "412350",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 4855,
+      "volume": 3200578,
+      "trade_value": 16184
+    },
+    {
+      "id": "오리엔트정공",
+      "ticker": "065500",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 3170,
+      "volume": 3175239,
+      "trade_value": 9774
+    },
+    {
+      "id": "에스오에스랩",
+      "ticker": "464080",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 20050,
+      "volume": 3131028,
+      "trade_value": 61634
+    },
+    {
+      "id": "오르비텍",
+      "ticker": "046120",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 6390,
+      "volume": 3114843,
+      "trade_value": 20440
+    },
+    {
+      "id": "HPSP",
+      "ticker": "403870",
+      "captured_at": "2026-02-25 15:27:55",
+      "price": 41000,
+      "volume": 3056323,
+      "trade_value": 126373
+    }
+  ]
+}
