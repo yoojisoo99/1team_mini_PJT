@@ -18,7 +18,7 @@ csv_file_path = f"data/{file_name}"
 df = pd.read_csv(csv_file_path, encoding="utf-8")
 recommendations_df = df[["user_id", "ticker", "as_of","score","reason"]].copy()
 
-recommendations_df["ticker"] = recommendations_df["ticker"].astype(str)
+recommendations_df["user_id"] = recommendations_df["user_id"].astype(str)
 
 engine = create_engine(
     "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4"
