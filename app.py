@@ -968,7 +968,16 @@ elif page == "📋 투자 성향 설문":
                 type_id = type_id_map.get(investor_type)
                 if type_id:
                     save_user_profile(user_id, type_id)
-                    st.toast(f"✅ {user_id}님의 투자 성향({investor_type})이 저장되었습니다!")
+                    st.toast(f"✅ {user_id}님의 투자 성향({investor_type})이 로컬에 저장되었습니다!")
+                    
+                    # 투자 성향 외부 DB 최신화 스크립트 실행 (B_users_type_table.py)
+                    try:
+                        import subprocess
+                        import os
+                        script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'B_users_type_table.py')
+                        subprocess.run(['python', script_path], capture_output=True, text=True, timeout=5)
+                    except Exception as e:
+                        print(f"B_users_type_table DB Sync failed: {e}")
 
         type_info = TYPE_DESCRIPTIONS[investor_type]
 
