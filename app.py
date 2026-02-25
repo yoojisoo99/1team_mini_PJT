@@ -47,15 +47,17 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 
 def ensure_data_exists():
-    """당일 데이터가 없다면 스크래퍼를 자동 실행합니다. 캐싱 밖에서 실행해야 UI(spinner) 업데이트가 정상 동작합니다."""
-    today_str = datetime.now().strftime('%Y%m%d')
-    stock_today = os.path.join(DATA_DIR, f'stock_data_{today_str}.csv')
-    hist_today = os.path.join(DATA_DIR, f'historical_{today_str}.csv')
+    """
+    데이터가 아예 없는 최초 구동 시에만 스크래퍼를 실행합니다.
+    매일 수집은 백그라운드 스케줄러(scheduler_job.py)가 담당하므로,
+    어제 데이터라도 있다면 즉시 화면을 띄워 로딩 속도를 대폭 개선합니다.
+    """
+    stock_files = glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv'))
     
-    # 당일 데이터가 하나라도 없으면 스크래퍼 구동
-    if not (os.path.exists(stock_today) and os.path.exists(hist_today)):
+    # 폴더 내에 데이터 파일이 하나라도 존재하면 대기하지 않고 패스
+    if not stock_files:
         from scraper import run_full_pipeline
-        with st.spinner("🔄 오늘의 최신 주식 데이터를 수집하고 분석 중입니다. 약 2~4분 정도 소요될 수 있습니다..."):
+        with st.spinner("🔄 기초 주식 데이터를 최초 수집 중입니다. 약 2~4분 소요될 수 있습니다..."):
             try:
                 run_full_pipeline()
                 st.toast("✅ 최신 시세 데이터 수집 완료!", icon="🚀")
