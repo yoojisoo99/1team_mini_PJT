@@ -112,6 +112,14 @@ st.markdown("""
         font-family: 'Noto Sans KR', sans-serif;
     }
 
+    /* 상단 헤더 (Deploy 창 등) 투명 및 아이콘 색상 변경 */
+    [data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+    [data-testid="stHeader"] * {
+        color: #a89f91 !important;
+    }
+
     /* 사이드바 */
     [data-testid="stSidebar"] {
         background: rgba(38, 34, 31, 0.98);
