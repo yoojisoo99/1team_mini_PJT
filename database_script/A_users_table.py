@@ -1,44 +1,33 @@
+import pymysql
 import pandas as pd
 import json
-import os
-import pymysql
-import sqlalchemy
+
+from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.dialects.mysql import insert
 
 pymysql.install_as_MySQLdb()
-from sqlalchemy import create_engine
 
-# JSON 파일 경로 설정 (data/users_db.json)
-current_dir = os.path.dirname(os.path.abspath(__file__))
-json_path = os.path.join(current_dir, '..', 'data', 'users_db.json')
+with open('data/users_db.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
 
-table_df = pd.DataFrame()
-if os.path.exists(json_path):
-    with open(json_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-        if isinstance(data, dict) and "users" in data:
-            table_df = pd.DataFrame(data["users"])
-        elif isinstance(data, list):
-            table_df = pd.DataFrame(data)
+table_df = pd.DataFrame(data['users'])
 
-if table_df.empty:
-    print("저장된 유저 데이터(JSON)가 없거나 형식이 올바르지 않습니다.")
-else:
-    engine = None
-    conn = None
-    try:
-        engine = create_engine('mysql+pymysql://python:kk@49.167.28.157:3307/python_db?charset=utf8mb4')
-        conn = engine.connect()    
+engine = create_engine(
+    'mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4'
+)
 
-        table_df.to_sql(name='users_table', con=engine, if_exists='replace', index=True,\
-                        index_label='A_id',
-                        dtype={
-                            'user_id': sqlalchemy.types.VARCHAR(200),
-                            'user_password': sqlalchemy.types.VARCHAR(200),
-                            'user_email': sqlalchemy.types.VARCHAR(200),
-                        })
-        print('유저 테이블 생성 완료')
-    finally:
-        if conn is not None: 
-            conn.close()
-        if engine is not None:
-            engine.dispose()
+metadata = MetaData()
+metadata.reflect(bind=engine)
+user_table = Table('users', metadata, autoload_with=engine)
+
+try:
+    with engine.begin() as conn:
+        for _, row in table_df.iterrows():
+            stmt = insert(user_table).values(**row.to_dict())
+            stmt = stmt.prefix_with("IGNORE")
+            conn.execute(stmt)
+
+    print("중복 제외하고 유저 데이터 추가 완료")
+
+finally:
+    engine.dispose()
