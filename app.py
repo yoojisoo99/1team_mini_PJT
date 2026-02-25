@@ -627,10 +627,11 @@ if page == "📝 회원가입":
                         with st.status("외부 DB 서버(A_users_table.py) 연동 중...", expanded=True) as status:
                             try:
                                 import subprocess
+                                import sys
                                 script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'A_users_table.py')
                                 
-                                # 시간 제한(timeout=10) 추가 및 출력 캡처
-                                res = subprocess.run(['python', script_path], capture_output=True, text=True, timeout=10)
+                                # 시간 제한을 30초로 늘리고, 현재 파이썬 환경(sys.executable)을 보장
+                                res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
                                 
                                 if res.returncode == 0:
                                     st.write("🌐 DB 서버 테이블 최신화 성공")
@@ -990,9 +991,10 @@ elif page == "📋 투자 성향 설문":
                     # 투자 성향 외부 DB 최신화 스크립트 실행 (B_users_type_table.py)
                     try:
                         import subprocess
+                        import sys
                         import os
                         script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'B_users_type_table.py')
-                        subprocess.run(['python', script_path], capture_output=True, text=True, timeout=5)
+                        subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
                     except Exception as e:
                         print(f"B_users_type_table DB Sync failed: {e}")
 
