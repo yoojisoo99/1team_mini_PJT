@@ -106,44 +106,9 @@ def save_json(data_list, filename, directory=None):
 
 def sync_json_to_db(filepath, table_name, if_exists='append'):
     """JSON 파일을 읽어 DataFrame으로 파싱 후 DB에 반영합니다."""
-    import json
-    engine = get_engine()
-    if engine is None:
-        logger.info(f"[DB] DB 미연결. '{table_name}' 동기화 생략 (JSON 보관됨).")
-        return False
-
-    if not os.path.exists(filepath):
-        logger.warning(f"[DB Sync] 파일 없음: {filepath}")
-        return False
-        
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            
-        # 최상위 키가 있는 구조인 경우 (예: {"stocks": [...]}) 리스트 추출
-        data_list = []
-        if isinstance(data, dict):
-            # dict의 첫 번째 value(리스트)를 사용, 아니면 data 자체를 하나의 리스트로 감쌈
-            for k, v in data.items():
-                if isinstance(v, list):
-                    data_list = v
-                    break
-            if not data_list:
-                data_list = [data]
-        elif isinstance(data, list):
-            data_list = data
-            
-        if not data_list:
-            logger.info(f"[DB Sync] 동기화할 데이터가 없습니다: {table_name}")
-            return True
-            
-        df = pd.DataFrame(data_list)
-        df.to_sql(table_name, engine, if_exists=if_exists, index=False)
-        logger.info(f"[DB Sync] '{table_name}' 테이블에 {len(df)}건 동기화 완료")
-        return True
-    except Exception as e:
-        logger.error(f"[DB Sync] '{table_name}' 동기화 실패: {e}")
-        return False
+    # 사용자 요청: SQL 접속 없이 JSON 저장만 수행하도록 DB 동기화 기능 비활성화
+    logger.info(f"[DB Sync 비활성화] '{table_name}' 데이터는 SQL에 연동되지 않고 JSON({filepath}) 자체로 보관됩니다.")
+    return True
 
 def save_to_csv(df, filename, directory=None, encoding='utf-8-sig'):
     """DataFrame을 CSV 파일로 저장합니다. (하위 호환 및 DB 미연결 시 대안)"""
