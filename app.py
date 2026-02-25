@@ -597,17 +597,40 @@ if page == "📝 회원가입":
                     }
                     save_users(users)
                     
-                    # 신규 회원가입 시 DB 테이블 최신화 스크립트 실행
-                    try:
-                        import subprocess
-                        script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'A_users_table.py')
-                        subprocess.run(['python', script_path], check=True)
-                    except Exception as e:
-                        st.warning(f"DB 연동 중 일부 오류가 발생했습니다: {e}")
+                    # 회원가입 및 DB 스크립트 실행 결과를 팝업으로 명확히 보여주기
+                    @st.dialog("회원가입 진행 상태")
+                    def show_signup_result():
+                        st.success("✅ 로컬 시스템에 회원가입이 완료되었습니다!")
+                        
+                        with st.status("외부 DB 서버(A_users_table.py) 연동 중...", expanded=True) as status:
+                            try:
+                                import subprocess
+                                script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'A_users_table.py')
+                                
+                                # 시간 제한(timeout=10) 추가 및 출력 캡처
+                                res = subprocess.run(['python', script_path], capture_output=True, text=True, timeout=10)
+                                
+                                if res.returncode == 0:
+                                    st.write("🌐 DB 서버 테이블 최신화 성공")
+                                    status.update(label="DB 연동 완료", state="complete")
+                                else:
+                                    st.write("⚠️ DB 서버 연결에 실패했거나 지연되었습니다.")
+                                    # 사용자 친화적으로 에러 메시지 축소
+                                    status.update(label="DB 연동 실패 (로컬 접속은 가능)", state="error")
+                                    
+                            except subprocess.TimeoutExpired:
+                                st.write("⚠️ DB 서버 응답이 너무 늦습니다. (타임아웃)")
+                                status.update(label="DB 연동 타임아웃 (로컬 접속은 가능)", state="error")
+                            except Exception as e:
+                                st.write(f"⚠️ 예기치 않은 오류: {e}")
+                                status.update(label="DB 연동 중 오류 발생", state="error")
+                        
+                        st.info("이제 왼쪽 메뉴에서 로그인을 진행해주세요.")
+                        if st.button("홈으로 이동", use_container_width=True):
+                            st.session_state['current_page'] = "🏠 메인 대시보드"
+                            st.rerun()
 
-                    st.success("✅ 회원가입이 완료되었습니다! 왼쪽 사이드바에서 로그인해주세요.")
-                    st.session_state['current_page'] = "🏠 메인 대시보드"
-                    st.rerun()
+                    show_signup_result()
 
 # ============================================================
 # 🏠 메인 대시보드
