@@ -906,6 +906,9 @@ if __name__ == "__main__":
 
     newsletter = result['newsletter']
     if newsletter:
-        print(f"\n[뉴스레터] {newsletter['title']}")
-        print(newsletter['content'][:500] + '...')
+        try:
+            print(f"\n[뉴스레터] {newsletter['title']}")
+            print(newsletter['content'][:500] + '...')
+        except UnicodeEncodeError:
+            print("\n[뉴스레터] (터미널 인코딩 문제로 내용을 표시할 수 없습니다. JSON 파일을 확인해주세요.)")
 
