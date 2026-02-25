@@ -48,13 +48,30 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 @st.cache_data(ttl=300)
 def load_latest_data():
-    """data/ 디렉토리에서 최신 CSV 파일을 로드합니다."""
+    """data/ 디렉토리에서 최신 CSV 파일을 로드합니다. 당일 데이터가 없다면 스크래퍼를 자동 실행합니다."""
+    today_str = datetime.now().strftime('%Y%m%d')
+    stock_today = os.path.join(DATA_DIR, f'stock_data_{today_str}.csv')
+    hist_today = os.path.join(DATA_DIR, f'historical_{today_str}.csv')
+    
+    # ── [신규 추가] 자동 스크래퍼 실행 로직 ──
+    # 당일 데이터가 하나라도 없으면 스크래퍼 구동 (09:00~15:30 사이 장중이거나, 장후 첫 구동 시)
+    if not (os.path.exists(stock_today) and os.path.exists(hist_today)):
+        from scraper import run_full_pipeline
+        with st.spinner("🔄 오늘의 최신 주식 데이터를 수집하고 분석 중입니다. 약 2~4분 정도 소요될 수 있습니다..."):
+            try:
+                # 백그라운드가 아닌 동기 방식으로 대기 후 진행
+                run_full_pipeline()
+                st.toast("✅ 최신 시세 데이터 수집 완료!", icon="🚀")
+            except Exception as e:
+                st.error(f"데이터 수집 중 오류가 발생했습니다: {e}")
+
+    # 데이터 로드 (가장 최신 파일)
     stock_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv')))
     news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
     hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
     signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.csv')))
 
-    # data/ 폴더에 없으면 프로젝트 루트에서도 탐색
+    # data/ 폴더에 없으면 프로젝트 루트에서도 탐색 (fallback)
     if not stock_files:
         root_dir = os.path.dirname(os.path.abspath(__file__))
         stock_files = sorted(glob.glob(os.path.join(root_dir, 'stock_data_*.csv')))
@@ -1605,11 +1622,25 @@ elif page == "📧 뉴스레터":
     
     # 로그인 체크
     if not st.session_state['logged_in']:
-        st.warning("⚠️ 뉴스레터 구독 및 열람은 로그인이 필요합니다. 좌측 메뉴에서 로그인해주세요.")
+        @st.dialog("로그인 안내")
+        def show_login_dialog():
+            st.warning("⚠️ 뉴스레터 구독 및 열람은 로그인이 필요합니다.")
+            st.info("좌측 사이드바에서 로그인 후 이용해 주세요.")
+            if st.button("홈으로 돌아가기", key="newsletter_login_home_btn"):
+                st.session_state['current_page'] = "🏠 메인 대시보드"
+                st.session_state['menu_radio'] = "🏠 메인 대시보드"
+                st.rerun()
+        show_login_dialog()
         st.stop()
 
     if stock_df.empty:
         st.warning("⚠️ 데이터가 없습니다.")
+        st.stop()
+
+    # ── [신규 추가] 뉴스레터 심야/아침(00:00 ~ 08:59) 비활성화 ──
+    current_hour = datetime.now().hour
+    if 0 <= current_hour < 9:
+        st.info("🌙 **현재는 정규장 개장 전입니다.**\n\n전일의 낡은 뉴스레터를 삭제(초기화)했습니다. 오늘의 새로운 맞춤 뉴스레터는 데이터 정비 후 **오전 9시 이후**부터 발행됩니다!")
         st.stop()
 
     # 성향 선택
