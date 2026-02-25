@@ -65,17 +65,19 @@ def ensure_data_exists():
 @st.cache_data(ttl=300)
 def load_latest_data():
     """data/ 디렉토리에서 최신 CSV 파일을 로드합니다."""
-    # 데이터 로드 (가장 최신 파일)
+    import json
+    # 최신 파일 검색
     stock_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv')))
     news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
     hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
-    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.csv')))
+    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.json'))) 
 
-    # data/ 폴더에 없으면 프로젝트 루트에서도 탐색 (fallback)
+    # fallback (루트 디렉토리 탐색)
     if not stock_files:
         root_dir = os.path.dirname(os.path.abspath(__file__))
         stock_files = sorted(glob.glob(os.path.join(root_dir, 'stock_data_*.csv')))
         news_files = sorted(glob.glob(os.path.join(root_dir, 'stock_news_*.csv')))
+        signal_files = sorted(glob.glob(os.path.join(root_dir, 'analysis_signals_*.json')))
 
     stock_df = pd.DataFrame()
     news_df = pd.DataFrame()
@@ -89,10 +91,20 @@ def load_latest_data():
         news_df = pd.read_csv(news_files[-1])
     if hist_files:
         hist_df = pd.read_csv(hist_files[-1])
+        
+    # JSON 파일 읽기 전용 로직
     if signal_files:
-        signals_df = pd.read_csv(signal_files[-1])
+        try:
+            with open(signal_files[-1], 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, dict) and "analysis_signals" in data:
+                    signals_df = pd.DataFrame(data["analysis_signals"])
+                else:
+                    signals_df = pd.DataFrame(data)
+        except Exception as e:
+            print(f"Failed to load JSON signals: {e}")
 
-    # signals가 없으면 실시간 생성
+    # signals가 없으면 실시간 생성 (Fallback)
     if signals_df.empty and not stock_df.empty:
         signals_df = generate_analysis_signals(stock_df, '1D')
 
