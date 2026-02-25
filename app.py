@@ -511,7 +511,8 @@ with st.sidebar:
                 <img src="data:image/jpeg;base64,{encoded_string}" 
                      style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; 
                             box-shadow: 0 4px 15px rgba(220,185,140,0.2); pointer-events: none;">
-                <h2 style="color: #dcb98c; margin-top: 15px; font-weight: 800; font-size: 22px; letter-spacing: 1px;">LUMINA CAPITAL</h2>
+                <h2 style="color: #dcb98c; margin-top: 15px; margin-bottom: 5px; font-weight: 800; font-size: 22px; letter-spacing: 1px;">LUMINA CAPITAL</h2>
+                <p style="color: #a89f91; font-size: 13px; margin: 0; font-weight: 500; letter-spacing: 0.5px;">주식 추천 시스템</p>
             </div>
             ''', 
             unsafe_allow_html=True
