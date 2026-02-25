@@ -240,6 +240,10 @@ st.markdown("""
         border-radius: 8px !important;
     }
     
+    div[role="listbox"] ul {
+        background-color: #302b28 !important;
+    }
+    
     div[role="listbox"] ul li {
         color: #f0e8dc !important;
         background-color: transparent !important;
@@ -250,12 +254,15 @@ st.markdown("""
         color: #dcb98c !important;
     }
 
-    /* 최신 버전을 위한 Popover 타겟팅 */
-    div[data-baseweb="popover"] {
+    /* 최신 버전을 위한 Popover 타겟팅 (배경색 강제) */
+    div[data-baseweb="popover"] > div {
+        background-color: #302b28 !important;
+    }
+    div[data-baseweb="popover"] ul {
         background-color: #302b28 !important;
     }
     
-    div[data-baseweb="popover"] ul li {
+    div[data-baseweb="popover"] ul li, div[data-baseweb="popover"] span {
         color: #f0e8dc !important;
         background-color: transparent !important;
     }
@@ -1272,7 +1279,10 @@ elif page == "⭐ 맞춤 종목 추천":
                     
                     # 레이아웃 프로페셔널 다듬기
                     fig_candle.update_layout(
-                        title=f"<b>{ticker_name_map.get(selected_ticker, selected_ticker)}</b> 정밀 시세 & 거래량 분해",
+                        title=dict(
+                            text=f"<b>{ticker_name_map.get(selected_ticker, selected_ticker)}</b> 정밀 시세 & 거래량 분해",
+                            font=dict(color='#e6edf3', size=18)
+                        ),
                         template='plotly_dark',
                         plot_bgcolor='#1e1e1e',
                         paper_bgcolor='rgba(0,0,0,0)',
