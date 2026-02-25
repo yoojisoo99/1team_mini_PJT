@@ -227,12 +227,13 @@ st.markdown("""
         font-size: 14px;
     }
 
-    /* 드롭다운 (셀렉트박스) 내부 텍스트 및 팝업창 스타일 */
+    /* 드롭다운 (셀렉트박스) 내부 텍스트 및 팝업창 스타일 (신규 Streamlit UI 대응 포함) */
     .stSelectbox div[data-baseweb="select"] > div {
         background-color: rgba(55, 50, 46, 0.9) !important;
         color: #f0e8dc !important;
     }
     
+    /* 기존 listbox 타겟팅 유지 */
     div[role="listbox"] {
         background-color: #302b28 !important;
         border: 1px solid rgba(220, 185, 140, 0.3) !important;
@@ -245,6 +246,21 @@ st.markdown("""
     }
     
     div[role="listbox"] ul li:hover {
+        background-color: rgba(220, 185, 140, 0.2) !important;
+        color: #dcb98c !important;
+    }
+
+    /* 최신 버전을 위한 Popover 타겟팅 */
+    div[data-baseweb="popover"] {
+        background-color: #302b28 !important;
+    }
+    
+    div[data-baseweb="popover"] ul li {
+        color: #f0e8dc !important;
+        background-color: transparent !important;
+    }
+    
+    div[data-baseweb="popover"] ul li:hover {
         background-color: rgba(220, 185, 140, 0.2) !important;
         color: #dcb98c !important;
     }
@@ -1216,41 +1232,65 @@ elif page == "⭐ 맞춤 종목 추천":
                 stock_hist = hist_df[hist_df['종목코드'] == selected_ticker].sort_values('날짜')
 
                 if not stock_hist.empty:
-                    # 캔들스틱 차트
-                    fig_candle = go.Figure(data=[go.Candlestick(
+                    # 캔들스틱 & 거래량 통합 차트 생성 (전문 트레이딩 차트 스타일화)
+                    from plotly.subplots import make_subplots
+                    
+                    fig_candle = make_subplots(
+                        rows=2, cols=1, 
+                        shared_xaxes=True, 
+                        vertical_spacing=0.03, 
+                        row_heights=[0.75, 0.25]
+                    )
+                    
+                    # 한국 시장 표준 상승(빨강) / 하락(파랑) 적용
+                    up_color = '#ef4444'
+                    down_color = '#3b82f6'
+                    
+                    # 캔들스틱 (오버레이 및 색상 조정)
+                    fig_candle.add_trace(go.Candlestick(
                         x=stock_hist['날짜'],
                         open=stock_hist['시가'],
                         high=stock_hist['고가'],
                         low=stock_hist['저가'],
                         close=stock_hist['종가'],
-                        increasing_line_color='#3fb950',
-                        decreasing_line_color='#f85149',
-                    )])
+                        increasing_line_color=up_color,
+                        decreasing_line_color=down_color,
+                        increasing_fillcolor=up_color,
+                        decreasing_fillcolor=down_color,
+                        name='시세'
+                    ), row=1, col=1)
+                    
+                    # 거래량 바 (상승/하락 색상 자동 맞춤)
+                    vol_colors = [up_color if row['종가'] >= row['시가'] else down_color for _, row in stock_hist.iterrows()]
+                    fig_candle.add_trace(go.Bar(
+                        x=stock_hist['날짜'],
+                        y=stock_hist['거래량'],
+                        marker_color=vol_colors,
+                        name='거래량',
+                        opacity=0.8
+                    ), row=2, col=1)
+                    
+                    # 레이아웃 프로페셔널 다듬기
                     fig_candle.update_layout(
-                        title=f"{ticker_name_map.get(selected_ticker, selected_ticker)} 5일 캔들스틱",
+                        title=f"<b>{ticker_name_map.get(selected_ticker, selected_ticker)}</b> 정밀 시세 & 거래량 분해",
                         template='plotly_dark',
-                        plot_bgcolor='rgba(0,0,0,0)',
+                        plot_bgcolor='#1e1e1e',
                         paper_bgcolor='rgba(0,0,0,0)',
-                        font=dict(color='#e6edf3'),
-                        height=450,
+                        font=dict(color='#e6edf3', size=13),
+                        height=550,
+                        margin=dict(l=50, r=40, t=60, b=40),
+                        showlegend=False,
                         xaxis_rangeslider_visible=False,
+                        hovermode='x unified'
                     )
-                    st.plotly_chart(fig_candle, use_container_width=True)
+                    
+                    # 우측 축 및 그리드 라인 설정으로 고급스러움 연출
+                    fig_candle.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#333333', row=1, col=1)
+                    fig_candle.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#333333', row=2, col=1)
+                    fig_candle.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#333333', side='right', row=1, col=1)
+                    fig_candle.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#333333', side='right', row=2, col=1)
 
-                    # 거래량 차트
-                    fig_vol = px.bar(
-                        stock_hist, x='날짜', y='거래량',
-                        title=f"{ticker_name_map.get(selected_ticker, '')} 거래량 추이",
-                        template='plotly_dark',
-                        color_discrete_sequence=['#58a6ff'],
-                    )
-                    fig_vol.update_layout(
-                        plot_bgcolor='rgba(0,0,0,0)',
-                        paper_bgcolor='rgba(0,0,0,0)',
-                        font=dict(color='#e6edf3'),
-                        height=300,
-                    )
-                    st.plotly_chart(fig_vol, use_container_width=True)
+                    st.plotly_chart(fig_candle, use_container_width=True)
             else:
                 st.info("추천 종목의 과거 시세 데이터가 없습니다.")
 
