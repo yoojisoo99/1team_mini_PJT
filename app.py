@@ -130,6 +130,11 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
+    /* 팝업(모달/다이얼로그) 타이틀 색상 보정 (흰 배경일 때 보이게끔 검정색 적용) */
+    div[role="dialog"] h2 {
+        color: #000000 !important;
+    }
+
     /* 성향 결과 카드 */
     .investor-card {
         background: rgba(55, 50, 46, 0.85);
@@ -598,9 +603,9 @@ if page == "📝 회원가입":
                     save_users(users)
                     
                     # 회원가입 및 DB 스크립트 실행 결과를 팝업으로 명확히 보여주기
-                    @st.dialog("회원가입 진행 상태")
+                    @st.dialog("회원가입 성공!")
                     def show_signup_result():
-                        st.success("✅ 로컬 시스템에 회원가입이 완료되었습니다!")
+                        st.success("✅ 회원가입이 완료되었습니다!")
                         
                         with st.status("외부 DB 서버(A_users_table.py) 연동 중...", expanded=True) as status:
                             try:
@@ -626,7 +631,7 @@ if page == "📝 회원가입":
                                 status.update(label="DB 연동 중 오류 발생", state="error")
                         
                         st.info("이제 왼쪽 메뉴에서 로그인을 진행해주세요.")
-                        if st.button("홈으로 이동", use_container_width=True):
+                        if st.button("로그인하러가기", use_container_width=True):
                             st.session_state['current_page'] = "🏠 메인 대시보드"
                             st.rerun()
 
