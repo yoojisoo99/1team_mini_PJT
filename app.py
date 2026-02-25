@@ -34,7 +34,7 @@ matplotlib.rcParams['axes.unicode_minus'] = False
 
 # ── 페이지 설정 ──
 st.set_page_config(
-    page_title="LUMINA CAPITAL | 맞춤형 알고리즘 주식 추천",
+    page_title="LUMINA CAPITAL | 당신을 위한 투자의 길잡이",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -512,7 +512,7 @@ with st.sidebar:
                      style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; 
                             box-shadow: 0 4px 15px rgba(220,185,140,0.2); pointer-events: none;">
                 <h2 style="color: #dcb98c; margin-top: 15px; margin-bottom: 5px; font-weight: 800; font-size: 22px; letter-spacing: 1px;">LUMINA CAPITAL</h2>
-                <p style="color: #a89f91; font-size: 13px; margin: 0; font-weight: 500; letter-spacing: 0.5px;">주식 추천 시스템</p>
+                <p style="color: #a89f91; font-size: 13px; margin: 0; font-weight: 500; letter-spacing: 0.5px;">당신을 위한 투자의 길잡이</p>
             </div>
             ''', 
             unsafe_allow_html=True
