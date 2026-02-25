@@ -1,0 +1,9 @@
+{
+    "users": [
+        {
+            "user_id": "testusr",
+            "user_password": "hashed_password_mock",
+            "user_email": "test@example.com"
+        }
+    ]
+}
