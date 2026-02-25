@@ -1,31 +1,42 @@
-import pandas as pd
-import json
-import os
-import glob
 import pymysql
-from sqlalchemy import create_engine
+import pandas as pd
+from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.dialects.mysql import insert
+from datetime import datetime
+import os
 
+# MySQL 연동
 pymysql.install_as_MySQLdb()
 
-json_files = glob.glob(os.path.join('data', 'price_snapshots_*.json'))
-if not json_files:
-    print("데이터를 찾을 수 없습니다: price_snapshots_*.json")
-    exit()
+# 오늘 날짜 YYYYMMDD 형식
+today_str = datetime.now().strftime("%Y%m%d")
 
-latest_file = max(json_files, key=os.path.getctime)
-with open(latest_file, 'r', encoding='utf-8') as f:
-    data = json.load(f)
+# 파일명 생성
+file_name = f"price_snapshots_{today_str}.csv"
+#file_name = f"price_snapshots_20260224.csv" #임시 테스트
+csv_file_path = f"data/{file_name}"
+df = pd.read_csv(csv_file_path, encoding="utf-8")
+price_df = df[["ticker", "captured_at", "price","volume","trade_value"]].copy()
 
-if isinstance(data, dict):
-    key = list(data.keys())[0] # "price_snapshots"
-    table_df = pd.DataFrame(data[key])
-else:
-    table_df = pd.DataFrame(data)
+price_df["ticker"] = price_df["ticker"].astype(str)
 
-engine = create_engine('mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4')
+engine = create_engine(
+    "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4"
+)
+
+metadata = MetaData()
+metadata.reflect(bind=engine)
+
+price_table = Table("price_snapshots", metadata, autoload_with=engine)
+
 try:
     with engine.begin() as conn:
-        table_df.to_sql(name='price_snapshots', con=conn, if_exists='append', index=False)
-    print("D_price_snapshots_table 누적 데이터 동기화 완료")
+        for _, row in price_df.iterrows():
+            stmt = insert(price_table).values(**row.to_dict())
+            stmt = stmt.prefix_with("IGNORE")  # 중복 무시
+            conn.execute(stmt)
+
+    print("✅ 중복 제외하고 가격 정보 추가 완료")
+
 finally:
     engine.dispose()
