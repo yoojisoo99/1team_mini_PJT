@@ -998,10 +998,17 @@ elif page == "📋 투자 성향 설문":
 # ============================================================
 elif page == "⭐ 맞춤 종목 추천":
     st.markdown("# ⭐ 맞춤 종목 추천")
-    
     # 로그인 체크
-    if not st.session_state['logged_in']:
-        st.warning("⚠️ 맞춤 종목 추천 서비스는 로그인이 필요합니다. 좌측 메뉴에서 로그인해주세요.")
+    if not st.session_state.get('logged_in', False):
+        @st.dialog("로그인 안내")
+        def show_login_dialog():
+            st.warning("⚠️ 맞춤 종목 추천 서비스는 로그인이 필요합니다.")
+            st.info("좌측 사이드바에서 로그인 후 이용해 주세요.")
+            if st.button("홈으로 돌아가기", use_container_width=True):
+                st.session_state['current_page'] = "🏠 메인 대시보드"
+                st.rerun()
+                
+        show_login_dialog()
         st.stop()
 
     if stock_df.empty:
