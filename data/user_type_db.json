@@ -23,6 +23,12 @@
             "type_id": 3,
             "type_name": "위험중립형",
             "description": "User has been profiled as 위험중립형."
+        },
+        {
+            "user_id": "asdqwe123",
+            "type_id": 2,
+            "type_name": "안정추구형",
+            "description": "User has been profiled as 안정추구형."
         }
     ]
 }

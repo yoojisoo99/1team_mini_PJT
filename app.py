@@ -583,7 +583,7 @@ if page == "📝 회원가입":
             new_pw = st.text_input("비밀번호 (4자리 이상)", type="password")
             new_pw_check = st.text_input("비밀번호 확인", type="password")
             
-            submitted = st.form_submit_button("회원가입 완료", use_container_width=True)
+            submitted = st.form_submit_button("회원가입", use_container_width=True)
             
             if submitted:
                 users = load_users()
