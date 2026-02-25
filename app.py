@@ -191,6 +191,10 @@ st.markdown("""
         padding: 8px 24px;
         font-weight: 500;
     }
+    /*  탭 하단의 빨간색 강조 선(인디케이터) 제거 */
+    [data-baseweb="tab-highlight"] {
+        display: none !important;
+    }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #a67c52, #c19b76) !important;
@@ -226,6 +230,17 @@ st.markdown("""
         color: #f0e8dc !important;
         font-size: 14px;
     }
+      
+    /* 1. 드롭다운이 펼쳐졌을 때 각 항목의 글자색 변경 */
+    div[data-baseweb="popover"] li {
+        color: #000000 !important; /* 글자색을 검정으로 강제 */
+        background-color: transparent !important;
+    }
+    /* 2. 이미 선택되어 박스에 표시되는 글자색 (가독성 확보) */
+    div[data-baseweb="select"] > div:first-child {
+        color: #ffffff !important; /* 이 부분은 배경이 어두우면 흰색, 밝으면 검정으로 조절하세요 */
+    }
+        
 
     /* 드롭다운 (셀렉트박스) 내부 텍스트 및 팝업창 스타일 */
     .stSelectbox div[data-baseweb="select"] > div {
@@ -555,12 +570,9 @@ elif page == "🏠 메인 대시보드":
                 price = f"{row.현재가:,}"
                 change = f"{row.등락률}"
                 
-                # 순위 표시 추가 (1~50)
-                rank = i + 1
-                label_with_rank = f"{rank}. {row.종목명}"
                 
                 cols[col_idx].metric(
-                    label=label_with_rank, 
+                    label=row.종목명, 
                     value=price, 
                     delta=change,
                     delta_color="normal"
@@ -569,6 +581,8 @@ elif page == "🏠 메인 대시보드":
         st.info("수집된 데이터가 없습니다.")
         
     st.markdown("---")
+
+    
 
     # ── 요약 통계 ──
     summary = generate_analysis_summary(stock_df)
@@ -591,118 +605,130 @@ elif page == "🏠 메인 대시보드":
 
     with tab1:
         st.markdown("### 거래량 상위 종목")
-        st.markdown("""
-        <style>
-        /* 1. 드롭다운이 펼쳐졌을 때 각 항목의 글자색 변경 */
-        div[data-baseweb="popover"] li {
-            color: #000000 !important; /* 글자색을 검정으로 강제 */
-            background-color: transparent !important;
-        }
-        /* 2. 이미 선택되어 박스에 표시되는 글자색 (가독성 확보) */
-        div[data-baseweb="select"] > div:first-child {
-            color: #ffffff !important; /* 이 부분은 배경이 어두우면 흰색, 밝으면 검정으로 조절하세요 */
-        }
-        </style>
-        """, unsafe_allow_html=True)
+        
         market_filter = st.selectbox(
             "시장 선택", ["전체", "KOSPI", "KOSDAQ"], key="market_filter_vol"
         )
-    # 1. 먼저 시장 필터링 적용
-    if market_filter == "전체":
-        filtered_df = stock_df.copy()
-    else:
-        filtered_df = stock_df[stock_df['시장'] == market_filter].copy()
+        # 1. 시장 필터링 적용
+        if market_filter == "전체":
+            filtered_df = stock_df.copy()
+        else:
+            filtered_df = stock_df[stock_df['시장'] == market_filter].copy()
 
-    # 2. 거래량 기준으로 내림차순 정렬
-    filtered_df = filtered_df.sort_values(by='거래량', ascending=False)
+        # 2. 거래량 기준으로 내림차순 정렬
+        filtered_df = filtered_df.sort_values(by='거래량', ascending=False)
 
-    # 3. 정렬된 데이터에서 상위 20개 추출
-    top20 = filtered_df.head(20)
+        # 3. 정렬된 데이터에서 상위 20개 추출
+        top20 = filtered_df.head(20)
 
-    if not top20.empty:
-        # 막대 그래프 (Bar Chart)
-        fig = px.bar(
-            top20,
-            x='종목명',
-            y='거래량',
-            color='시장',
-            # 전체 선택 시 두 시장이 모두 보일 수 있도록 카테고리별 색상 지정
-            color_discrete_map={'KOSPI': '#dcb98c', 'KOSDAQ': "#4a3728"},
-            title=f'거래량 상위 종목 ({market_filter})',
-            template='plotly_dark',
-            # 범례 제목(시장) 표시 설정
-            #labels={'시장': '시장 구분'}
-        )
+        col_left, col_pie1 = st.columns([1.5, 1])
+        with col_left:
+            if not top20.empty:
+                # 막대 그래프 (Bar Chart)
+                fig = px.bar(
+                    top20,
+                    x='종목명',
+                    y='거래량',
+                    color='시장',
+                    # 전체 선택 시 두 시장이 모두 보일 수 있도록 카테고리별 색상 지정
+                    color_discrete_map={'KOSPI': '#dcb98c', 'KOSDAQ': "#4a3728"},
+                    title=f'거래량 상위 종목 ({market_filter})',
+                    template='plotly_dark',
+                    # 범례 제목(시장) 표시 설정
+                    #labels={'시장': '시장 구분'}
+                )
+            
+                # X축 순서가 거래량 순으로 유지되도록 설정
+                fig.update_layout(
+                    # 타이틀 색상 변경
+                    title={
+                    'font': {'color': "#ffffff", 'size': 20}
+                    },
+                    # 각 색상별 어떤 시장인지 표시
+                    showlegend=True,
+                    legend=dict(
+                        title_text='시장',
+                        font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+                        orientation="v", # 세로로 나열
+                        yanchor="top",
+                        y=0.99,
+                        xanchor="left",
+                        x=1.02 # 차트 오른쪽에 범례 표시
+                    ),
+                    #xaxis={'categoryorder':'total descending'},
+                    xaxis_tickangle=-45,
+                    xaxis=dict(
+                        {'categoryorder':'total descending'},
+                        title_font=dict(color="#ffffff"),   # 축 이름 색상
+                        tickfont=dict(color="#ffffff")   # 축 숫자 색상
+                    ),
+                    yaxis=dict(
+                        title_font=dict(color="#ffffff"),  # 축 이름 색상
+                        tickfont=dict(color="#ffffff")    # 축 숫자 색상
+                    ),
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color="#ffffff"),
+                    height=550
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("거래량 데이터가 없습니다.")
+
         
-        # X축 순서가 거래량 순으로 유지되도록 설정
-        fig.update_layout(
-            # 타이틀 색상 변경
-            title={
-            'font': {'color': "#ffffff", 'size': 20}
-            },
-            # 각 색상별 어떤 시장인지 표시
-            showlegend=True,
-            legend=dict(
-                title_text='시장',
-                font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
-                orientation="v", # 세로로 나열
-                yanchor="top",
-                y=0.99,
-                xanchor="left",
-                x=1.02 # 차트 오른쪽에 범례 표시
-            ),
-            #xaxis={'categoryorder':'total descending'},
-            xaxis_tickangle=-45,
-            xaxis=dict(
-                {'categoryorder':'total descending'},
-                title_font=dict(color="#ffffff"),   # 축 이름 색상
-                tickfont=dict(color="#ffffff")   # 축 숫자 색상
-            ),
-            yaxis=dict(
-                title_font=dict(color="#ffffff"),  # 축 이름 색상
-                tickfont=dict(color="#ffffff")    # 축 숫자 색상
-            ),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(color="#ffffff"),
-            height=500,
-        )
-        st.plotly_chart(fig, use_container_width=True)
 
-        # 등락률 산점도 (Scatter Chart)
-        if '등락률(숫자)' in top20.columns:
-            fig2 = px.scatter(
-                top20,
-                x='거래량',
-                y='등락률(숫자)',
-                size='거래대금',
-                color='시장',
-                hover_name='종목명',
-                color_discrete_map={'KOSPI': '#667eea', 'KOSDAQ': '#764ba2'},
-                title='거래량 vs 등락률 (버블 크기 = 거래대금)',
-                template='plotly_dark',
+        with col_pie1:
+            # 1. 상승/하락 그룹 나누기 로직 (등락률 숫자가 있다고 가정)
+            def get_signal_label(row):
+                if row['등락률(숫자)'] > 0: return '상승 종목'
+                elif row['등락률(숫자)'] < 0: return '하락 종목'
+                else: return '보합'
+
+            # 상위 50개 혹은 전체 데이터를 대상으로 비중 계산
+            analysis_df = filtered_df.copy()
+            analysis_df['구분'] = analysis_df.apply(get_signal_label, axis=1)
+            
+            # 그룹별 거래량 합계
+            vol_dist = analysis_df.groupby('구분')['거래량'].sum().reset_index()
+
+            # 2. 도넛 차트 생성
+            fig_pie = px.pie(
+                vol_dist, 
+                values='거래량', 
+                names='구분',
+                hole=0.5,
+                color='구분',
+                color_discrete_map={'상승 종목': '#f85149', '하락 종목': '#3fb950', '보합': '#8b949e'}, # 상승 빨강, 하락 초록(해외 기준/취향따라 변경)
+                title=f"🔥 {market_filter} 거래량 수급 비중 (상승 vs 하락)"
             )
-            fig2.update_layout(
+            
+            fig_pie.update_traces(textposition='inside', textinfo='percent+label',textfont=dict(size=16, family="Arial", color="black"),insidetextfont=dict(weight='bold'))
+            fig_pie.update_layout(
                 title={
-                'font': {'color': "#ffffff", 'size': 20}
+                    'font': {'color': "#ffffff", 'size': 20}
                 },
-                # 각 색상별 어떤 시장인지 표시
-                showlegend=True,
-                legend=dict(
-                title_text='시장',
-                font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
-                orientation="v", # 세로로 나열
-                yanchor="top",
-                y=0.99,
-                xanchor="left",
-                x=1.02 # 차트 오른쪽에 범례 표시
-                ),
-                plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#e0e0ff'),
-                height=500,
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color="#ffffff"),
+                showlegend=False,
+                margin=dict(t=50, b=0, l=0, r=0),
+                height=350
             )
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig_pie, use_container_width=True)
+            st.markdown("#### 💡 수급 비중 인사이트")
+            # 간단한 로직으로 시장 해석 제공
+            up_vol = vol_dist[vol_dist['구분'] == '상승 종목']['거래량'].sum()
+            total_vol = vol_dist['거래량'].sum()
+            up_ratio = (up_vol / total_vol) * 100 if total_vol > 0 else 0
+
+            if up_ratio > 60:
+                st.success(f"**강세장:** 현재 거래량의 {up_ratio:.1f}%가 상승 종목에 쏠려 있습니다. 매수세가 매우 강력합니다.")
+            elif up_ratio < 40:
+                st.error(f"**약세장:** 현재 거래량의 {100-up_ratio:.1f}%가 하락 종목에서 발생하고 있습니다. 패닉 셀링에 주의하세요.")
+            else:
+                st.info(f"**혼조세:** 상승/하락 종목의 거래량 비중이 팽팽합니다. 방향성이 결정될 때까지 관망이 필요합니다.")
+            
+            st.caption("※ 이 차트는 종목 수가 아닌, 실제 '거래된 대금/물량'의 비중을 나타냅니다.")   
 
     with tab2:
         st.markdown("### 외국인/기관 매매 동향")
@@ -715,30 +741,50 @@ elif page == "🏠 메인 대시보드":
                 top_n_display = st.slider("표시할 종목 수 (외국인 순매수 기준)", 10, 50, 20)
                 inv_df_top = inv_df.sort_values('외국인_순매수량', ascending=False).head(top_n_display)
 
-                fig3 = go.Figure()
-                fig3.add_trace(go.Bar(
+                fig2 = go.Figure()
+                fig2.add_trace(go.Bar(
                     x=inv_df_top['종목명'],
                     y=inv_df_top['외국인_순매수량'],
                     name='외국인',
                     marker_color='#dcb98c',
                 ))
-                fig3.add_trace(go.Bar(
+                fig2.add_trace(go.Bar(
                     x=inv_df_top['종목명'],
                     y=inv_df_top['기관_순매수량'],
                     name='기관',
-                    marker_color='#8a735c',
+                    marker_color="#3f3122",
                 ))
-                fig3.update_layout(
-                    title=f'외국인/기관 순매수량 비교 (상위 {top_n_display}종목)',
+                fig2.update_layout(
+                    title={
+                        'text': f'외국인/기관 순매수량 비교 (상위 {top_n_display}종목)',
+                        'font': {'color': "#ffffff", 'size': 20}
+                    },
                     barmode='group',
                     template='plotly_dark',
+                    xaxis=dict(
+                    title_font=dict(color="#ffffff"),  # 축 이름 색상
+                    tickfont=dict(color="#ffffff")    # 축 숫자 색상
+                    ),
+                    yaxis=dict(
+                    title_font=dict(color="#ffffff"),  # 축 이름 색상
+                    tickfont=dict(color="#ffffff")    # 축 숫자 색상
+                    ),
+                    showlegend=True,
+                    legend=dict(
+                        font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+                        orientation="v", # 세로로 나열
+                        yanchor="top",
+                        y=0.99,
+                        xanchor="left",
+                        x=1.02 # 차트 오른쪽에 범례 표시
+                    ),
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
                     font=dict(color='#f2ece4'),
                     xaxis_tickangle=-45,
                     height=500,
                 )
-                st.plotly_chart(fig3, use_container_width=True)
+                st.plotly_chart(fig2, use_container_width=True)
 
                 # Seaborn 히트맵 (matplotlib)
                 st.markdown("### 투자 지표 상관관계 히트맵")
@@ -760,6 +806,11 @@ elif page == "🏠 메인 대시보드":
                         annot_kws={'color': '#f2ece4', 'fontsize': 9},
                         cbar_kws={'label': '상관계수'},
                     )
+                    # --- 글자 뒤집힘/회전 방지 설정 ---
+                    # x축 레이블을 가로(0도)로 설정
+                    ax.set_xticklabels(ax.get_xticklabels(), rotation=0, color='#f2ece4')
+                    # y축 레이블을 가로(0도)로 설정 (기본은 보통 90도 돌아가 있음)
+                    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, color='#f2ece4')
                     ax.tick_params(colors='#f2ece4')
                     ax.xaxis.label.set_color('#f2ece4')
                     ax.yaxis.label.set_color('#f2ece4')
@@ -1396,11 +1447,11 @@ elif page == "📈 분석 신호":
     st.markdown("---")
 
     # 신호 필터
-    signal_filter = st.selectbox("신호 필터", ['전체', 'BUY', 'HOLD', 'SELL'], key='sig_filter')
+    signal_filter = st.selectbox("신호 필터", ['전체', '매수', '보유', '매도'], key='sig_filter')
     display_signals = signals_df if signal_filter == '전체' else signals_df[signals_df['signal'] == signal_filter]
 
     # 추세 점수 바 차트
-    color_map = {'BUY': '#3fb950', 'HOLD': '#d29922', 'SELL': '#f85149'}
+    color_map = {'매수': '#3fb950', '보유': '#d29922', '매도': '#f85149'}
     display_signals = display_signals.sort_values('trend_score', ascending=False)
 
     fig_sig = px.bar(
@@ -1415,17 +1466,41 @@ elif page == "📈 분석 신호":
     )
     fig_sig.update_traces(texttemplate='%{text:.0f}', textposition='outside')
     fig_sig.update_layout(
+        title={
+                'font': {'color': "#ffffff", 'size': 20}
+                },
+        # 각 색상별 어떤 시장인지 표시
+        showlegend=True,
+        legend=dict(
+        title_text='신호',
+        font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+        orientation="v", # 세로로 나열
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=1.02 # 차트 오른쪽에 범례 표시
+        ),
+        #xaxis={'categoryorder':'total descending'},
         xaxis_tickangle=-45,
+        xaxis=dict(
+            {'categoryorder':'total descending'},
+            title_font=dict(color="#ffffff"),   # 축 이름 색상
+            tickfont=dict(color="#ffffff")   # 축 숫자 색상
+            ),
+        yaxis=dict(
+            title_font=dict(color="#ffffff"),  # 축 이름 색상
+            tickfont=dict(color="#ffffff")    # 축 숫자 색상
+            ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#e6edf3'),
+        font=dict(color="#ffffff"),
         height=500,
     )
     # 기준선 추가
     fig_sig.add_hline(y=60, line_dash='dash', line_color='#3fb950',
-                      annotation_text='BUY 기준(60)', annotation_position='top left')
+                      annotation_text='매수 기준(60)', annotation_position='top right')
     fig_sig.add_hline(y=40, line_dash='dash', line_color='#f85149',
-                      annotation_text='SELL 기준(40)', annotation_position='bottom left')
+                      annotation_text='매도 기준(40)', annotation_position='bottom right')
     st.plotly_chart(fig_sig, use_container_width=True)
 
     # 신호 분포 파이 차트
