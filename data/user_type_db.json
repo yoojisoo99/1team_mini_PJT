@@ -17,6 +17,12 @@
             "type_id": 5,
             "type_name": "공격투자형",
             "description": "User has been profiled as 공격투자형."
+        },
+        {
+            "user_id": "testusr",
+            "type_id": 3,
+            "type_name": "위험중립형",
+            "description": "User has been profiled as 위험중립형."
         }
     ]
 }

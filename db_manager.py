@@ -87,8 +87,66 @@ def load_from_db(query):
         return None
 
 
+def save_json(data_list, filename, directory=None):
+    """데이터 리스트를 JSON 파일로 저장합니다."""
+    import json
+    if directory is None:
+        directory = str(DATA_DIR)
+    os.makedirs(directory, exist_ok=True)
+    filepath = os.path.join(directory, filename)
+    
+    try:
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data_list, f, ensure_ascii=False, indent=2)
+        logger.info(f"  -> JSON 저장 완료: {filepath} ({len(data_list.get(list(data_list.keys())[0], [])) if isinstance(data_list, dict) else len(data_list)}건)")
+        return filepath
+    except Exception as e:
+        logger.error(f"[JSON] 저장 실패 ({filename}): {e}")
+        return None
+
+def sync_json_to_db(filepath, table_name, if_exists='append'):
+    """JSON 파일을 읽어 DataFrame으로 파싱 후 DB에 반영합니다."""
+    import json
+    engine = get_engine()
+    if engine is None:
+        logger.info(f"[DB] DB 미연결. '{table_name}' 동기화 생략 (JSON 보관됨).")
+        return False
+
+    if not os.path.exists(filepath):
+        logger.warning(f"[DB Sync] 파일 없음: {filepath}")
+        return False
+        
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        # 최상위 키가 있는 구조인 경우 (예: {"stocks": [...]}) 리스트 추출
+        data_list = []
+        if isinstance(data, dict):
+            # dict의 첫 번째 value(리스트)를 사용, 아니면 data 자체를 하나의 리스트로 감쌈
+            for k, v in data.items():
+                if isinstance(v, list):
+                    data_list = v
+                    break
+            if not data_list:
+                data_list = [data]
+        elif isinstance(data, list):
+            data_list = data
+            
+        if not data_list:
+            logger.info(f"[DB Sync] 동기화할 데이터가 없습니다: {table_name}")
+            return True
+            
+        df = pd.DataFrame(data_list)
+        df.to_sql(table_name, engine, if_exists=if_exists, index=False)
+        logger.info(f"[DB Sync] '{table_name}' 테이블에 {len(df)}건 동기화 완료")
+        return True
+    except Exception as e:
+        logger.error(f"[DB Sync] '{table_name}' 동기화 실패: {e}")
+        return False
+
 def save_to_csv(df, filename, directory=None, encoding='utf-8-sig'):
-    """DataFrame을 CSV 파일로 저장합니다. (DB 미연결 시 대안)"""
+    """DataFrame을 CSV 파일로 저장합니다. (하위 호환 및 DB 미연결 시 대안)"""
     if directory is None:
         directory = str(DATA_DIR)
     os.makedirs(directory, exist_ok=True)
@@ -104,7 +162,7 @@ def save_to_csv(df, filename, directory=None, encoding='utf-8-sig'):
 # ============================================================
 def save_stocks(df):
     """
-    종목 마스터 테이블에 저장합니다.
+    종목 마스터 정보를 JSON으로 변환 후 테이블에 동기화합니다.
 
     Args:
         df: 스크래핑된 전체 DataFrame (종목코드, 종목명, 시장 포함)
@@ -118,11 +176,17 @@ def save_stocks(df):
         '시장': 'market',
     })
 
-    # DB 저장 시도
-    save_to_db(master_db, 'stocks', if_exists='replace')
-
-    # CSV 항상 저장
+    # 1. JSON 변환 및 저장
+    data_records = master_db.to_dict(orient='records')
+    json_data = {"stocks": data_records}
     today = datetime.now().strftime('%Y%m%d')
+    json_filepath = save_json(json_data, f'stocks_{today}.json')
+    
+    # 2. JSON 기반으로 DB 동기화
+    if json_filepath:
+        sync_json_to_db(json_filepath, 'stocks', if_exists='replace')
+
+    # 하위 호환용 CSV 유지
     save_to_csv(master_db, f'stocks_{today}.csv')
 
     return master_db
@@ -134,7 +198,7 @@ def save_stocks(df):
 # ============================================================
 def save_price_snapshots(df):
     """
-    시세 스냅샷을 저장합니다.
+    시세 스냅샷을 JSON으로 변환 후 저장 및 테이블 동기화합니다.
 
     Args:
         df: 스크래핑된 전체 DataFrame (종목코드, 수집시간, 현재가, 거래량, 거래대금 포함)
@@ -149,7 +213,16 @@ def save_price_snapshots(df):
         return
 
     snap = df[required].copy()
-    snap_db = snap.rename(columns={
+    
+    # id 필드 추가 요구사항에 맞춰 종목명을 id로 처리 (종목명이 df에 있다면)
+    if '종목명' in df.columns:
+        snap_db = df[['종목명'] + required].copy()
+        snap_db = snap_db.rename(columns={'종목명': 'id'})
+    else:
+        snap_db = snap.copy()
+        snap_db['id'] = snap_db['종목코드']
+        
+    snap_db = snap_db.rename(columns={
         '종목코드': 'ticker',
         '수집시간': 'captured_at',
         '현재가': 'price',
@@ -157,12 +230,30 @@ def save_price_snapshots(df):
         '거래대금': 'trade_value',
     })
 
-    # DB 저장
-    save_to_db(snap_db, 'price_snapshots', if_exists='append')
+    # JSON 호환을 위해 datetime 문자열 변환
+    if pd.api.types.is_datetime64_any_dtype(snap_db['captured_at']):
+        snap_db['captured_at'] = snap_db['captured_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+        
+    # Python int/float 변환 (Numpy 타입 이슈 방지)
+    snap_db['price'] = snap_db['price'].apply(lambda x: int(x) if pd.notnull(x) else 0)
+    snap_db['volume'] = snap_db['volume'].apply(lambda x: int(x) if pd.notnull(x) else 0)
+    snap_db['trade_value'] = snap_db['trade_value'].apply(lambda x: int(x) if pd.notnull(x) else 0)
 
-    # CSV 저장
+    # 1. JSON 변환 및 저장
+    data_records = snap_db.to_dict(orient='records')
+    json_data = {"price_snapshots": data_records}
     today = datetime.now().strftime('%Y%m%d')
-    save_to_csv(snap_db, f'price_snapshots_{today}.csv')
+    
+    # 스케줄러를 위해 분 단위까지 파일명 기록 고려(중복 방지, 여기서는 YYYYMMDD_HHMM으로 확장 추천)
+    time_suffix = datetime.now().strftime('%Y%m%d_%H%M%S')
+    json_filepath = save_json(json_data, f'price_snapshots_{time_suffix}.json')
+
+    # 2. JSON 기반 DB 동기화
+    if json_filepath:
+        sync_json_to_db(json_filepath, 'price_snapshots', if_exists='append')
+
+    # 하위 호환
+    save_to_csv(snap_db, f'price_snapshots_{time_suffix}.csv')
 
     return snap_db
 
@@ -173,7 +264,7 @@ def save_price_snapshots(df):
 # ============================================================
 def save_analysis_signals(signals_df):
     """
-    분석 신호를 저장합니다.
+    분석 신호를 JSON으로 변환 후 데이터베이스와 동기화합니다.
 
     Args:
         signals_df: analyzer.generate_analysis_signals() 결과 DataFrame
@@ -182,14 +273,32 @@ def save_analysis_signals(signals_df):
     if signals_df is None or signals_df.empty:
         return
 
-    # DB 저장
-    save_to_db(signals_df, 'analysis_signals', if_exists='append')
+    sign_db = signals_df.copy()
+    
+    # 'id' 컬럼 요구 반영 (종목명이 있다면 사용)
+    if '종목명' in sign_db.columns:
+        sign_db.rename(columns={'종목명': 'id'}, inplace=True)
+    elif 'name' in sign_db.columns:
+        sign_db.rename(columns={'name': 'id'}, inplace=True)
+    else:
+        sign_db['id'] = sign_db['ticker']
 
-    # CSV 저장
+    if pd.api.types.is_datetime64_any_dtype(sign_db['as_of']):
+        sign_db['as_of'] = sign_db['as_of'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+        
+    # 1. JSON 변환 및 저장
+    data_records = sign_db.to_dict(orient='records')
+    json_data = {"analysis_signals": data_records}
     today = datetime.now().strftime('%Y%m%d')
-    save_to_csv(signals_df, f'analysis_signals_{today}.csv')
+    json_filepath = save_json(json_data, f'analysis_signals_{today}.json')
 
-    return signals_df
+    # 2. JSON 기반 DB 동기화
+    if json_filepath:
+        sync_json_to_db(json_filepath, 'analysis_signals', if_exists='append')
+
+    save_to_csv(sign_db, f'analysis_signals_{today}.csv')
+
+    return sign_db
 
 
 # ============================================================
@@ -198,7 +307,7 @@ def save_analysis_signals(signals_df):
 # ============================================================
 def save_recommendations(recs_df):
     """
-    추천 결과를 저장합니다.
+    추천 결과를 JSON으로 변환 후 데이터베이스에 동기화합니다.
 
     Args:
         recs_df: analyzer.build_recommendations_df() 결과 DataFrame
@@ -207,14 +316,28 @@ def save_recommendations(recs_df):
     if recs_df is None or recs_df.empty:
         return
 
-    # DB 저장
-    save_to_db(recs_df, 'recommendations', if_exists='append')
+    recs_db = recs_df.copy()
+    if pd.api.types.is_datetime64_any_dtype(recs_db['as_of']):
+        recs_db['as_of'] = recs_db['as_of'].dt.strftime('%Y-%m-%d')
+        
+    # id (PK) 컬럼 요구사항 대응 (없으면 1부터 순번 부여)
+    if 'id' not in recs_db.columns:
+        recs_db.insert(0, 'id', range(1, len(recs_db) + 1))
 
-    # CSV 저장
+    # 1. JSON 저장
+    data_records = recs_db.to_dict(orient='records')
+    json_data = {"recommendations": data_records}
     today = datetime.now().strftime('%Y%m%d')
-    save_to_csv(recs_df, f'recommendations_{today}.csv')
+    json_filepath = save_json(json_data, f'recommendations_{today}.json')
 
-    return recs_df
+    # 2. 동기화
+    if json_filepath:
+        # DB 컬럼 맞춰서 'id' 컬럼은 제외 (Auto Increment 의존)
+        sync_json_to_db(json_filepath, 'recommendations', if_exists='append')
+
+    save_to_csv(recs_db, f'recommendations_{today}.csv')
+
+    return recs_db
 
 
 # ============================================================
@@ -223,7 +346,7 @@ def save_recommendations(recs_df):
 # ============================================================
 def save_newsletter(newsletter_dict):
     """
-    뉴스레터를 저장합니다.
+    뉴스레터를 JSON으로 변환 후 데이터베이스와 동기화합니다.
 
     Args:
         newsletter_dict: analyzer.generate_newsletter() 결과 dict
@@ -233,15 +356,26 @@ def save_newsletter(newsletter_dict):
         return
 
     news_df = pd.DataFrame([newsletter_dict])
+    
+    # ID 필드 부여
+    if 'id' not in news_df.columns:
+        news_df.insert(0, 'id', [101]) # 기본 샘플 ID
+        
+    if pd.api.types.is_datetime64_any_dtype(news_df['created_at']):
+        news_df['created_at'] = news_df['created_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
 
-    # DB 저장
-    save_to_db(news_df, 'newsletters', if_exists='append')
-
-    # CSV 저장
+    # 1. JSON 저장
+    data_records = news_df.to_dict(orient='records')
+    json_data = {"newsletters": data_records}
     today = datetime.now().strftime('%Y%m%d')
+    json_filepath = save_json(json_data, f'newsletters_{today}.json')
+
+    # 2. 동기화
+    if json_filepath:
+        sync_json_to_db(json_filepath, 'newsletters', if_exists='append')
+
     save_to_csv(news_df, f'newsletters_{today}.csv')
 
-    # 텍스트 파일로도 저장 (읽기 편의)
     txt_path = os.path.join(str(DATA_DIR), f'newsletter_{today}.txt')
     with open(txt_path, 'w', encoding='utf-8') as f:
         f.write(newsletter_dict['content'])
@@ -372,17 +506,8 @@ def save_users_to_db(users_dict):
     except Exception as e:
         logger.error(f"users_db.json 백업 저장 실패: {e}")
         
-    # DataFrame 변환 후 DB 저장
-    if users_dict:
-        records = []
-        for uid, data in users_dict.items():
-            records.append({
-                'user_id': uid,
-                'user_password': data.get('user_password', ''),
-                'user_email': data.get('user_email', '')
-            })
-        df = pd.DataFrame(records)
-        save_to_db(df, 'users', if_exists='replace')
+    # JSON 파일 기반으로 DB 동기화
+    sync_json_to_db(csv_path, 'users', if_exists='replace')
 
 
 def save_user_profile(user_id, type_id):
@@ -432,11 +557,6 @@ def save_user_profile(user_id, type_id):
     except Exception as e:
         logger.error(f"user_type_db.json 백업 저장 실패: {e}")
 
-    # 2. 통합 DB (CSV Fallback 포함) 저장
-    df = pd.DataFrame([{
-        'user_id': user_id,
-        'type_id': type_id
-    }])
-    # append로 누적하거나 로직에 맞게 업데이트 (단순화를 위해 append 후 최신 사용)
-    save_to_db(df, 'user_profile', if_exists='append')
+    # JSON 기반 DB 동기화
+    sync_json_to_db(type_csv_path, 'user_profile', if_exists='append')
     logger.info(f"[DB] '{user_id}' 투자 성향({type_id}) 프로필 저장 완료")
