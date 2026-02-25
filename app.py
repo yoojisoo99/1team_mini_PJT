@@ -573,6 +573,15 @@ if page == "📝 회원가입":
                         "user_email": new_email
                     }
                     save_users(users)
+                    
+                    # 신규 회원가입 시 DB 테이블 최신화 스크립트 실행
+                    try:
+                        import subprocess
+                        script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'A_users_table.py')
+                        subprocess.run(['python', script_path], check=True)
+                    except Exception as e:
+                        st.warning(f"DB 연동 중 일부 오류가 발생했습니다: {e}")
+
                     st.success("✅ 회원가입이 완료되었습니다! 왼쪽 사이드바에서 로그인해주세요.")
                     st.session_state['current_page'] = "🏠 메인 대시보드"
                     st.rerun()
