@@ -23,7 +23,7 @@ def main():
         output_path=OUTPUT_PATH,
         columns=COLUMNS,
     )
-    print(f"✅ analysis_signals export 완료: {OUTPUT_PATH}")
+    print(f"[Success] analysis_signals export completed: {OUTPUT_PATH}")
 
 if __name__ == "__main__":
     main()

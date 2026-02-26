@@ -16,7 +16,7 @@ def main():
         output_path=OUTPUT_PATH,
         columns=COLUMNS
     )
-    print(f"✅ user_type export 완료: {OUTPUT_PATH} (rows={rows})")
+    print(f"[Success] user_type export completed: {OUTPUT_PATH} (rows={rows})")
 
 if __name__ == "__main__":
     main()

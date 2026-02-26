@@ -31,12 +31,14 @@ def main():
     ]
     
     start_time = time.time()
-    print("=== Starting Full Outbound Sync ===")
+    print("=== Starting Full Outbound Sync (Parallel) ===")
+    
+    from concurrent.futures import ThreadPoolExecutor
     
     success_count = 0
-    for script in scripts:
-        if run_script(script):
-            success_count += 1
+    with ThreadPoolExecutor(max_workers=len(scripts)) as executor:
+        results = list(executor.map(run_script, scripts))
+        success_count = sum(results)
             
     end_time = time.time()
     print(f"=== Sync Completed in {end_time - start_time:.2f}s ===")

@@ -17,7 +17,7 @@ def main():
         output_path=OUTPUT_PATH,
         columns=COLUMNS,
     )
-    print(f"✅ price_snapshots export 완료: {OUTPUT_PATH} (rows={rows}")
+    print(f"[Success] price_snapshots export completed: {OUTPUT_PATH} (rows={rows})")
 
 if __name__ == "__main__":
     main()

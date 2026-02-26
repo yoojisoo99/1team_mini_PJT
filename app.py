@@ -44,58 +44,18 @@ st.set_page_config(
 # 0. 세션 매니지먼트 (30분 자동 로그아웃)
 # ============================================================
 import time
-from streamlit_autorefresh import st_autorefresh
 
-# 페이지 전역에서 1초마다 백그라운드 새로고침(타이머다운 틱) 지원
-st_autorefresh(interval=1000, key="global_timer")
+# SESSION_TIMEOUT_SECONDS = 1800 # 30분 기능을 제거합니다.
 
-SESSION_TIMEOUT_SECONDS = 1800 # 30분
-
-# URL 파라미터 기반 세션 복구 로직 (F5 새로고침 100% 보장)
-try:
-    if "login_token" in st.query_params:
-        cookie_logged_in = 'true'
-        cookie_username = st.query_params.get("login_token")
-        cookie_last_active = st.query_params.get("last_active")
-    else:
-        cookie_logged_in = None
-        cookie_username = None
-        cookie_last_active = None
-except Exception:
-    cookie_logged_in = None
-    cookie_username = None
-    cookie_last_active = None
-
+# 세션 복구 및 상태 관리
 if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = True if cookie_logged_in == 'true' else False
+    st.session_state['logged_in'] = False
 if 'username' not in st.session_state:
-    st.session_state['username'] = cookie_username if cookie_username else ""
+    st.session_state['username'] = ""
 if 'current_page' not in st.session_state:
     st.session_state['current_page'] = "🏠 메인 대시보드"
 
-# 마지막 활동 시간 복구 (우선순위: 쿠키 -> 없음)
-if 'last_active' not in st.session_state:
-    if cookie_last_active:
-        try:
-            st.session_state['last_active'] = float(cookie_last_active)
-        except ValueError:
-            st.session_state['last_active'] = time.time()
-    else:
-        st.session_state['last_active'] = time.time()
-
-# 로그인 된 상태라면 타임아웃 검사
-if st.session_state['logged_in']:
-    current_time = time.time()
-    elapsed = current_time - st.session_state['last_active']
-    
-    if elapsed > SESSION_TIMEOUT_SECONDS:
-        st.session_state['logged_in'] = False
-        st.session_state['username'] = ""
-        st.session_state['current_page'] = "🏠 메인 대시보드"
-        st.query_params.clear()
-        
-        st.warning("⏱️ 보안을 위해 30분 동안 활동이 없어 자동 로그아웃 되었습니다.")
-        st.rerun()
+# 자동 로그아웃 기능을 제거했습니다.
 
 # ============================================================
 # 1. 데이터 로드
@@ -103,12 +63,26 @@ if st.session_state['logged_in']:
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 OUT_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out_data')
 
+def check_db_port(host="25.4.53.12", port=3306, timeout=1.5):
+    """DB 서버 포트가 열려있는지 소켓으로 빠르게 확인합니다."""
+    import socket
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except (socket.timeout, ConnectionRefusedError, OSError):
+        return False
+
 def run_outbound_sync():
     """DB에서 로컬로 데이터를 동기화하는 outbound/run_all.py 스크립트를 실행합니다."""
     import subprocess
     import sys
     import os
     
+    # 1. 포트 체크 먼저 수행 (속도 개선 핵심)
+    if not check_db_port():
+        st.warning("⚠️ DB 서버에 연결할 수 없어 로컬 데이터를 사용합니다.")
+        return False
+
     script_path = os.path.join(os.path.dirname(__file__), 'outbound', 'run_all.py')
     if os.path.exists(script_path):
         try:
@@ -699,30 +673,11 @@ with st.sidebar:
     else:
         st.success(f"👋 환영합니다, **{st.session_state['username']}**님!")
         
-        # 세션 만료 시간 계산
-        remaining_seconds = int(SESSION_TIMEOUT_SECONDS - (time.time() - st.session_state['last_active']))
-        
-        # 0초 이하면 바로 로그아웃 재실행 트리거
-        if remaining_seconds <= 0:
+        if st.button("로그아웃", use_container_width=True):
+            st.session_state['logged_in'] = False
+            st.session_state['username'] = ""
+            st.query_params.clear()
             st.rerun()
-            
-        mins, secs = divmod(remaining_seconds, 60)
-        st.caption(f"⏱️ 세션 만료까지: {mins:02d}분 {secs:02d}초")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("시간 연장", use_container_width=True):
-                t = time.time()
-                st.session_state['last_active'] = t
-                st.query_params["last_active"] = str(t)
-                st.rerun()
-        with col2:
-            if st.button("로그아웃", use_container_width=True):
-                st.session_state['logged_in'] = False
-                st.session_state['username'] = ""
-                st.session_state['last_active'] = time.time()
-                st.query_params.clear()
-                st.rerun()
             
     st.markdown("---")
 

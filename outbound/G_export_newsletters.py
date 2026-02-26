@@ -17,7 +17,7 @@ def main():
         output_path=OUTPUT_PATH,
         columns=COLUMNS,
     )
-    print(f"✅ newsletters export 완료: {OUTPUT_PATH}")
+    print(f"[Success] newsletters export completed: {OUTPUT_PATH}")
 
 if __name__ == "__main__":
     main()

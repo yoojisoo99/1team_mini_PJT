@@ -5,9 +5,9 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import create_engine
 
-# SQLAlchemy 엔진 생성
+# SQLAlchemy 엔진 생성 (3초 타임아웃 설정으로 연결 실패 시 빠른 대응)
 def get_engine(engine_url: str):
-    return create_engine(engine_url) 
+    return create_engine(engine_url, connect_args={'connect_timeout': 3}) 
 
 # pandas DataFrame을 JSON 구조로 변환
 def dataframe_to_json_file(df: pd.DataFrame, root_key: str, output_path: str):
