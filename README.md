@@ -135,6 +135,8 @@ uv run streamlit run app.py
 # (선택) 스케줄러 실행
 uv run python scheduler_job.py
 ```
+# 메일 수신 동의한 유저에게 해당되는 유형의 뉴스 보내기
+uv run -m mailer.send_newsletters   
 
 ---
 
