@@ -36,7 +36,9 @@ def main():
         df['현재가'] = df['현재가'].fillna(0).astype(int)
         df['거래량'] = df['거래량'].fillna(0).astype(int)
         df['거래대금'] = df['거래대금'].fillna(0).astype(int)
-        df['등락률'] = '0.00%'  # 앱 크래시 방지용 더미 데이터
+        df['등락률'] = '0.00%'      # 앱 UI 표시용
+        df['등락률(숫자)'] = 0.0     # 앱 계산용 (Pie 차트 등)
+        df['전일비'] = 0              # 앱 Metric 표시용
         
         dataframe_to_json_file(df, root_key=ROOT_KEY, output_path=OUTPUT_PATH)
         print(f"[Success] stocks export completed (Joined with price): {OUTPUT_PATH} (rows={len(df)})")
