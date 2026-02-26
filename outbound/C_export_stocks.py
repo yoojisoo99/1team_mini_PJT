@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT_PATH = os.path.join(BASE_DIR, "out_data", "stocks_export.json")
 ROOT_KEY = "stocks"
 
-COLUMNS = ["ticker", "name", "market","total_value"]
+COLUMNS = ["ticker", "name", "market"]
 
 def main():
     engine = get_engine(ENGINE_URL)

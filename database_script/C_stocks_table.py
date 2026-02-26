@@ -16,12 +16,12 @@ file_name = f"stock_data_{today_str}.csv"
 #file_name = f"stock_data_20260224.csv" #임시 테스트
 csv_file_path = f"data/{file_name}"
 df = pd.read_csv(csv_file_path, encoding="utf-8")
-stocks_df = df[["종목코드", "종목명", "시장","total_value"]].copy()
+stocks_df = df[["종목코드", "종목명", "시장"]].copy()
 
 stocks_df.rename(columns={
     "종목코드": "ticker",
     "종목명": "name",
-    "시장": "market"
+    "시장": "market",
 }, inplace=True)
 
 stocks_df["ticker"] = stocks_df["ticker"].astype(str)
