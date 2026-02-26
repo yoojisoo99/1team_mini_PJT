@@ -5,12 +5,17 @@ from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import formataddr
 
-def send_email(host: str, port: int, user: str, app_password: str,
-               from_name: str, to_email: str, subject: str, body: str,
-               dry_run: bool = True):
-    """
-    Gmail SMTP (STARTTLS)
-    """
+def send_email(
+    host: str,
+    port: int,
+    user: str,
+    app_password: str,
+    from_name: str,
+    to_email: str,
+    subject: str,
+    body: str,
+    dry_run: bool = True,
+):
     if dry_run:
         print(f"[DRY_RUN] to={to_email} subject={subject}")
         return

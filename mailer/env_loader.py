@@ -14,4 +14,3 @@ class Settings:
     from_name: str = os.getenv("FROM_NAME", "Lumina Capital")
 
     dry_run: bool = os.getenv("DRY_RUN", "1") == "1"
-    newsletter_save_db: bool = os.getenv("NEWSLETTER_SAVE_DB", "0") == "1"
