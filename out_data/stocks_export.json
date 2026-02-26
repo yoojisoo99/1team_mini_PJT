@@ -1,218 +1,258 @@
 {
     "stocks": [
         {
-            "ticker": "0001A0",
-            "name": "?????",
-            "market": "KOSDAQ"
+            "ticker": "000270",
+            "name": "기아",
+            "market": "KOSPI"
         },
         {
             "ticker": "000370",
-            "name": "??????",
+            "name": "한화손해보험",
             "market": "KOSPI"
         },
         {
             "ticker": "000400",
-            "name": "??????",
+            "name": "롯데손해보험",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "000540",
+            "name": "흥국화재",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "0005D0",
+            "name": "SOL 전고체배터리&실리콘음극재",
             "market": "KOSPI"
         },
         {
             "ticker": "000660",
-            "name": "SK????",
+            "name": "SK하이닉스",
             "market": "KOSPI"
         },
         {
             "ticker": "001200",
-            "name": "??????",
+            "name": "유진투자증권",
             "market": "KOSPI"
         },
         {
-            "ticker": "001210",
-            "name": "????",
+            "ticker": "001290",
+            "name": "상상인증권",
             "market": "KOSPI"
         },
         {
             "ticker": "001440",
-            "name": "????",
+            "name": "대한전선",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "001500",
+            "name": "현대차증권",
             "market": "KOSPI"
         },
         {
             "ticker": "001510",
-            "name": "SK??",
+            "name": "SK증권",
             "market": "KOSPI"
+        },
+        {
+            "ticker": "0015G0",
+            "name": "그린광학",
+            "market": "KOSDAQ"
         },
         {
             "ticker": "001620",
-            "name": "?????????",
-            "market": "KOSPI"
-        },
-        {
-            "ticker": "001740",
-            "name": "SK????",
-            "market": "KOSPI"
-        },
-        {
-            "ticker": "002630",
-            "name": "???????",
+            "name": "케이비아이동국실업",
             "market": "KOSPI"
         },
         {
             "ticker": "003000",
-            "name": "????",
+            "name": "부광약품",
             "market": "KOSPI"
         },
         {
             "ticker": "003060",
-            "name": "???????????",
+            "name": "에이프로젠바이오로직스",
             "market": "KOSPI"
         },
         {
             "ticker": "003280",
-            "name": "????",
+            "name": "흥아해운",
             "market": "KOSPI"
         },
         {
             "ticker": "003380",
-            "name": "????",
+            "name": "하림지주",
             "market": "KOSDAQ"
         },
         {
+            "ticker": "003460",
+            "name": "유화증권",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003470",
+            "name": "유안타증권",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003490",
+            "name": "대한항공",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003520",
+            "name": "영진약품",
+            "market": "KOSPI"
+        },
+        {
             "ticker": "003530",
-            "name": "??????",
+            "name": "한화투자증권",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "003620",
+            "name": "KG모빌리티",
             "market": "KOSPI"
         },
         {
             "ticker": "004060",
-            "name": "SG????",
+            "name": "SG세계물산",
             "market": "KOSPI"
         },
         {
             "ticker": "004410",
-            "name": "????",
+            "name": "서울식품",
             "market": "KOSPI"
         },
         {
-            "ticker": "0053L0",
-            "name": "TIGER ??????????",
+            "ticker": "005380",
+            "name": "현대차",
             "market": "KOSPI"
         },
         {
             "ticker": "005440",
-            "name": "????????",
+            "name": "현대지에프홀딩스",
             "market": "KOSPI"
         },
         {
             "ticker": "005880",
-            "name": "????",
+            "name": "대한해운",
             "market": "KOSPI"
         },
         {
             "ticker": "005930",
-            "name": "????",
+            "name": "삼성전자",
             "market": "KOSPI"
         },
         {
             "ticker": "005935",
-            "name": "?????",
+            "name": "삼성전자우",
             "market": "KOSPI"
         },
         {
             "ticker": "006200",
-            "name": "???????",
+            "name": "한국전자홀딩스",
             "market": "KOSPI"
         },
         {
             "ticker": "006340",
-            "name": "????",
+            "name": "대원전선",
             "market": "KOSPI"
         },
         {
-            "ticker": "006345",
-            "name": "?????",
+            "ticker": "006740",
+            "name": "블루산업개발",
             "market": "KOSPI"
         },
         {
             "ticker": "006800",
-            "name": "??????",
+            "name": "미래에셋증권",
             "market": "KOSPI"
         },
         {
             "ticker": "006910",
-            "name": "?????",
+            "name": "보성파워텍",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "0072R0",
-            "name": "TIGER KRX???",
-            "market": "KOSPI"
-        },
-        {
             "ticker": "007460",
-            "name": "?????",
+            "name": "에이프로젠",
             "market": "KOSPI"
         },
         {
             "ticker": "008290",
-            "name": "????",
+            "name": "원풍물산",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "008930",
-            "name": "??????",
-            "market": "KOSPI"
-        },
-        {
             "ticker": "0091P0",
-            "name": "TIGER ??????",
+            "name": "TIGER 코리아원자력",
             "market": "KOSPI"
         },
         {
             "ticker": "009290",
-            "name": "????",
+            "name": "광동제약",
             "market": "KOSPI"
         },
         {
-            "ticker": "009460",
-            "name": "????",
+            "ticker": "009310",
+            "name": "참엔지니어링",
             "market": "KOSPI"
         },
         {
             "ticker": "009830",
-            "name": "?????",
+            "name": "한화솔루션",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "0098F0",
+            "name": "KODEX 원자력SMR",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "009900",
+            "name": "명신산업",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "010140",
+            "name": "삼성중공업",
             "market": "KOSPI"
         },
         {
             "ticker": "010170",
-            "name": "?????",
+            "name": "대한광통신",
             "market": "KOSDAQ"
         },
         {
             "ticker": "010820",
-            "name": "???",
+            "name": "퍼스텍",
             "market": "KOSPI"
         },
         {
-            "ticker": "011000",
-            "name": "??????",
-            "market": "KOSPI"
-        },
-        {
-            "ticker": "011300",
-            "name": "???????",
+            "ticker": "011200",
+            "name": "HMM",
             "market": "KOSPI"
         },
         {
             "ticker": "011500",
-            "name": "????",
+            "name": "한농화성",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "011700",
+            "name": "한신기계",
             "market": "KOSPI"
         },
         {
             "ticker": "0117V0",
-            "name": "TIGER ???AI????TOP3???",
+            "name": "TIGER 코리아AI전력기기TOP3플러스",
             "market": "KOSPI"
         },
         {
             "ticker": "011930",
-            "name": "?????",
+            "name": "신성이엔지",
             "market": "KOSPI"
         },
         {
@@ -221,218 +261,333 @@
             "market": "KOSPI"
         },
         {
-            "ticker": "012800",
-            "name": "??",
+            "ticker": "012160",
+            "name": "영흥",
             "market": "KOSPI"
         },
         {
+            "ticker": "012200",
+            "name": "계양전기",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "012340",
+            "name": "뉴인텍",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "012860",
+            "name": "모베이스전자",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "013720",
+            "name": "THE CUBE&",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "0148J0",
-            "name": "TIGER ????????????",
+            "name": "TIGER 코리아휴머노이드로봇산업",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "014910",
+            "name": "성문전자",
             "market": "KOSPI"
         },
         {
             "ticker": "015260",
-            "name": "????",
+            "name": "에이엔피",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "0162Z0",
+            "name": "RISE 삼성전자SK하이닉스채권혼합50",
             "market": "KOSPI"
         },
         {
             "ticker": "016600",
-            "name": "????",
+            "name": "큐캐피탈",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "017510",
+            "name": "세명전기",
             "market": "KOSDAQ"
         },
         {
             "ticker": "018000",
-            "name": "???",
+            "name": "유니슨",
             "market": "KOSDAQ"
         },
         {
             "ticker": "018880",
-            "name": "?????",
+            "name": "한온시스템",
             "market": "KOSPI"
         },
         {
+            "ticker": "019550",
+            "name": "SBI인베스트먼트",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "023440",
+            "name": "제이스코홀딩스",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "024060",
-            "name": "????",
+            "name": "흥구석유",
             "market": "KOSDAQ"
         },
         {
             "ticker": "024840",
-            "name": "KBI??",
+            "name": "KBI메탈",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "027710",
-            "name": "????",
+            "ticker": "024910",
+            "name": "경창산업",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "031820",
-            "name": "????????",
+            "ticker": "025980",
+            "name": "아난티",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "028670",
+            "name": "팬오션",
             "market": "KOSPI"
         },
         {
+            "ticker": "030530",
+            "name": "원익홀딩스",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "032680",
-            "name": "????",
+            "name": "소프트센",
             "market": "KOSDAQ"
         },
         {
             "ticker": "032820",
-            "name": "????",
+            "name": "우리기술",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "033230",
-            "name": "????",
+            "ticker": "032940",
+            "name": "원익",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "033320",
+            "name": "제이씨현시스템",
             "market": "KOSDAQ"
         },
         {
             "ticker": "033340",
-            "name": "?????",
+            "name": "좋은사람들",
             "market": "KOSDAQ"
         },
         {
             "ticker": "034020",
-            "name": "???????",
+            "name": "두산에너빌리티",
             "market": "KOSPI"
         },
         {
             "ticker": "034220",
-            "name": "LG?????",
+            "name": "LG디스플레이",
             "market": "KOSPI"
         },
         {
             "ticker": "034830",
-            "name": "??????",
+            "name": "한국토지신탁",
             "market": "KOSPI"
         },
         {
-            "ticker": "035620",
-            "name": "???????",
-            "market": "KOSDAQ"
+            "ticker": "035720",
+            "name": "카카오",
+            "market": "KOSPI"
         },
         {
-            "ticker": "035810",
-            "name": "?????",
-            "market": "KOSDAQ"
-        },
-        {
-            "ticker": "036120",
-            "name": "??????",
+            "ticker": "036090",
+            "name": "위지트",
             "market": "KOSDAQ"
         },
         {
             "ticker": "036170",
-            "name": "??????",
+            "name": "에이치엠넥스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "036540",
-            "name": "SFA???",
+            "name": "SFA반도체",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "038060",
+            "name": "루멘스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "038500",
-            "name": "?????",
+            "name": "삼표시멘트",
             "market": "KOSDAQ"
         },
         {
             "ticker": "038530",
-            "name": "?????",
+            "name": "케이바이오",
             "market": "KOSDAQ"
         },
         {
             "ticker": "038880",
-            "name": "????",
+            "name": "아이에이",
             "market": "KOSDAQ"
         },
         {
             "ticker": "039860",
-            "name": "????",
+            "name": "나노엔텍",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "042040",
+            "name": "케이피엠테크",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "042700",
+            "name": "한미반도체",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "043910",
+            "name": "자연과환경",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "044480",
+            "name": "빌리언스",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "045390",
+            "name": "대아티아이",
             "market": "KOSDAQ"
         },
         {
             "ticker": "046120",
-            "name": "????",
+            "name": "오르비텍",
             "market": "KOSDAQ"
         },
         {
             "ticker": "046890",
-            "name": "?????",
+            "name": "서울반도체",
             "market": "KOSDAQ"
         },
         {
             "ticker": "047040",
-            "name": "????",
+            "name": "대우건설",
             "market": "KOSPI"
         },
         {
-            "ticker": "048410",
-            "name": "?????",
+            "ticker": "047770",
+            "name": "코데즈컴바인",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "049080",
-            "name": "????",
+            "ticker": "048410",
+            "name": "현대바이오",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "049180",
+            "name": "셀루메드",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "049470",
+            "name": "비트플래닛",
             "market": "KOSDAQ"
         },
         {
             "ticker": "049630",
-            "name": "?????",
+            "name": "재영솔루텍",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "050890",
-            "name": "???",
+            "ticker": "050090",
+            "name": "비케이홀딩스",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "054210",
-            "name": "???",
+            "ticker": "052770",
+            "name": "아이톡시",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "053950",
+            "name": "경남제약",
             "market": "KOSDAQ"
         },
         {
             "ticker": "054220",
-            "name": "?????",
+            "name": "비츠로시스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "056090",
-            "name": "?????",
+            "name": "시지메드텍",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "060250",
+            "name": "NHN KCP",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "060720",
+            "name": "KH바텍",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "060900",
+            "name": "에이전트AI",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "064260",
+            "name": "다날",
             "market": "KOSDAQ"
         },
         {
             "ticker": "065170",
-            "name": "????",
+            "name": "비엘팜텍",
             "market": "KOSDAQ"
         },
         {
             "ticker": "065500",
-            "name": "??????",
+            "name": "오리엔트정공",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "066360",
-            "name": "????",
-            "market": "KOSDAQ"
+            "ticker": "066570",
+            "name": "LG전자",
+            "market": "KOSPI"
         },
         {
             "ticker": "067310",
-            "name": "??????",
+            "name": "하나마이크론",
             "market": "KOSDAQ"
         },
         {
             "ticker": "067390",
-            "name": "???",
-            "market": "KOSDAQ"
-        },
-        {
-            "ticker": "068240",
-            "name": "????",
+            "name": "아스트",
             "market": "KOSDAQ"
         },
         {
             "ticker": "069460",
-            "name": "?????",
+            "name": "대호에이엘",
             "market": "KOSPI"
         },
         {
@@ -442,67 +597,92 @@
         },
         {
             "ticker": "069540",
-            "name": "????",
+            "name": "빛과전자",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "072470",
+            "name": "우리산업홀딩스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "076610",
-            "name": "?????",
+            "name": "해성옵틱스",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "077360",
-            "name": "??????",
+            "ticker": "078020",
+            "name": "LS증권",
             "market": "KOSDAQ"
         },
         {
             "ticker": "078590",
-            "name": "?????",
+            "name": "휴림에이텍",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "078860",
+            "name": "스테이지원엔터",
             "market": "KOSDAQ"
         },
         {
             "ticker": "079190",
-            "name": "????",
+            "name": "케스피온",
             "market": "KOSDAQ"
         },
         {
             "ticker": "080220",
-            "name": "?????",
+            "name": "제주반도체",
             "market": "KOSDAQ"
         },
         {
             "ticker": "083640",
-            "name": "??",
+            "name": "인콘",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "083660",
-            "name": "CSA ???",
+            "ticker": "085810",
+            "name": "알티캐스트",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "085620",
-            "name": "??????",
-            "market": "KOSPI"
+            "ticker": "086520",
+            "name": "에코프로",
+            "market": "KOSDAQ"
         },
         {
             "ticker": "088350",
-            "name": "????",
+            "name": "한화생명",
             "market": "KOSPI"
         },
         {
+            "ticker": "089150",
+            "name": "케이씨티",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "090710",
-            "name": "????",
+            "name": "휴림로봇",
             "market": "KOSDAQ"
         },
         {
             "ticker": "091160",
-            "name": "KODEX ???",
+            "name": "KODEX 반도체",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "091180",
+            "name": "KODEX 자동차",
             "market": "KOSPI"
         },
         {
             "ticker": "092040",
-            "name": "????",
+            "name": "아미코젠",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "092190",
+            "name": "서울바이오시스",
             "market": "KOSDAQ"
         },
         {
@@ -511,8 +691,23 @@
             "market": "KOSPI"
         },
         {
-            "ticker": "096350",
-            "name": "?????",
+            "ticker": "097800",
+            "name": "윈팩",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "099440",
+            "name": "스맥",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "101330",
+            "name": "모베이스",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "101400",
+            "name": "엔시트론",
             "market": "KOSDAQ"
         },
         {
@@ -522,192 +717,207 @@
         },
         {
             "ticker": "102970",
-            "name": "KODEX ??",
+            "name": "KODEX 증권",
             "market": "KOSPI"
         },
         {
-            "ticker": "103840",
-            "name": "??",
-            "market": "KOSDAQ"
-        },
-        {
-            "ticker": "109960",
-            "name": "????",
+            "ticker": "113810",
+            "name": "디젠스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "114800",
-            "name": "KODEX ???",
+            "name": "KODEX 인버스",
             "market": "KOSPI"
         },
         {
+            "ticker": "115480",
+            "name": "씨유메디칼",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "115530",
+            "name": "씨엔플러스",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "118000",
-            "name": "????",
+            "name": "메타케어",
             "market": "KOSPI"
         },
         {
             "ticker": "122630",
-            "name": "KODEX ????",
+            "name": "KODEX 레버리지",
             "market": "KOSPI"
+        },
+        {
+            "ticker": "123040",
+            "name": "엠에스오토텍",
+            "market": "KOSDAQ"
         },
         {
             "ticker": "123310",
-            "name": "TIGER ???",
-            "market": "KOSPI"
-        },
-        {
-            "ticker": "123890",
-            "name": "??????",
+            "name": "TIGER 인버스",
             "market": "KOSPI"
         },
         {
             "ticker": "125020",
-            "name": "???????",
+            "name": "티씨머티리얼즈",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "131180",
-            "name": "??",
+            "ticker": "125490",
+            "name": "한라캐스트",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "131400",
-            "name": "???????",
+            "ticker": "126640",
+            "name": "화신정공",
             "market": "KOSDAQ"
         },
         {
             "ticker": "144600",
-            "name": "KODEX ???(H)",
+            "name": "KODEX 은선물(H)",
             "market": "KOSPI"
         },
         {
-            "ticker": "147830",
-            "name": "????",
-            "market": "KOSDAQ"
-        },
-        {
             "ticker": "152550",
-            "name": "??ANKOR??",
+            "name": "한국ANKOR유전",
             "market": "KOSPI"
         },
         {
             "ticker": "157500",
-            "name": "TIGER ??",
+            "name": "TIGER 증권",
             "market": "KOSPI"
         },
         {
-            "ticker": "161510",
-            "name": "PLUS ????",
-            "market": "KOSPI"
+            "ticker": "159910",
+            "name": "에코글로우",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "178320",
+            "name": "서진시스템",
+            "market": "KOSDAQ"
         },
         {
             "ticker": "187660",
-            "name": "??ADM",
+            "name": "현대ADM",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "204610",
+            "name": "티쓰리",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "205470",
+            "name": "휴마시스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "206650",
-            "name": "???????",
+            "name": "유바이오로직스",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "208370",
-            "name": "???????",
-            "market": "KOSDAQ"
-        },
-        {
-            "ticker": "220260",
-            "name": "????",
+            "ticker": "214180",
+            "name": "헥토이노베이션",
             "market": "KOSDAQ"
         },
         {
             "ticker": "221800",
-            "name": "?????",
+            "name": "유투바이오",
             "market": "KOSDAQ"
         },
         {
             "ticker": "222080",
-            "name": "?????",
+            "name": "씨아이에스",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "225430",
-            "name": "?????",
+            "ticker": "225190",
+            "name": "LK삼양",
             "market": "KOSDAQ"
         },
         {
             "ticker": "227950",
-            "name": "???",
+            "name": "엔투텍",
             "market": "KOSDAQ"
         },
         {
             "ticker": "228790",
-            "name": "TIGER ???",
+            "name": "TIGER 화장품",
             "market": "KOSPI"
         },
         {
             "ticker": "229000",
-            "name": "????",
+            "name": "젠큐릭스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "229200",
-            "name": "KODEX ???150",
+            "name": "KODEX 코스닥150",
             "market": "KOSPI"
         },
         {
             "ticker": "232080",
-            "name": "TIGER ???150",
+            "name": "TIGER 코스닥150",
             "market": "KOSPI"
         },
         {
             "ticker": "233740",
-            "name": "KODEX ???150????",
+            "name": "KODEX 코스닥150레버리지",
             "market": "KOSPI"
         },
         {
+            "ticker": "234340",
+            "name": "헥토파이낸셜",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "238120",
+            "name": "얼라인드",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "241520",
-            "name": "DSC??????",
+            "name": "DSC인베스트먼트",
             "market": "KOSDAQ"
         },
         {
             "ticker": "242040",
-            "name": "????",
+            "name": "나무기술",
             "market": "KOSDAQ"
         },
         {
             "ticker": "246690",
-            "name": "TS??????",
+            "name": "TS인베스트먼트",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "250930",
+            "name": "예선테크",
             "market": "KOSDAQ"
         },
         {
             "ticker": "251340",
-            "name": "KODEX ???150?????",
+            "name": "KODEX 코스닥150선물인버스",
             "market": "KOSPI"
         },
         {
             "ticker": "252670",
-            "name": "KODEX 200?????2X",
+            "name": "KODEX 200선물인버스2X",
             "market": "KOSPI"
         },
         {
             "ticker": "252710",
-            "name": "TIGER 200?????2X",
+            "name": "TIGER 200선물인버스2X",
             "market": "KOSPI"
         },
         {
-            "ticker": "252990",
-            "name": "?????",
-            "market": "KOSDAQ"
-        },
-        {
             "ticker": "253590",
-            "name": "???",
-            "market": "KOSDAQ"
-        },
-        {
-            "ticker": "254490",
-            "name": "?????",
+            "name": "네오셈",
             "market": "KOSDAQ"
         },
         {
@@ -717,92 +927,107 @@
         },
         {
             "ticker": "267320",
-            "name": "????",
+            "name": "나인테크",
             "market": "KOSDAQ"
         },
         {
             "ticker": "270520",
-            "name": "??",
+            "name": "앱튼",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "273060",
+            "name": "와이즈버즈",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "288330",
+            "name": "파라택시스코리아",
             "market": "KOSDAQ"
         },
         {
             "ticker": "288980",
-            "name": "?????",
+            "name": "모아데이타",
             "market": "KOSDAQ"
         },
         {
             "ticker": "289080",
-            "name": "SV??????",
-            "market": "KOSDAQ"
-        },
-        {
-            "ticker": "290550",
-            "name": "????",
+            "name": "SV인베스트먼트",
             "market": "KOSDAQ"
         },
         {
             "ticker": "290660",
-            "name": "????",
+            "name": "네오펙트",
             "market": "KOSDAQ"
         },
         {
             "ticker": "292150",
-            "name": "TIGER ???TOP10",
+            "name": "TIGER 코리아TOP10",
             "market": "KOSPI"
         },
         {
-            "ticker": "293580",
-            "name": "??IB",
+            "ticker": "298830",
+            "name": "슈어소프트테크",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "304840",
-            "name": "?????",
+            "ticker": "302550",
+            "name": "리메드",
             "market": "KOSDAQ"
         },
         {
             "ticker": "305720",
-            "name": "KODEX 2?????",
+            "name": "KODEX 2차전지산업",
             "market": "KOSPI"
         },
         {
-            "ticker": "306620",
-            "name": "?????",
+            "ticker": "307180",
+            "name": "아이엘",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "307180",
-            "name": "???",
+            "ticker": "308080",
+            "name": "바이젠셀",
             "market": "KOSDAQ"
         },
         {
             "ticker": "317240",
-            "name": "TS????",
+            "name": "TS트릴리온",
             "market": "KOSDAQ"
         },
         {
             "ticker": "319400",
-            "name": "?????",
+            "name": "현대무벡스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "321370",
-            "name": "???",
-            "market": "KOSDAQ"
-        },
-        {
-            "ticker": "328380",
-            "name": "????",
+            "name": "센서뷰",
             "market": "KOSDAQ"
         },
         {
             "ticker": "329200",
-            "name": "TIGER ????????",
+            "name": "TIGER 리츠부동산인프라",
             "market": "KOSPI"
         },
         {
+            "ticker": "330350",
+            "name": "위더스제약",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "339950",
+            "name": "아이비김영",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "340930",
-            "name": "??????",
+            "name": "유일에너테크",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "347700",
+            "name": "스피어",
             "market": "KOSDAQ"
         },
         {
@@ -812,62 +1037,62 @@
         },
         {
             "ticker": "360750",
-            "name": "TIGER ??S&P500",
+            "name": "TIGER 미국S&P500",
             "market": "KOSPI"
-        },
-        {
-            "ticker": "363260",
-            "name": "?????",
-            "market": "KOSDAQ"
         },
         {
             "ticker": "364980",
-            "name": "TIGER 2???TOP10",
+            "name": "TIGER 2차전지TOP10",
             "market": "KOSPI"
         },
         {
-            "ticker": "373200",
-            "name": "?????",
+            "ticker": "377030",
+            "name": "비트맥스",
             "market": "KOSDAQ"
         },
         {
-            "ticker": "377030",
-            "name": "????",
-            "market": "KOSDAQ"
+            "ticker": "377300",
+            "name": "카카오페이",
+            "market": "KOSPI"
         },
         {
             "ticker": "379800",
-            "name": "KODEX ??S&P500",
+            "name": "KODEX 미국S&P500",
             "market": "KOSPI"
         },
         {
             "ticker": "379810",
-            "name": "KODEX ?????100",
+            "name": "KODEX 미국나스닥100",
             "market": "KOSPI"
         },
         {
-            "ticker": "388050",
-            "name": "????",
+            "ticker": "380540",
+            "name": "옵티코어",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "382480",
+            "name": "지아이텍",
             "market": "KOSDAQ"
         },
         {
             "ticker": "395160",
-            "name": "KODEX AI???",
+            "name": "KODEX AI반도체",
             "market": "KOSPI"
         },
         {
             "ticker": "395270",
-            "name": "HANARO Fn K-???",
+            "name": "HANARO Fn K-반도체",
             "market": "KOSPI"
         },
         {
             "ticker": "396300",
-            "name": "??????",
+            "name": "세아메카닉스",
             "market": "KOSDAQ"
         },
         {
             "ticker": "396500",
-            "name": "TIGER ???TOP10",
+            "name": "TIGER 반도체TOP10",
             "market": "KOSPI"
         },
         {
@@ -877,127 +1102,197 @@
         },
         {
             "ticker": "411060",
-            "name": "ACE KRX???",
+            "name": "ACE KRX금현물",
             "market": "KOSPI"
         },
         {
             "ticker": "412350",
-            "name": "????",
+            "name": "레이저쎌",
             "market": "KOSDAQ"
         },
         {
             "ticker": "412570",
-            "name": "TIGER 2???TOP10????",
+            "name": "TIGER 2차전지TOP10레버리지",
             "market": "KOSPI"
         },
         {
+            "ticker": "413630",
+            "name": "씨피시스템",
+            "market": "KOSDAQ"
+        },
+        {
             "ticker": "417010",
-            "name": "???",
+            "name": "나노팀",
             "market": "KOSDAQ"
         },
         {
             "ticker": "417200",
-            "name": "LS?????",
+            "name": "LS머트리얼즈",
             "market": "KOSDAQ"
         },
         {
             "ticker": "417840",
-            "name": "???",
+            "name": "저스템",
             "market": "KOSDAQ"
         },
         {
+            "ticker": "445290",
+            "name": "KODEX 로봇액티브",
+            "market": "KOSPI"
+        },
+        {
             "ticker": "448330",
-            "name": "KODEX ????????",
+            "name": "KODEX 삼성전자채권혼합",
             "market": "KOSPI"
         },
         {
             "ticker": "452260",
-            "name": "??????",
+            "name": "한화갤러리아",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "453850",
+            "name": "ACE 미국30년국채액티브(H)",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "455850",
+            "name": "SOL AI반도체소부장",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "461950",
+            "name": "KODEX 2차전지핵심소재10",
             "market": "KOSPI"
         },
         {
             "ticker": "462010",
-            "name": "TIGER 2?????Fn",
+            "name": "TIGER 2차전지소재Fn",
             "market": "KOSPI"
         },
         {
             "ticker": "462330",
-            "name": "KODEX 2?????????",
+            "name": "KODEX 2차전지산업레버리지",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "462860",
+            "name": "더즌",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "464080",
+            "name": "에스오에스랩",
+            "market": "KOSDAQ"
+        },
+        {
+            "ticker": "469070",
+            "name": "RISE AI&로봇",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "469170",
+            "name": "ACE 포스코그룹포커스",
             "market": "KOSPI"
         },
         {
             "ticker": "472150",
-            "name": "TIGER ?????????",
+            "name": "TIGER 배당커버드콜액티브",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "475720",
+            "name": "RISE 200위클리커버드콜",
             "market": "KOSPI"
         },
         {
             "ticker": "476060",
-            "name": "????????",
+            "name": "온코닉테라퓨틱스",
             "market": "KOSDAQ"
         },
         {
+            "ticker": "487230",
+            "name": "KODEX 미국AI전력핵심인프라",
+            "market": "KOSPI"
+        },
+        {
             "ticker": "487240",
-            "name": "KODEX AI??????",
+            "name": "KODEX AI전력핵심설비",
             "market": "KOSPI"
         },
         {
             "ticker": "488080",
-            "name": "TIGER ???TOP10????",
+            "name": "TIGER 반도체TOP10레버리지",
             "market": "KOSPI"
         },
         {
             "ticker": "489790",
-            "name": "????",
+            "name": "한화비전",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "494310",
+            "name": "KODEX 반도체레버리지",
             "market": "KOSPI"
         },
         {
             "ticker": "495050",
-            "name": "RISE ??????",
+            "name": "RISE 코리아밸류업",
             "market": "KOSPI"
         },
         {
             "ticker": "498400",
-            "name": "KODEX 200?????????",
-            "market": "KOSPI"
-        },
-        {
-            "ticker": "498410",
-            "name": "KODEX ?????TOP10?????????",
+            "name": "KODEX 200타겟위클리커버드콜",
             "market": "KOSPI"
         },
         {
             "ticker": "500027",
-            "name": "?? ??? 2X WTI?? ?? ETN(H)",
+            "name": "신한 인버스 2X WTI원유 선물 ETN(H)",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "520055",
+            "name": "미래에셋 인버스 2X 코스피200 선물 ETN",
             "market": "KOSPI"
         },
         {
             "ticker": "520057",
-            "name": "???? ??? 2X ???150 ?? ETN",
+            "name": "미래에셋 인버스 2X 코스닥150 선물 ETN",
             "market": "KOSPI"
         },
         {
             "ticker": "530036",
-            "name": "?? ??? 2X WTI?? ?? ETN",
+            "name": "삼성 인버스 2X WTI원유 선물 ETN",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "530062",
+            "name": "삼성 인버스 2X 은 선물 ETN(H)",
+            "market": "KOSPI"
+        },
+        {
+            "ticker": "530105",
+            "name": "삼성 인버스 2X 코스피200 선물 ETN",
             "market": "KOSPI"
         },
         {
             "ticker": "530107",
-            "name": "?? ??? 2X ???150 ?? ETN",
+            "name": "삼성 인버스 2X 코스닥150 선물 ETN",
             "market": "KOSPI"
         },
         {
-            "ticker": "550043",
-            "name": "N2 ??? ???? WTI?? ?? ETN(H)",
+            "ticker": "530111",
+            "name": "삼성 레버리지 천연가스 선물 ETN C",
             "market": "KOSPI"
         },
         {
             "ticker": "900070",
-            "name": "??????",
+            "name": "글로벌에스엠",
             "market": "KOSDAQ"
         },
         {
             "ticker": "900300",
-            "name": "????????",
+            "name": "오가닉티코스메틱",
             "market": "KOSDAQ"
         }
     ]
