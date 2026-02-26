@@ -31,6 +31,16 @@
             "user_email": "kimgeon3@gmail.com"
         },
         {
+            "user_id": "test14",
+            "user_password": "1234",
+            "user_email": "hi020514@gmail.com"
+        },
+        {
+            "user_id": "testuser",
+            "user_password": "1234",
+            "user_email": "hi020514@naver.com"
+        },
+        {
             "user_id": "testusr",
             "user_password": "hashed_password_mock",
             "user_email": "test@example.com"

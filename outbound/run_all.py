@@ -27,7 +27,9 @@ def main():
         "D_export_price_snapshots.py",
         "E_export_analysis_signals.py",
         "F_export_recommendations.py",
-        "G_export_newsletters.py"
+        "G_export_newsletters.py",
+        "H_export_stock_fundamentals.py",
+        "I_export_investor_trends.py"
     ]
     
     start_time = time.time()
