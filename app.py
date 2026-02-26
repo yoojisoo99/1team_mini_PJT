@@ -101,6 +101,29 @@ if st.session_state['logged_in']:
 # 1. 데이터 로드
 # ============================================================
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+OUT_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out_data')
+
+def run_outbound_sync():
+    """DB에서 로컬로 데이터를 동기화하는 outbound/run_all.py 스크립트를 실행합니다."""
+    import subprocess
+    import sys
+    import os
+    
+    script_path = os.path.join(os.path.dirname(__file__), 'outbound', 'run_all.py')
+    if os.path.exists(script_path):
+        try:
+            # 동기화 시작 토스트 알림
+            st.toast("🔄 DB 데이터를 로컬로 동기화 중입니다...", icon="🔃")
+            result = subprocess.run([sys.executable, script_path], 
+                                  capture_output=True, 
+                                  text=True, 
+                                  check=True)
+            st.toast("✅ DB 동기화 완료!", icon="✨")
+            return True
+        except Exception as e:
+            st.error(f"DB 동기화 중 오류 발생: {e}")
+            return False
+    return False
 
 
 def ensure_data_exists():
@@ -123,11 +146,17 @@ def ensure_data_exists():
 
 @st.cache_data(ttl=300)
 def load_latest_data():
-    """out_data/ 디렉토리에서 최종 백업된 JSON 데이터를 로드합니다."""
+    """out_data/ 디렉토리에서 최종 백업된 JSON 데이터를 로드합니다. 로드 전 DB 동기화를 수행합니다."""
     import json
     import os
     
-    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out_data')
+    # 데이터 로드 전 DB에서 로컬로 최신 데이터 가져오기
+    # (매번 실행하면 느려질 수 있으므로, 세션당 1회 또는 특정 간격으로 실행하는 로직이 향후 필요할 수 있음)
+    if 'last_sync_time' not in st.session_state:
+        run_outbound_sync()
+        st.session_state['last_sync_time'] = time.time()
+
+    out_dir = OUT_DATA_DIR
     
     stock_df = pd.DataFrame()
     signals_df = pd.DataFrame()

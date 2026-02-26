@@ -1,0 +1,46 @@
+import subprocess
+import sys
+import os
+import time
+
+def run_script(script_name):
+    print(f"[Run] {script_name}...")
+    try:
+        # Use the same python interpreter
+        result = subprocess.run([sys.executable, script_name], 
+                                capture_output=True, 
+                                text=True, 
+                                check=True,
+                                cwd=os.path.dirname(os.path.abspath(__file__)))
+        print(result.stdout)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"[Error] {script_name}:")
+        print(e.stderr)
+        return False
+
+def main():
+    scripts = [
+        "A_export_users.py",
+        "B_export_user_type.py",
+        "C_export_stocks.py",
+        "D_export_price_snapshots.py",
+        "E_export_analysis_signals.py",
+        "F_export_recommendations.py",
+        "G_export_newsletters.py"
+    ]
+    
+    start_time = time.time()
+    print("=== Starting Full Outbound Sync ===")
+    
+    success_count = 0
+    for script in scripts:
+        if run_script(script):
+            success_count += 1
+            
+    end_time = time.time()
+    print(f"=== Sync Completed in {end_time - start_time:.2f}s ===")
+    print(f"DONE: Successfully ran {success_count}/{len(scripts)} scripts.")
+
+if __name__ == "__main__":
+    main()
