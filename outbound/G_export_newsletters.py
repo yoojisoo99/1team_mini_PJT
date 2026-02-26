@@ -6,7 +6,7 @@ TABLE_NAME = "newsletters"
 ROOT_KEY = "newsletters"
 OUTPUT_PATH = "out_data/newsletters_export.json"
 
-COLUMNS = ["id", "user_id", "created_at", "title", "content"]
+COLUMNS = ["user_id", "type_id", "created_at", "title", "content"]
 
 
 def main():

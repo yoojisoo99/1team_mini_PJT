@@ -24,6 +24,16 @@
             "user_id": "asd1",
             "user_password": "$2b$12$pCk5bdZ2lHqIwyHqmsfkIurPQHJ.oGVJP5w5IiHQCGLdIfvz0fxxe",
             "user_email": "asd@1.com"
+        },
+        {
+            "user_id": "user5",
+            "user_password": "$2b$12$MrHu5vGbBG6S.wFTnRen6OOvtDpVCbBomZYmYiyGF8RjpI4bo/4EO",
+            "user_email": "1111@example.com"
+        },
+        {
+            "user_id": "user7",
+            "user_password": "$2b$12$XEjwwsNqcqPyUz1.46JSeetYMBXIqevmxgVDlIo3qIe2JhNJGbqPS",
+            "user_email": "hi6379@naver.com"
         }
     ]
 }

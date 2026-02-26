@@ -6,7 +6,7 @@ TABLE_NAME = "recommendations"
 ROOT_KEY = "recommendations"
 OUTPUT_PATH = "out_data/recommendations_export.json"
 
-COLUMNS = ["id", "user_id", "ticker", "as_of", "score", "reason"]
+COLUMNS = ["user_id", "ticker", "as_of", "score", "reason"]
 
 
 def main():
@@ -16,7 +16,6 @@ def main():
         root_key=ROOT_KEY,
         output_path=OUTPUT_PATH,
         columns=COLUMNS,
-        where=WHERE
     )
     print(f"✅ recommendations export 완료: {OUTPUT_PATH}")
 

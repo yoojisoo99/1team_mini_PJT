@@ -6,7 +6,7 @@ TABLE_NAME = "user_type"
 ROOT_KEY = "user_type"
 OUTPUT_PATH = "out_data/user_type_export.json"
 
-COLUMNS = ["user_id", "type_id", "type_name", "description"]
+COLUMNS = ["user_id", "type_id", "type_name", "description","user_check"]
 
 def main():
     rows = export_table_to_json(

@@ -7,7 +7,7 @@ ROOT_KEY = "users"
 OUTPUT_PATH = "out_data/users_export.json"
 
 
-COLUMNS = ["user_id", "user_email"]  
+COLUMNS = ["user_id","user_password", "user_email"]  
 
 def main():
     rows = export_table_to_json(
