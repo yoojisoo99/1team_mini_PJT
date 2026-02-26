@@ -4,7 +4,7 @@ ENGINE_URL = "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4
 
 TABLE_NAME = "users"
 ROOT_KEY = "users"
-OUTPUT_PATH = "out_data/users_export.json"
+OUTPUT_PATH = "../out_data/users_export.json"
 
 
 COLUMNS = ["user_id","user_password", "user_email"]  
