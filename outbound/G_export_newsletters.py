@@ -4,7 +4,7 @@ ENGINE_URL = "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4
 
 TABLE_NAME = "newsletters"
 ROOT_KEY = "newsletters"
-OUTPUT_PATH = "out_data/newsletters_export.json"
+OUTPUT_PATH = "../out_data/newsletters_export.json"
 
 COLUMNS = ["user_id", "type_id", "created_at", "title", "content"]
 
