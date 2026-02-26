@@ -72,14 +72,14 @@ def load_latest_data():
     stock_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv')))
     news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
     hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
-    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.json'))) 
+    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.csv'))) 
 
     # fallback (루트 디렉토리 탐색)
     if not stock_files:
         root_dir = os.path.dirname(os.path.abspath(__file__))
         stock_files = sorted(glob.glob(os.path.join(root_dir, 'stock_data_*.csv')))
         news_files = sorted(glob.glob(os.path.join(root_dir, 'stock_news_*.csv')))
-        signal_files = sorted(glob.glob(os.path.join(root_dir, 'analysis_signals_*.json')))
+        signal_files = sorted(glob.glob(os.path.join(root_dir, 'analysis_signals_*.csv')))
 
     stock_df = pd.DataFrame()
     news_df = pd.DataFrame()
@@ -94,17 +94,12 @@ def load_latest_data():
     if hist_files:
         hist_df = pd.read_csv(hist_files[-1])
         
-    # JSON 파일 읽기 전용 로직
+    # CSV 파일 읽기 전용 로직
     if signal_files:
         try:
-            with open(signal_files[-1], 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                if isinstance(data, dict) and "analysis_signals" in data:
-                    signals_df = pd.DataFrame(data["analysis_signals"])
-                else:
-                    signals_df = pd.DataFrame(data)
+            signals_df = pd.read_csv(signal_files[-1])
         except Exception as e:
-            print(f"Failed to load JSON signals: {e}")
+            print(f"Failed to load CSV signals: {e}")
 
     # signals가 없으면 실시간 생성 (Fallback)
     if signals_df.empty and not stock_df.empty:
@@ -235,6 +230,10 @@ st.markdown("""
         padding: 8px 24px;
         font-weight: 500;
     }
+    /*  탭 하단의 빨간색 강조 선(인디케이터) 제거 */
+    [data-baseweb="tab-highlight"] {
+        display: none !important;
+    }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #a67c52, #c19b76) !important;
@@ -270,6 +269,17 @@ st.markdown("""
         color: #f0e8dc !important;
         font-size: 14px;
     }
+      
+    /* 1. 드롭다운이 펼쳐졌을 때 각 항목의 글자색 변경 */
+    div[data-baseweb="popover"] li {
+        color: #000000 !important; /* 글자색을 검정으로 강제 */
+        background-color: transparent !important;
+    }
+    /* 2. 이미 선택되어 박스에 표시되는 글자색 (가독성 확보) */
+    div[data-baseweb="select"] > div:first-child {
+        color: #ffffff !important; /* 이 부분은 배경이 어두우면 흰색, 밝으면 검정으로 조절하세요 */
+    }
+        
 
     /* 드롭다운 (셀렉트박스) 내부 텍스트 및 팝업창 스타일 (신규 Streamlit UI 대응 포함) */
     .stSelectbox div[data-baseweb="select"] > div {
@@ -419,8 +429,8 @@ import json
 import bcrypt as _bcrypt  # passlib 대신 raw bcrypt 사용 (backend 호환 문제 해결)
 import os
 
-USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.json')
-USER_TYPE_DB_FILE = os.path.join(DATA_DIR, 'user_type_db.json')
+USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.csv')
+USER_TYPE_DB_FILE = os.path.join(DATA_DIR, 'user_type_db.csv')
 
 def init_user_type_table():
     pass # 파일 기반 관리로 변경되었으므로 별도의 초기화 불필요
@@ -428,30 +438,19 @@ def init_user_type_table():
 def load_users():
     if os.path.exists(USERS_DB_FILE):
         try:
-            with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                if isinstance(data, dict) and "users" in data:
-                    fallback_dict = {}
-                    for u in data["users"]:
-                        fallback_dict[u["user_id"]] = {
-                            "user_password": u.get("user_password", ""),
-                            "user_email": u.get("user_email", "")
-                        }
-                    return fallback_dict
-                return data
-        except:
+            df = pd.read_csv(USERS_DB_FILE)
+            fallback_dict = {}
+            for _, row in df.iterrows():
+                fallback_dict[str(row["user_id"])] = {
+                    "user_password": str(row.get("user_password", "")),
+                    "user_email": str(row.get("user_email", ""))
+                }
+            return fallback_dict
+        except Exception as e:
             pass
     return {}
 
 def save_users(users_dict):
-    try:
-        with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if not isinstance(data, dict):
-                data = {"users": []}
-    except:
-        data = {"users": []}
-        
     new_users = []
     for uid, udata in users_dict.items():
         new_users.append({
@@ -459,28 +458,27 @@ def save_users(users_dict):
             "user_password": udata.get("user_password", ""),
             "user_email": udata.get("user_email", "")
         })
-    data["users"] = new_users
-    
-    with open(USERS_DB_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    df = pd.DataFrame(new_users)
+    df.to_csv(USERS_DB_FILE, index=False, encoding='utf-8-sig')
 
-def save_user_profile(user_id, type_id):
+def save_user_profile(user_id, type_id, user_check=0):
     try:
-        with open(USER_TYPE_DB_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if not isinstance(data, dict) or "user_type" not in data:
-                data = {"user_type": []}
+        if os.path.exists(USER_TYPE_DB_FILE):
+            df = pd.read_csv(USER_TYPE_DB_FILE)
+            user_type_list = df.to_dict('records')
+        else:
+            user_type_list = []
     except:
-        data = {"user_type": []}
+        user_type_list = []
         
     type_names = {1: "안정형", 2: "안정추구형", 3: "위험중립형", 4: "적극투자형", 5: "공격투자형"}
-    user_type_list = data.get("user_type", [])
     found = False
     for ut in user_type_list:
-        if ut.get("user_id") == user_id:
+        if str(ut.get("user_id")) == str(user_id):
             ut["type_id"] = type_id
             ut["type_name"] = type_names.get(type_id, "Unknown Profile")
             ut["description"] = f"User has been profiled as {ut['type_name']}."
+            ut["user_check"] = user_check
             found = True
             break
             
@@ -489,12 +487,12 @@ def save_user_profile(user_id, type_id):
             "user_id": user_id,
             "type_id": type_id,
             "type_name": type_names.get(type_id, "Unknown Profile"),
-            "description": f"User has been profiled as {type_names.get(type_id, 'Unknown Profile')}."
+            "description": f"User has been profiled as {type_names.get(type_id, 'Unknown Profile')}.",
+            "user_check": user_check
         })
         
-    data["user_type"] = user_type_list
-    with open(USER_TYPE_DB_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    df = pd.DataFrame(user_type_list)
+    df.to_csv(USER_TYPE_DB_FILE, index=False, encoding='utf-8-sig')
 
 if 'user_type_init' not in st.session_state:
     init_user_type_table()
@@ -546,26 +544,29 @@ with st.sidebar:
     # 로그인 폼 구성
     if not st.session_state['logged_in']:
         st.markdown("### 🔑 로그인")
-        login_id = st.text_input("아이디", key="login_id")
-        login_pw = st.text_input("비밀번호", type="password", key="login_pw")
-        if st.button("로그인", use_container_width=True):
-            users = load_users()
-            if login_id in users:
-                user_data = users[login_id]
-                if isinstance(user_data, str):
-                    hashed_pw = user_data
-                else:
-                    hashed_pw = user_data.get("user_password", "")
-                    
-                if _safe_verify(login_pw, hashed_pw):
-                    st.session_state['logged_in'] = True
-                    st.session_state['username'] = login_id
-                    st.success("로그인 성공!")
-                    st.rerun()
+        with st.form("login_form"):
+            login_id = st.text_input("아이디", key="login_id")
+            login_pw = st.text_input("비밀번호", type="password", key="login_pw")
+            submitted = st.form_submit_button("로그인", use_container_width=True)
+            
+            if submitted:
+                users = load_users()
+                if login_id in users:
+                    user_data = users[login_id]
+                    if isinstance(user_data, str):
+                        hashed_pw = user_data
+                    else:
+                        hashed_pw = user_data.get("user_password", "")
+                        
+                    if _safe_verify(login_pw, hashed_pw):
+                        st.session_state['logged_in'] = True
+                        st.session_state['username'] = login_id
+                        st.success("로그인 성공!")
+                        st.rerun()
+                    else:
+                        st.error("아이디 또는 비밀번호가 틀렸습니다.")
                 else:
                     st.error("아이디 또는 비밀번호가 틀렸습니다.")
-            else:
-                st.error("아이디 또는 비밀번호가 틀렸습니다.")
                 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("📝 회원가입 하기", use_container_width=True):
@@ -673,16 +674,11 @@ if page == "📝 회원가입":
                                 import sys
                                 script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'A_users_table.py')
                                 
-                                # 시간 제한을 30초로 늘리고, 현재 파이썬 환경(sys.executable)을 보장
-                                res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
+                                # 백그라운드 스크립트 실행. 서버 연동 시간을 극적으로 줄임.
+                                subprocess.Popen([sys.executable, script_path])
                                 
-                                if res.returncode == 0:
-                                    st.write("🌐 DB 서버 테이블 최신화 성공")
-                                    status.update(label="DB 연동 완료", state="complete")
-                                else:
-                                    st.write("⚠️ DB 서버 연결에 실패했거나 지연되었습니다.")
-                                    # 사용자 친화적으로 에러 메시지 축소
-                                    status.update(label="DB 연동 실패 (로컬 접속은 가능)", state="error")
+                                st.write("🌐 DB 동기화 백그라운드 스케줄링 완료")
+                                status.update(label="DB 연동 완료 (백그라운드)", state="complete")
                                     
                             except subprocess.TimeoutExpired:
                                 st.write("⚠️ DB 서버 응답이 너무 늦습니다. (타임아웃)")
@@ -744,12 +740,9 @@ elif page == "🏠 메인 대시보드":
                 price = f"{row.현재가:,}"
                 change = f"{row.등락률}"
                 
-                # 순위 표시 추가 (1~50)
-                rank = i + 1
-                label_with_rank = f"{rank}. {row.종목명}"
                 
                 cols[col_idx].metric(
-                    label=label_with_rank, 
+                    label=row.종목명, 
                     value=price, 
                     delta=change,
                     delta_color="normal"
@@ -758,6 +751,8 @@ elif page == "🏠 메인 대시보드":
         st.info("수집된 데이터가 없습니다.")
         
     st.markdown("---")
+
+    
 
     # ── 요약 통계 ──
     summary = generate_analysis_summary(stock_df)
@@ -780,51 +775,130 @@ elif page == "🏠 메인 대시보드":
 
     with tab1:
         st.markdown("### 거래량 상위 종목")
+        
         market_filter = st.selectbox(
             "시장 선택", ["전체", "KOSPI", "KOSDAQ"], key="market_filter_vol"
         )
-        filtered = stock_df if market_filter == "전체" else stock_df[stock_df['시장'] == market_filter]
-        top20 = filtered.head(20)
+        # 1. 시장 필터링 적용
+        if market_filter == "전체":
+            filtered_df = stock_df.copy()
+        else:
+            filtered_df = stock_df[stock_df['시장'] == market_filter].copy()
 
-        if not top20.empty:
-            fig = px.bar(
-                top20,
-                x='종목명',
-                y='거래량',
-                color='시장',
-                color_discrete_map={'KOSPI': '#dcb98c', 'KOSDAQ': '#8a735c'},
-                title='거래량 상위 종목',
-                template='plotly_dark',
-            )
-            fig.update_layout(
-                xaxis_tickangle=-45,
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#f2ece4'),
-                height=500,
-            )
-            st.plotly_chart(fig, use_container_width=True)
+        # 2. 거래량 기준으로 내림차순 정렬
+        filtered_df = filtered_df.sort_values(by='거래량', ascending=False)
 
-            # 등락률 산점도
-            if '등락률(숫자)' in top20.columns:
-                fig2 = px.scatter(
+        # 3. 정렬된 데이터에서 상위 20개 추출
+        top20 = filtered_df.head(20)
+
+        col_left, col_pie1 = st.columns([1.5, 1])
+        with col_left:
+            if not top20.empty:
+                # 막대 그래프 (Bar Chart)
+                fig = px.bar(
                     top20,
-                    x='거래량',
-                    y='등락률(숫자)',
-                    size='거래대금',
+                    x='종목명',
+                    y='거래량',
                     color='시장',
-                    hover_name='종목명',
-                    color_discrete_map={'KOSPI': '#667eea', 'KOSDAQ': '#764ba2'},
-                    title='거래량 vs 등락률 (버블 크기 = 거래대금)',
+                    # 전체 선택 시 두 시장이 모두 보일 수 있도록 카테고리별 색상 지정
+                    color_discrete_map={'KOSPI': '#dcb98c', 'KOSDAQ': "#4a3728"},
+                    title=f'거래량 상위 종목 ({market_filter})',
                     template='plotly_dark',
+                    # 범례 제목(시장) 표시 설정
+                    #labels={'시장': '시장 구분'}
                 )
-                fig2.update_layout(
+            
+                # X축 순서가 거래량 순으로 유지되도록 설정
+                fig.update_layout(
+                    # 타이틀 색상 변경
+                    title={
+                    'font': {'color': "#ffffff", 'size': 20}
+                    },
+                    # 각 색상별 어떤 시장인지 표시
+                    showlegend=True,
+                    legend=dict(
+                        title_text='시장',
+                        font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+                        orientation="v", # 세로로 나열
+                        yanchor="top",
+                        y=0.99,
+                        xanchor="left",
+                        x=1.02 # 차트 오른쪽에 범례 표시
+                    ),
+                    #xaxis={'categoryorder':'total descending'},
+                    xaxis_tickangle=-45,
+                    xaxis=dict(
+                        {'categoryorder':'total descending'},
+                        title_font=dict(color="#ffffff"),   # 축 이름 색상
+                        tickfont=dict(color="#ffffff")   # 축 숫자 색상
+                    ),
+                    yaxis=dict(
+                        title_font=dict(color="#ffffff"),  # 축 이름 색상
+                        tickfont=dict(color="#ffffff")    # 축 숫자 색상
+                    ),
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='#e0e0ff'),
-                    height=500,
+                    font=dict(color="#ffffff"),
+                    height=550
                 )
-                st.plotly_chart(fig2, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("거래량 데이터가 없습니다.")
+
+        
+
+        with col_pie1:
+            # 1. 상승/하락 그룹 나누기 로직 (등락률 숫자가 있다고 가정)
+            def get_signal_label(row):
+                if row['등락률(숫자)'] > 0: return '상승 종목'
+                elif row['등락률(숫자)'] < 0: return '하락 종목'
+                else: return '보합'
+
+            # 상위 50개 혹은 전체 데이터를 대상으로 비중 계산
+            analysis_df = filtered_df.copy()
+            analysis_df['구분'] = analysis_df.apply(get_signal_label, axis=1)
+            
+            # 그룹별 거래량 합계
+            vol_dist = analysis_df.groupby('구분')['거래량'].sum().reset_index()
+
+            # 2. 도넛 차트 생성
+            fig_pie = px.pie(
+                vol_dist, 
+                values='거래량', 
+                names='구분',
+                hole=0.5,
+                color='구분',
+                color_discrete_map={'상승 종목': '#f85149', '하락 종목': '#3fb950', '보합': '#8b949e'}, # 상승 빨강, 하락 초록(해외 기준/취향따라 변경)
+                title=f"🔥 {market_filter} 거래량 수급 비중 (상승 vs 하락)"
+            )
+            
+            fig_pie.update_traces(textposition='inside', textinfo='percent+label',textfont=dict(size=16, family="Arial", color="black"),insidetextfont=dict(weight='bold'))
+            fig_pie.update_layout(
+                title={
+                    'font': {'color': "#ffffff", 'size': 20}
+                },
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color="#ffffff"),
+                showlegend=False,
+                margin=dict(t=50, b=0, l=0, r=0),
+                height=350
+            )
+            st.plotly_chart(fig_pie, use_container_width=True)
+            st.markdown("#### 💡 수급 비중 인사이트")
+            # 간단한 로직으로 시장 해석 제공
+            up_vol = vol_dist[vol_dist['구분'] == '상승 종목']['거래량'].sum()
+            total_vol = vol_dist['거래량'].sum()
+            up_ratio = (up_vol / total_vol) * 100 if total_vol > 0 else 0
+
+            if up_ratio > 60:
+                st.success(f"**강세장:** 현재 거래량의 {up_ratio:.1f}%가 상승 종목에 쏠려 있습니다. 매수세가 매우 강력합니다.")
+            elif up_ratio < 40:
+                st.error(f"**약세장:** 현재 거래량의 {100-up_ratio:.1f}%가 하락 종목에서 발생하고 있습니다. 패닉 셀링에 주의하세요.")
+            else:
+                st.info(f"**혼조세:** 상승/하락 종목의 거래량 비중이 팽팽합니다. 방향성이 결정될 때까지 관망이 필요합니다.")
+            
+            st.caption("※ 이 차트는 종목 수가 아닌, 실제 '거래된 대금/물량'의 비중을 나타냅니다.")   
 
     with tab2:
         st.markdown("### 외국인/기관 매매 동향")
@@ -837,30 +911,50 @@ elif page == "🏠 메인 대시보드":
                 top_n_display = st.slider("표시할 종목 수 (외국인 순매수 기준)", 10, 50, 20)
                 inv_df_top = inv_df.sort_values('외국인_순매수량', ascending=False).head(top_n_display)
 
-                fig3 = go.Figure()
-                fig3.add_trace(go.Bar(
+                fig2 = go.Figure()
+                fig2.add_trace(go.Bar(
                     x=inv_df_top['종목명'],
                     y=inv_df_top['외국인_순매수량'],
                     name='외국인',
                     marker_color='#dcb98c',
                 ))
-                fig3.add_trace(go.Bar(
+                fig2.add_trace(go.Bar(
                     x=inv_df_top['종목명'],
                     y=inv_df_top['기관_순매수량'],
                     name='기관',
-                    marker_color='#8a735c',
+                    marker_color="#3f3122",
                 ))
-                fig3.update_layout(
-                    title=f'외국인/기관 순매수량 비교 (상위 {top_n_display}종목)',
+                fig2.update_layout(
+                    title={
+                        'text': f'외국인/기관 순매수량 비교 (상위 {top_n_display}종목)',
+                        'font': {'color': "#ffffff", 'size': 20}
+                    },
                     barmode='group',
                     template='plotly_dark',
+                    xaxis=dict(
+                    title_font=dict(color="#ffffff"),  # 축 이름 색상
+                    tickfont=dict(color="#ffffff")    # 축 숫자 색상
+                    ),
+                    yaxis=dict(
+                    title_font=dict(color="#ffffff"),  # 축 이름 색상
+                    tickfont=dict(color="#ffffff")    # 축 숫자 색상
+                    ),
+                    showlegend=True,
+                    legend=dict(
+                        font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+                        orientation="v", # 세로로 나열
+                        yanchor="top",
+                        y=0.99,
+                        xanchor="left",
+                        x=1.02 # 차트 오른쪽에 범례 표시
+                    ),
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
                     font=dict(color='#f2ece4'),
                     xaxis_tickangle=-45,
                     height=500,
                 )
-                st.plotly_chart(fig3, use_container_width=True)
+                st.plotly_chart(fig2, use_container_width=True)
 
                 # Seaborn 히트맵 (matplotlib)
                 st.markdown("### 투자 지표 상관관계 히트맵")
@@ -882,6 +976,11 @@ elif page == "🏠 메인 대시보드":
                         annot_kws={'color': '#f2ece4', 'fontsize': 9},
                         cbar_kws={'label': '상관계수'},
                     )
+                    # --- 글자 뒤집힘/회전 방지 설정 ---
+                    # x축 레이블을 가로(0도)로 설정
+                    ax.set_xticklabels(ax.get_xticklabels(), rotation=0, color='#f2ece4')
+                    # y축 레이블을 가로(0도)로 설정 (기본은 보통 90도 돌아가 있음)
+                    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, color='#f2ece4')
                     ax.tick_params(colors='#f2ece4')
                     ax.xaxis.label.set_color('#f2ece4')
                     ax.yaxis.label.set_color('#f2ece4')
@@ -1004,12 +1103,24 @@ elif page == "📋 투자 성향 설문":
             answers[q['id']] = selected
             st.markdown("")
 
+        st.markdown("### 📧 뉴스레터 구독")
+        newsletter_opt = st.radio(
+            "이메일로 뉴스레터 구독 받으시겠습니까?",
+            options=["예", "아니오"],
+            horizontal=True,
+            key="newsletter_subscribe"
+        )
+        st.markdown("")
+
         submitted = st.form_submit_button(
             "🔍 투자 성향 진단하기",
             use_container_width=True,
         )
 
     if submitted:
+        # 뉴스레터 구독 여부 세션 저장
+        st.session_state['newsletter_subscribed'] = (newsletter_opt == "예")
+
         investor_type, total_score = classify_investor_type(answers)
         st.session_state['investor_type'] = investor_type
         st.session_state['survey_score'] = total_score
@@ -1028,18 +1139,31 @@ elif page == "📋 투자 성향 설문":
                 }
                 type_id = type_id_map.get(investor_type)
                 if type_id:
-                    save_user_profile(user_id, type_id)
+                    user_check_val = 1 if st.session_state.get('newsletter_subscribed') else 0
+                    save_user_profile(user_id, type_id, user_check=user_check_val)
                     st.toast(f"✅ {user_id}님의 투자 성향({investor_type})이 로컬에 저장되었습니다!")
                     
                     # 투자 성향 외부 DB 최신화 스크립트 실행 (B_users_type_table.py)
-                    try:
-                        import subprocess
-                        import sys
-                        import os
-                        script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'B_users_type_table.py')
-                        subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
-                    except Exception as e:
-                        print(f"B_users_type_table DB Sync failed: {e}")
+                    with st.status("📊 외부 DB 서버(B_users_type_table.py) 연동 중...", expanded=True) as status:
+                        try:
+                            import subprocess
+                            import sys
+                            import os
+                            script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'B_users_type_table.py')
+                            res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
+                            
+                            if res.returncode == 0:
+                                st.write("🌐 투자성향 DB 테이블 최신화 성공")
+                                status.update(label="DB 연동 완료", state="complete")
+                            else:
+                                st.write("⚠️ DB 서버 연결에 실패했거나 지연되었습니다.")
+                                status.update(label="DB 연동 실패 (로컬 저장은 완료)", state="error")
+                        except subprocess.TimeoutExpired:
+                            st.write("⚠️ DB 서버 응답이 너무 늦습니다. (타임아웃)")
+                            status.update(label="DB 연동 타임아웃 (로컬 저장은 완료)", state="error")
+                        except Exception as e:
+                            st.write(f"⚠️ 예기치 않은 오류: {e}")
+                            status.update(label="DB 연동 중 오류 발생", state="error")
 
         type_info = TYPE_DESCRIPTIONS[investor_type]
 
@@ -1562,11 +1686,11 @@ elif page == "📈 분석 신호":
     st.markdown("---")
 
     # 신호 필터
-    signal_filter = st.selectbox("신호 필터", ['전체', 'BUY', 'HOLD', 'SELL'], key='sig_filter')
+    signal_filter = st.selectbox("신호 필터", ['전체', '매수', '보유', '매도'], key='sig_filter')
     display_signals = signals_df if signal_filter == '전체' else signals_df[signals_df['signal'] == signal_filter]
 
     # 추세 점수 바 차트
-    color_map = {'BUY': '#3fb950', 'HOLD': '#d29922', 'SELL': '#f85149'}
+    color_map = {'매수': '#3fb950', '보유': '#d29922', '매도': '#f85149'}
     display_signals = display_signals.sort_values('trend_score', ascending=False)
 
     fig_sig = px.bar(
@@ -1581,17 +1705,41 @@ elif page == "📈 분석 신호":
     )
     fig_sig.update_traces(texttemplate='%{text:.0f}', textposition='outside')
     fig_sig.update_layout(
+        title={
+                'font': {'color': "#ffffff", 'size': 20}
+                },
+        # 각 색상별 어떤 시장인지 표시
+        showlegend=True,
+        legend=dict(
+        title_text='신호',
+        font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+        orientation="v", # 세로로 나열
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=1.02 # 차트 오른쪽에 범례 표시
+        ),
+        #xaxis={'categoryorder':'total descending'},
         xaxis_tickangle=-45,
+        xaxis=dict(
+            {'categoryorder':'total descending'},
+            title_font=dict(color="#ffffff"),   # 축 이름 색상
+            tickfont=dict(color="#ffffff")   # 축 숫자 색상
+            ),
+        yaxis=dict(
+            title_font=dict(color="#ffffff"),  # 축 이름 색상
+            tickfont=dict(color="#ffffff")    # 축 숫자 색상
+            ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#e6edf3'),
+        font=dict(color="#ffffff"),
         height=500,
     )
     # 기준선 추가
     fig_sig.add_hline(y=60, line_dash='dash', line_color='#3fb950',
-                      annotation_text='BUY 기준(60)', annotation_position='top left')
+                      annotation_text='매수 기준(60)', annotation_position='top right')
     fig_sig.add_hline(y=40, line_dash='dash', line_color='#f85149',
-                      annotation_text='SELL 기준(40)', annotation_position='bottom left')
+                      annotation_text='매도 기준(40)', annotation_position='bottom right')
     st.plotly_chart(fig_sig, use_container_width=True)
 
     # 신호 분포 파이 차트

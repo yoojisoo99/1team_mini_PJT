@@ -677,10 +677,9 @@ def scrape_historical_prices(tickers, days=5):
 
 
 # ============================================================
-# 6.5 신규 추가: JSON 저장 전용 함수
+# 6.5 신규 추가: CSV 저장 전용 함수
 # ============================================================
-def save_all_to_json(stock_df, signals_df=None, recs_df=None, newsletter_dict=None):
-    import json
+def save_all_to_csv(stock_df, signals_df=None, recs_df=None, newsletter_dict=None):
     import os
     from datetime import datetime
     
@@ -688,19 +687,18 @@ def save_all_to_json(stock_df, signals_df=None, recs_df=None, newsletter_dict=No
     today = datetime.now().strftime('%Y%m%d')
     time_suffix = datetime.now().strftime('%Y%m%d_%H%M%S')
     
-    def _write_json(data_dict, filename):
+    def _write_csv(df, filename):
         filepath = os.path.join('data', filename)
-        with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(data_dict, f, ensure_ascii=False, indent=2)
-        logger.info(f"  -> JSON 저장 완료: {filepath}")
+        df.to_csv(filepath, index=False, encoding='utf-8-sig')
+        logger.info(f"  -> CSV 저장 완료: {filepath}")
 
-    # (1) stocks.json
+    # (1) stocks.csv
     if not stock_df.empty:
         master = stock_df[['종목코드', '종목명', '시장']].drop_duplicates(subset='종목코드')
         master = master.rename(columns={'종목코드': 'ticker', '종목명': 'name', '시장': 'market'})
-        _write_json({"stocks": master.to_dict(orient='records')}, f"stocks_{today}.json")
+        _write_csv(master, f"stocks_{today}.csv")
         
-    # (2) price_snapshots.json
+    # (2) price_snapshots.csv
     if not stock_df.empty:
         required = ['종목코드', '수집시간', '현재가', '거래량', '거래대금']
         available = [c for c in required if c in stock_df.columns]
@@ -717,9 +715,9 @@ def save_all_to_json(stock_df, signals_df=None, recs_df=None, newsletter_dict=No
             snap['price'] = snap['price'].fillna(0).astype('int64')
             snap['volume'] = snap['volume'].fillna(0).astype('int64')
             snap['trade_value'] = snap['trade_value'].fillna(0).astype('int64')
-            _write_json({"price_snapshots": snap.to_dict(orient='records')}, f"price_snapshots_{time_suffix}.json")
+            _write_csv(snap, f"price_snapshots_{time_suffix}.csv")
 
-    # (3) analysis_signals.json
+    # (3) analysis_signals.csv
     if signals_df is not None and not signals_df.empty:
         sign = signals_df.copy()
         if '종목명' in sign.columns: sign.rename(columns={'종목명': 'id'}, inplace=True)
@@ -728,24 +726,24 @@ def save_all_to_json(stock_df, signals_df=None, recs_df=None, newsletter_dict=No
         
         if pd.api.types.is_datetime64_any_dtype(sign['as_of']):
             sign['as_of'] = sign['as_of'].dt.strftime('%Y-%m-%dT%H:%M:%S')
-        _write_json({"analysis_signals": sign.to_dict(orient='records')}, f"analysis_signals_{today}.json")
+        _write_csv(sign, f"analysis_signals_{today}.csv")
 
-    # (4) recommendations.json
+    # (4) recommendations.csv
     if recs_df is not None and not recs_df.empty:
         recs = recs_df.copy()
         if pd.api.types.is_datetime64_any_dtype(recs['as_of']):
             recs['as_of'] = recs['as_of'].dt.strftime('%Y-%m-%d')
         if 'id' not in recs.columns:
             recs.insert(0, 'id', range(1, len(recs) + 1))
-        _write_json({"recommendations": recs.to_dict(orient='records')}, f"recommendations_{today}.json")
+        _write_csv(recs, f"recommendations_{today}.csv")
 
-    # (5) newsletters.json
+    # (5) newsletters.csv
     if newsletter_dict:
         news_df = pd.DataFrame([newsletter_dict])
         if 'id' not in news_df.columns: news_df.insert(0, 'id', [101])
         if pd.api.types.is_datetime64_any_dtype(news_df['created_at']):
             news_df['created_at'] = news_df['created_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
-        _write_json({"newsletters": news_df.to_dict(orient='records')}, f"newsletters_{today}.json")
+        _write_csv(news_df, f"newsletters_{today}.csv")
 
 # ============================================================
 # 7. 전체 파이프라인 실행 함수
@@ -838,11 +836,11 @@ def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
         news_df=news_df,
     )
 
-    # ─── STEP 9: 전체 저장 (C~G) JSON ───
-    logger.info("[저장] 전체 데이터 JSON 파일로 저장 중...")
+    # ─── STEP 9: 전체 저장 (C~G) CSV ───
+    logger.info("[저장] 전체 데이터 CSV 파일로 저장 중...")
 
-    # save_all_to_json 내부 로직 실행
-    save_all_to_json(
+    # save_all_to_csv 내부 로직 실행
+    save_all_to_csv(
         stock_df=final_df,
         signals_df=signals_df,
         recs_df=recs_df,
