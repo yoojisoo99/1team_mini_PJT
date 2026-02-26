@@ -120,16 +120,10 @@ def ensure_data_exists():
 
 @st.cache_data(ttl=300)
 def load_latest_data():
-    """out_data/ 디렉토리에서 최종 백업된 JSON 데이터를 로드합니다. 로드 전 DB 동기화를 수행합니다."""
+    """out_data/ 디렉토리에서 최종 백업된 JSON 데이터를 로드합니다."""
     import json
     import os
     
-    # 데이터 로드 전 DB에서 로컬로 최신 데이터 가져오기
-    # (매번 실행하면 느려질 수 있으므로, 세션당 1회 또는 특정 간격으로 실행하는 로직이 향후 필요할 수 있음)
-    if 'last_sync_time' not in st.session_state:
-        run_outbound_sync()
-        st.session_state['last_sync_time'] = time.time()
-
     out_dir = OUT_DATA_DIR
     
     stock_df = pd.DataFrame()
@@ -721,9 +715,17 @@ with st.sidebar:
 
 
 # ============================================================
-# 📌 데이터 로드
+# 📌 데이터 로드 & DB 동기화
 # ============================================================
+# 1. 세션당 최초 1회 DB에서 로컬로 데이터 동기화 수행 (사이드바 메뉴 로드 전 실행)
+if 'last_sync_time' not in st.session_state:
+    run_outbound_sync()
+    st.session_state['last_sync_time'] = time.time()
+
+# 2. 로컬 데이터가 아예 없는 경우 스크래핑 (최초 실행용)
 ensure_data_exists()
+
+# 3. 로컬 JSON 데이터 로드 (캐싱 지원)
 stock_df, news_df, hist_df, signals_df = load_latest_data()
 
 
