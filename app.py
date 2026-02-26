@@ -421,7 +421,7 @@ st.markdown("""
         font-size: 14px;
     }
       
-    /* 1. 드롭다운이 펼쳐졌을 때 각 항목의 글자색 변경 */
+    /* 드롭다운이 펼쳐졌을 때 각 항목의 글자색 변경 */
     div[data-baseweb="popover"] li {
         color: #000000 !important; /* 글자색을 검정으로 강제 */
         background-color: transparent !important;
@@ -738,22 +738,57 @@ with st.sidebar:
             
     st.markdown("---")
 
-    menu_options = ["🏠 메인 대시보드", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
-                    "📈 분석 신호", "📰 종목 뉴스", "📧 뉴스레터"]
+    import streamlit as st
+    from streamlit_option_menu import option_menu
 
-    # 콜백 함수를 통해 session state 수동 업데이트 우회
-    def on_page_change():
-        st.session_state['current_page'] = st.session_state['menu_radio']
+    if 'current_page' not in st.session_state:
+        st.session_state['current_page'] = "🏠 메인 대시보드"
+    # --- 사이드바 메뉴 섹션 ---
+    with st.sidebar:
+        
+        menu_options = ["🏠 메인 대시보드", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
+                        "📈 분석 신호", "📰 종목 뉴스", "📧 뉴스레터"]
+        
+        # 아이콘 설정
+        menu_icons = ["house", "clipboard-check", "star", "graph-up", "newspaper", "envelope"]
 
-    st.radio(
-        "메뉴 선택",
-        menu_options,
-        index=menu_options.index(st.session_state['current_page']) if st.session_state['current_page'] in menu_options else 0,
-        key="menu_radio",
-        on_change=on_page_change,
-        label_visibility="collapsed",
-    )
-    
+        # option_menu 생성 (빨간 선 제거)
+        selected = option_menu(
+            menu_title=None,
+            options=menu_options,
+            icons=menu_icons,
+            menu_icon="cast",
+            default_index=menu_options.index(st.session_state['current_page']) if st.session_state['current_page'] in menu_options else 0,
+            styles={
+                "container": {
+                    "padding": "0!important", 
+                    "background-color": "transparent" # 컨테이너 배경 투명화
+                },
+                "icon": {"color": "#dcb98c", "font-size": "18px"}, 
+                "nav-link": {
+                    "font-size": "16px", 
+                    "text-align": "left", 
+                    "margin": "0px", 
+                    "color": "#ffffff",
+                    "background-color": "transparent", # 기본 배경을 투명하게 설정 (흰색 제거)
+                    "transition": "0.2s",
+                    "--hover-color": "rgba(255, 255, 255, 0.1)"
+                },
+                "nav-link-selected": {
+                    "background-color": "#BA996B",      # 선택된 탭 배경색 (원하시는 올리브색)
+                    "color": "#ffffff", 
+                    "font-weight": "600",
+                    "border-left": "none"
+                },
+            }
+        )
+
+        # 페이지 전환 로직
+        if st.session_state['current_page'] != selected:
+            st.session_state['current_page'] = selected
+            st.rerun()
+
+    # 최종 페이지 상태 저장
     page = st.session_state['current_page']
 
     st.markdown("---")
@@ -762,11 +797,11 @@ with st.sidebar:
         st.cache_data.clear()
         st.rerun()
 
-    with st.expander("🛠️ 시스템 관리"):
-        if st.button("📥 전체 시스템 리프레시", use_container_width=True, help="Web 스크래핑부터 DB 반영까지 전체 과정을 재실행합니다."):
-            run_full_system_sync()
-            st.cache_data.clear()
-            st.rerun()
+    # with st.expander("🛠️ 시스템 관리"):
+    #     if st.button("📥 전체 시스템 리프레시", use_container_width=True, help="Web 스크래핑부터 DB 반영까지 전체 과정을 재실행합니다."):
+    #         run_full_system_sync()
+    #         st.cache_data.clear()
+    #         st.rerun()
 
     # 데이터 파일 정보
     if 'data_file' in st.session_state:
@@ -922,7 +957,155 @@ elif page == "🏠 메인 대시보드":
         
     st.markdown("---")
 
+    st.markdown("### 📈 오늘의 증시 (KOSPI / KOSDAQ)")
+    # 데이터 로드 (indices_df가 로드되었다고 가정)
+    # ── 1. 데이터 정의 및 더미 데이터 생성 로직 ──
+    import numpy as np
+    from datetime import datetime, timedelta
+
+    # indices_df가 로드되지 않았거나 비어있는 경우 더미 데이터 생성
+    if 'indices_df' not in locals() or indices_df.empty:
+        # 그래프 모양 확인을 위한 100일치 가상 데이터 생성
+        test_dates = [(datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(100)]
+        test_dates.reverse()
+        
+        # 실제 지수와 유사한 랜덤 흐름 생성
+        np.random.seed(42) # 동일한 그래프 모양 유지를 위해 시드 고정
+        kp_sample = np.linspace(2450, 2580, 100) + np.random.normal(0, 15, 100)
+        kd_sample = np.linspace(810, 870, 100) + np.random.normal(0, 8, 100)
+        
+        df_kp = pd.DataFrame({'Date': test_dates, 'Close': kp_sample, '시장': 'KOSPI'})
+        df_kd = pd.DataFrame({'Date': test_dates, 'Close': kd_sample, '시장': 'KOSDAQ'})
+        
+        st.caption("✨ 현재 레이아웃 확인을 위한 **샘플 데이터**를 표시 중입니다. (실제 데이터 없음)")
+    else:
+        # 실제 데이터가 존재하는 경우 필터링
+        df_kp = indices_df[indices_df['시장'] == 'KOSPI']
+        df_kd = indices_df[indices_df['시장'] == 'KOSDAQ']
     
+    # ── 2. 레이아웃 분리 (2개의 컬럼 생성) ──
+    col_chart1, col_chart2 = st.columns(2)
+
+    # 공통 레이아웃 설정 함수
+    def get_layout(title_text, color):
+        return dict(
+            template='plotly_dark',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            height=300, # 분리된 만큼 높이를 조금 줄임
+            margin=dict(l=10, r=10, t=40, b=10),
+            hovermode='x unified',
+            title=dict(text=title_text, font=dict(color=color, size=18)),
+            xaxis=dict(showgrid=False, tickfont=dict(color='#888')),
+            yaxis=dict(
+                showgrid=True,
+                gridcolor='rgba(255,255,255,0.05)',
+                tickfont=dict(color=color),
+                zeroline=False
+            )
+        )
+
+    # ── 3. 코스피 그래프 (좌측) ──
+    with col_chart1:
+        fig_kp = go.Figure()
+        fig_kp.add_trace(go.Scatter(
+            x=df_kp['Date'], y=df_kp['Close'],
+            name='KOSPI',
+            line=dict(color='#dcb98c', width=2),
+            fill='tozeroy',
+            fillcolor='rgba(220, 185, 140, 0.1)'
+        ))
+        fig_kp.update_layout(get_layout("코스피(KOSPI)", "#dcb98c"))
+        st.plotly_chart(fig_kp, use_container_width=True)
+
+    # ── 4. 코스닥 그래프 (우측) ──
+    with col_chart2:
+        fig_kd = go.Figure()
+        fig_kd.add_trace(go.Scatter(
+            x=df_kd['Date'], y=df_kd['Close'],
+            name='KOSDAQ',
+            line=dict(color='#f2ece4', width=2),
+            fill='tozeroy',
+            fillcolor='rgba(242, 236, 228, 0.05)'
+        ))
+        fig_kd.update_layout(get_layout("코스닥(KOSDAQ)", "#f2ece4"))
+        st.plotly_chart(fig_kd, use_container_width=True)
+
+    # ── 4. 지수 요약 메트릭 ──
+    index_metrics_container = st.container()
+
+    with index_metrics_container:
+        # 1. 이 컨테이너 바로 다음에 오는 메트릭들만 가로로 배치하는 CSS
+        # nth-child를 사용하여 지수 그래프 바로 아래의 메트릭 섹션만 정밀 타겟팅합니다.
+        st.markdown("""
+            <style>
+            /* 상자 자체의 여백 최소화 및 테두리 설정 */
+            [data-testid="stVerticalBlock"] > div:has(div#index-area-marker) + div [data-testid="stMetric"] {
+                padding: 5px 0px !important; 
+                border: 1px solid rgba(220, 185, 140, 0.3) !important;
+                border-radius: 10px !important;
+                text-align: center !important;
+            }
+
+            /* 내부 요소를 가로 한 줄로 세우고 전체 중앙 정렬 */
+            [data-testid="stVerticalBlock"] > div:has(div#index-area-marker) + div [data-testid="stMetric"] > div {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: center !important; /* 모든 요소를 가로 중앙으로 */
+                align-items: baseline !important;    /* 글자 아래선 맞춤 */
+                gap: 10px !important;                /* 요소 간 간격 */
+                width: 100% !important;
+            }
+
+            /* 항목 이름(KOSPI) 스타일 */
+            [data-testid="stVerticalBlock"] > div:has(div#index-area-marker) + div [data-testid="stMetricLabel"] {
+                margin-bottom: 0 !important;
+                min-width: fit-content !important;
+            }
+            
+            [data-testid="stVerticalBlock"] > div:has(div#index-area-marker) + div [data-testid="stMetricLabel"] > div {
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                color: #dcb98c !important;
+            }
+
+            /* 지수 숫자(Value) 확대 */
+            [data-testid="stVerticalBlock"] > div:has(div#index-area-marker) + div [data-testid="stMetricValue"] > div {
+                font-size: 30px !important; 
+                font-weight: 800 !important;
+                line-height: 1 !important;
+            }
+
+            /* 변동폭(Delta) 중앙 정렬을 위해 마진 해제 */
+            [data-testid="stVerticalBlock"] > div:has(div#index-area-marker) + div [data-testid="stMetricDelta"] {
+                margin-top: 0 !important;
+                margin-left: 0 !important; /* 오른쪽 밀착 해제 */
+                display: flex !important;
+                align-items: center !important;
+            }
+            
+            [data-testid="stMetricDelta"] svg {
+                display: none !important; /* 화살표가 너무 크면 숨기거나 조정 가능 */
+            }
+            </style>
+            <div id="index-area-marker"></div>
+        """, unsafe_allow_html=True)
+
+        # 2. 실제 메트릭 배치
+        idx_col1, idx_col2 = st.columns(2)
+        
+        kp_last = df_kp.iloc[-1]['Close']
+        kp_delta = kp_last - df_kp.iloc[-2]['Close']
+        kd_last = df_kd.iloc[-1]['Close']
+        kd_delta = kd_last - df_kd.iloc[-2]['Close']
+
+        with idx_col1:
+            st.metric("KOSPI", f"{kp_last:,.2f}", f"{kp_delta:+.2f}")
+
+        with idx_col2:
+            st.metric("KOSDAQ", f"{kd_last:,.2f}", f"{kd_delta:+.2f}")
+
+    st.markdown("---")
 
     # ── 요약 통계 ──
     summary = generate_analysis_summary(stock_df)
@@ -1908,8 +2091,11 @@ elif page == "📈 분석 신호":
         display_signals = signals_df[signals_df['signal'] == filter_map[signal_filter]]
 
     # 추세 점수 바 차트
-    color_map = {'BUY': '#3fb950', 'HOLD': '#d29922', 'SELL': '#f85149'}
-    display_signals = display_signals.sort_values('trend_score', ascending=False)
+    # 1. 데이터프레임의 값을 한글로 치환
+    display_signals['signal'] = display_signals['signal'].replace({'BUY': '매수', 'HOLD': '보유', 'SELL': '매도'})
+
+    # 2. 컬러 맵도 한글 키값으로 변경
+    color_map = {'매수': '#3fb950', '보유': '#d29922', '매도': '#f85149'}
 
     fig_sig = px.bar(
         display_signals,
@@ -1917,7 +2103,12 @@ elif page == "📈 분석 신호":
         y='trend_score',
         color='signal',
         color_discrete_map=color_map,
-        title='종목별 추세 점수 및 매매 신호',
+        labels={
+            'BUY': '매수',      # 'BUY'를 '매수 신호'로 변경
+            'HOLD': '보유',     # 'HOLD'를 '보유 신호'로 변경
+            'SELL': '매도'      # 'SELL'를 '매도 신호'로 변경
+        },
+        title='종목별 점수 분포 및 매매 신호',
         template='plotly_dark',
         text='trend_score',
     )
@@ -1929,23 +2120,24 @@ elif page == "📈 분석 신호":
         # 각 색상별 어떤 시장인지 표시
         showlegend=True,
         legend=dict(
-        title_text='신호',
-        font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
-        orientation="v", # 세로로 나열
-        yanchor="top",
-        y=0.99,
-        xanchor="left",
-        x=1.02 # 차트 오른쪽에 범례 표시
-        ),
+            title_text='신호',
+            font=dict(size=14, color="white"), # 텍스트 크기를 키우고 흰색으로 고정
+            orientation="v", # 세로로 나열
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=1.02 # 차트 오른쪽에 범례 표시
+            ),
         #xaxis={'categoryorder':'total descending'},
         xaxis_tickangle=-45,
         xaxis=dict(
             {'categoryorder':'total descending'},
-            title_font=dict(color="#ffffff"),   # 축 이름 색상
+            title_font=dict(color="#ffffff",size=18),   # 축 이름 색상
             tickfont=dict(color="#ffffff")   # 축 숫자 색상
             ),
         yaxis=dict(
-            title_font=dict(color="#ffffff"),  # 축 이름 색상
+            title_text='추세 점수',
+            title_font=dict(color="#ffffff",size=18),  # 축 이름 색상
             tickfont=dict(color="#ffffff")    # 축 숫자 색상
             ),
         plot_bgcolor='rgba(0,0,0,0)',
@@ -1954,10 +2146,27 @@ elif page == "📈 분석 신호":
         height=500,
     )
     # 기준선 추가
-    fig_sig.add_hline(y=60, line_dash='dash', line_color='#3fb950',
-                      annotation_text='매수 기준(60)', annotation_position='top right')
-    fig_sig.add_hline(y=40, line_dash='dash', line_color='#f85149',
-                      annotation_text='매도 기준(40)', annotation_position='bottom right')
+    fig_sig.add_hline(y=60, line_dash='dash', line_color='#3fb950')
+    fig_sig.add_hline(y=40, line_dash='dash', line_color='#f85149')
+
+    # 범례에만 나타나게 하는 가짜 데이터 추가 (중요: x, y에 아무것도 넣지 않음)
+    fig_sig.add_scatter(
+        x=[None], 
+        y=[None],
+        mode='lines',
+        line=dict(color='#3fb950', dash='dash'),
+        name='매수 기준 (60)',
+        showlegend=True
+    )
+
+    fig_sig.add_scatter(
+        x=[None], 
+        y=[None],
+        mode='lines',
+        line=dict(color='#f85149', dash='dash'),
+        name='매도 기준 (40)',
+        showlegend=True
+    )
     st.plotly_chart(fig_sig, use_container_width=True)
 
     # 신호 분포 파이 차트
@@ -1982,9 +2191,9 @@ elif page == "📈 분석 신호":
         st.markdown("""
         | 점수 | 신호 | 의미 |
         |------|------|------|
-        | **≥ 60** | 🟢 **BUY** | 등락률 + 거래량 + 외국인/기관 추세 양호 |
-        | **40~59** | 🟡 **HOLD** | 동향 혼재, 관망 유지 |
-        | **< 40** | 🔴 **SELL** | 하락 추세 또는 외국인/기관 순매도 |
+        | **≥ 60** | 🟢 **매수** | 등락률 + 거래량 + 외국인/기관 추세 양호 |
+        | **40~59** | 🟡 **보유** | 동향 혼재, 관망 유지 |
+        | **< 40** | 🔴 **매도** | 하락 추세 또는 외국인/기관 순매도 |
         """)
         st.markdown("""
         **추세 점수 산출:**
