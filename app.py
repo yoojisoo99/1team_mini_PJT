@@ -41,7 +41,64 @@ st.set_page_config(
 )
 
 # ============================================================
-# 0. 데이터 로드
+# 0. 세션 매니지먼트 (30분 자동 로그아웃)
+# ============================================================
+import time
+from streamlit_autorefresh import st_autorefresh
+
+# 페이지 전역에서 1초마다 백그라운드 새로고침(타이머다운 틱) 지원
+st_autorefresh(interval=1000, key="global_timer")
+
+SESSION_TIMEOUT_SECONDS = 1800 # 30분
+
+# URL 파라미터 기반 세션 복구 로직 (F5 새로고침 100% 보장)
+try:
+    if "login_token" in st.query_params:
+        cookie_logged_in = 'true'
+        cookie_username = st.query_params.get("login_token")
+        cookie_last_active = st.query_params.get("last_active")
+    else:
+        cookie_logged_in = None
+        cookie_username = None
+        cookie_last_active = None
+except Exception:
+    cookie_logged_in = None
+    cookie_username = None
+    cookie_last_active = None
+
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = True if cookie_logged_in == 'true' else False
+if 'username' not in st.session_state:
+    st.session_state['username'] = cookie_username if cookie_username else ""
+if 'current_page' not in st.session_state:
+    st.session_state['current_page'] = "🏠 메인 대시보드"
+
+# 마지막 활동 시간 복구 (우선순위: 쿠키 -> 없음)
+if 'last_active' not in st.session_state:
+    if cookie_last_active:
+        try:
+            st.session_state['last_active'] = float(cookie_last_active)
+        except ValueError:
+            st.session_state['last_active'] = time.time()
+    else:
+        st.session_state['last_active'] = time.time()
+
+# 로그인 된 상태라면 타임아웃 검사
+if st.session_state['logged_in']:
+    current_time = time.time()
+    elapsed = current_time - st.session_state['last_active']
+    
+    if elapsed > SESSION_TIMEOUT_SECONDS:
+        st.session_state['logged_in'] = False
+        st.session_state['username'] = ""
+        st.session_state['current_page'] = "🏠 메인 대시보드"
+        st.query_params.clear()
+        
+        st.warning("⏱️ 보안을 위해 30분 동안 활동이 없어 자동 로그아웃 되었습니다.")
+        st.rerun()
+
+# ============================================================
+# 1. 데이터 로드
 # ============================================================
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
@@ -66,40 +123,48 @@ def ensure_data_exists():
 
 @st.cache_data(ttl=300)
 def load_latest_data():
-    """data/ 디렉토리에서 최신 CSV 파일을 로드합니다."""
+    """out_data/ 디렉토리에서 최종 백업된 JSON 데이터를 로드합니다."""
     import json
-    # 최신 파일 검색
-    stock_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv')))
-    news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
-    hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
-    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.csv'))) 
-
-    # fallback (루트 디렉토리 탐색)
-    if not stock_files:
-        root_dir = os.path.dirname(os.path.abspath(__file__))
-        stock_files = sorted(glob.glob(os.path.join(root_dir, 'stock_data_*.csv')))
-        news_files = sorted(glob.glob(os.path.join(root_dir, 'stock_news_*.csv')))
-        signal_files = sorted(glob.glob(os.path.join(root_dir, 'analysis_signals_*.csv')))
-
+    import os
+    
+    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out_data')
+    
     stock_df = pd.DataFrame()
+    signals_df = pd.DataFrame()
     news_df = pd.DataFrame()
     hist_df = pd.DataFrame()
-    signals_df = pd.DataFrame()
 
-    if stock_files:
-        stock_df = pd.read_csv(stock_files[-1])
-        st.session_state['data_file'] = os.path.basename(stock_files[-1])
+    # 1. 시세/거래량 JSON 로드 (C_export_stocks.py 결과물)
+    stock_json_path = os.path.join(out_dir, 'stocks_export.json')
+    if os.path.exists(stock_json_path):
+        try:
+            with open(stock_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'stocks' in data:
+                    stock_df = pd.DataFrame(data['stocks'])
+                    st.session_state['data_file'] = "stocks_export.json"
+        except Exception as e:
+            print(f"Failed to load stocks JSON: {e}")
+
+    # 2. 분석 시그널 JSON 로드 (E_export_analysis_signals.py 결과물)
+    signal_json_path = os.path.join(out_dir, 'analysis_signals_export.json')
+    if os.path.exists(signal_json_path):
+        try:
+            with open(signal_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'analysis_signals' in data:
+                    signals_df = pd.DataFrame(data['analysis_signals'])
+        except Exception as e:
+            print(f"Failed to load analysis signals JSON: {e}")
+
+    # 3. 뉴스 및 과거 시세 (기존 CSV 백업 방식 유지)
+    import glob
+    news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
+    hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
     if news_files:
         news_df = pd.read_csv(news_files[-1])
     if hist_files:
         hist_df = pd.read_csv(hist_files[-1])
-        
-    # CSV 파일 읽기 전용 로직
-    if signal_files:
-        try:
-            signals_df = pd.read_csv(signal_files[-1])
-        except Exception as e:
-            print(f"Failed to load CSV signals: {e}")
 
     # signals가 없으면 실시간 생성 (Fallback)
     if signals_df.empty and not stock_df.empty:
@@ -436,6 +501,26 @@ def init_user_type_table():
     pass # 파일 기반 관리로 변경되었으므로 별도의 초기화 불필요
 
 def load_users():
+    import json
+    out_users_file = os.path.join(os.path.dirname(__file__), 'out_data', 'users_export.json')
+    
+    # 1. 최상위 DB 백업인 JSON 먼저 확인
+    if os.path.exists(out_users_file):
+        try:
+            with open(out_users_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'users' in data:
+                    fallback_dict = {}
+                    for row in data['users']:
+                        fallback_dict[str(row["user_id"])] = {
+                            "user_password": str(row.get("user_password", "")),
+                            "user_email": str(row.get("user_email", ""))
+                        }
+                    return fallback_dict
+        except Exception as e:
+            pass
+            
+    # 2. JSON이 없거나 실패하면 로컬 CSV (작업본) 확인
     if os.path.exists(USERS_DB_FILE):
         try:
             df = pd.read_csv(USERS_DB_FILE)
@@ -507,13 +592,6 @@ def _safe_verify(password: str, hashed: str) -> bool:
     pw_bytes = password.encode('utf-8')[:72]
     return _bcrypt.checkpw(pw_bytes, hashed.encode('utf-8'))
 
-if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = False
-if 'username' not in st.session_state:
-    st.session_state['username'] = ""
-if 'current_page' not in st.session_state:
-    st.session_state['current_page'] = "🏠 메인 대시보드"
-
 # ============================================================
 # 사이드바 네비게이션 & 로그인 폼
 # ============================================================
@@ -561,6 +639,11 @@ with st.sidebar:
                     if _safe_verify(login_pw, hashed_pw):
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = login_id
+                        t = time.time()
+                        st.session_state['last_active'] = t
+                        st.query_params["login_token"] = login_id
+                        st.query_params["last_active"] = str(t)
+                        
                         st.success("로그인 성공!")
                         st.rerun()
                     else:
@@ -575,10 +658,31 @@ with st.sidebar:
             st.rerun()
     else:
         st.success(f"👋 환영합니다, **{st.session_state['username']}**님!")
-        if st.button("로그아웃", use_container_width=True):
-            st.session_state['logged_in'] = False
-            st.session_state['username'] = ""
+        
+        # 세션 만료 시간 계산
+        remaining_seconds = int(SESSION_TIMEOUT_SECONDS - (time.time() - st.session_state['last_active']))
+        
+        # 0초 이하면 바로 로그아웃 재실행 트리거
+        if remaining_seconds <= 0:
             st.rerun()
+            
+        mins, secs = divmod(remaining_seconds, 60)
+        st.caption(f"⏱️ 세션 만료까지: {mins:02d}분 {secs:02d}초")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("시간 연장", use_container_width=True):
+                t = time.time()
+                st.session_state['last_active'] = t
+                st.query_params["last_active"] = str(t)
+                st.rerun()
+        with col2:
+            if st.button("로그아웃", use_container_width=True):
+                st.session_state['logged_in'] = False
+                st.session_state['username'] = ""
+                st.session_state['last_active'] = time.time()
+                st.query_params.clear()
+                st.rerun()
             
     st.markdown("---")
 
@@ -1164,6 +1268,15 @@ elif page == "📋 투자 성향 설문":
                         except Exception as e:
                             st.write(f"⚠️ 예기치 않은 오류: {e}")
                             status.update(label="DB 연동 중 오류 발생", state="error")
+                            
+        # 설문 완료 후 결과 페이지(맞춤 종목 추천)로 자동 강제 이동
+        import time 
+        time.sleep(1) # 유저가 토스트 메시지/상태창을 볼 아주 잠깐의 여유 제공
+        
+        # 라디오 버튼 UI 동기화를 위해 session_state 처리
+        st.session_state['current_page'] = "⭐ 맞춤 종목 추천"
+        st.session_state['menu_radio'] = "⭐ 맞춤 종목 추천"
+        st.rerun()
 
         type_info = TYPE_DESCRIPTIONS[investor_type]
 
@@ -1238,7 +1351,41 @@ elif page == "⭐ 맞춤 종목 추천":
         st.warning("⚠️ 주식 데이터가 없습니다. 먼저 `python scraper.py`를 실행해 주세요.")
         st.stop()
 
-    # ── 투자 성향 확인 ──
+    # ── 투자 성향 확인 (DB 연동 기반) ──
+    # 세션에 투자 성향이 없어도 DB에 기록이 있다면 불러오기
+    if 'investor_type' not in st.session_state and st.session_state.get('logged_in'):
+        import os, pandas as pd, json
+        
+        # 1. 최상위 DB 백업인 JSON 먼저 확인
+        out_type_json = os.path.join(os.path.dirname(__file__), 'out_data', 'user_type_export.json')
+        found_in_json = False
+        
+        if os.path.exists(out_type_json):
+            try:
+                with open(out_type_json, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if 'user_type' in data:
+                        tdf = pd.DataFrame(data['user_type'])
+                        user_match = tdf[tdf['user_id'].astype(str) == str(st.session_state['username'])]
+                        if not user_match.empty:
+                            st.session_state['investor_type'] = user_match.iloc[-1]['type_name']
+                            found_in_json = True
+            except Exception as e:
+                pass
+                
+        # 2. JSON에서 못 찾았으면 로컬 CSV (작업본) 확인
+        if not found_in_json:
+            type_db = os.path.join(DATA_DIR, 'user_type_db.csv')
+            if os.path.exists(type_db):
+                try:
+                    tdf = pd.read_csv(type_db)
+                    user_match = tdf[tdf['user_id'].astype(str) == str(st.session_state['username'])]
+                    if not user_match.empty:
+                        # DB에서 찾아온 성향 이름 저장
+                        st.session_state['investor_type'] = user_match.iloc[-1]['type_name']
+                except Exception as e:
+                    pass
+                
     if 'investor_type' not in st.session_state:
         st.info("📋 먼저 **투자 성향 설문**을 완료해 주세요.")
 
@@ -1779,7 +1926,7 @@ elif page == "📈 분석 신호":
     for _, row in display_signals.iterrows():
         sig = row['signal']
         sig_emoji = '🟢' if sig == 'BUY' else '🟡' if sig == 'HOLD' else '🔴'
-        sig_color = color_map[sig]
+        sig_color = color_map.get(sig, '#8b949e') # Fallback color instead of raising KeyError
         st.markdown(
             f"""
             <div class="stock-card">

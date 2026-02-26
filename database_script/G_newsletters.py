@@ -16,7 +16,12 @@ file_name = f"newsletters_{today_str}.csv"
 #file_name = f"newsletters_20260224.csv" #임시 테스트
 csv_file_path = f"data/{file_name}"
 df = pd.read_csv(csv_file_path, encoding="utf-8")
-newsletters_df = df[["user_id", "created_at", "title","content"]].copy()
+
+cols = ["user_id", "created_at", "title", "content"]
+if "type_id" in df.columns:
+    cols.insert(1, "type_id")
+    
+newsletters_df = df[cols].copy()
 
 newsletters_df["user_id"] = newsletters_df["user_id"].astype(str)
 
