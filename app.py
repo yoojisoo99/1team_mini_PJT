@@ -41,9 +41,63 @@ st.set_page_config(
 )
 
 # ============================================================
-# 0. 데이터 로드
+# 0. 세션 매니지먼트 (30분 자동 로그아웃)
+# ============================================================
+import time
+
+# SESSION_TIMEOUT_SECONDS = 1800 # 30분 기능을 제거합니다.
+
+# 세션 복구 및 상태 관리
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+if 'username' not in st.session_state:
+    st.session_state['username'] = ""
+if 'current_page' not in st.session_state:
+    st.session_state['current_page'] = "🏠 메인 대시보드"
+
+# 자동 로그아웃 기능을 제거했습니다.
+
+# ============================================================
+# 1. 데이터 로드
 # ============================================================
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+OUT_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out_data')
+
+def check_db_port(host="25.4.53.12", port=3306, timeout=1.5):
+    """DB 서버 포트가 열려있는지 소켓으로 빠르게 확인합니다."""
+    import socket
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except (socket.timeout, ConnectionRefusedError, OSError):
+        return False
+
+def run_outbound_sync():
+    """DB에서 로컬로 데이터를 동기화하는 outbound/run_all.py 스크립트를 실행합니다."""
+    import subprocess
+    import sys
+    import os
+    
+    # 1. 포트 체크 먼저 수행 (속도 개선 핵심)
+    if not check_db_port():
+        st.warning("⚠️ DB 서버에 연결할 수 없어 로컬 데이터를 사용합니다.")
+        return False
+
+    script_path = os.path.join(os.path.dirname(__file__), 'outbound', 'run_all.py')
+    if os.path.exists(script_path):
+        try:
+            # 동기화 시작 토스트 알림
+            st.toast("🔄 DB 데이터를 로컬로 동기화 중입니다...", icon="🔃")
+            result = subprocess.run([sys.executable, script_path], 
+                                  capture_output=True, 
+                                  text=True, 
+                                  check=True)
+            st.toast("✅ DB 동기화 완료!", icon="✨")
+            return True
+        except Exception as e:
+            st.error(f"DB 동기화 중 오류 발생: {e}")
+            return False
+    return False
 
 
 def ensure_data_exists():
@@ -66,46 +120,90 @@ def ensure_data_exists():
 
 @st.cache_data(ttl=300)
 def load_latest_data():
-    """data/ 디렉토리에서 최신 CSV 파일을 로드합니다."""
+    """out_data/ 디렉토리에서 최종 백업된 JSON 데이터를 로드합니다."""
     import json
-    # 최신 파일 검색
-    stock_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv')))
-    news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
-    hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
-    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.csv'))) 
-
-    # fallback (루트 디렉토리 탐색)
-    if not stock_files:
-        root_dir = os.path.dirname(os.path.abspath(__file__))
-        stock_files = sorted(glob.glob(os.path.join(root_dir, 'stock_data_*.csv')))
-        news_files = sorted(glob.glob(os.path.join(root_dir, 'stock_news_*.csv')))
-        signal_files = sorted(glob.glob(os.path.join(root_dir, 'analysis_signals_*.csv')))
-
+    import os
+    
+    out_dir = OUT_DATA_DIR
+    
     stock_df = pd.DataFrame()
+    signals_df = pd.DataFrame()
     news_df = pd.DataFrame()
     hist_df = pd.DataFrame()
-    signals_df = pd.DataFrame()
+    recs_df = pd.DataFrame()
+    newsletters_df = pd.DataFrame()
+    user_types_df = pd.DataFrame()
 
-    if stock_files:
-        stock_df = pd.read_csv(stock_files[-1])
-        st.session_state['data_file'] = os.path.basename(stock_files[-1])
+    # 1. 시세/거래량 JSON 로드 (C_export_stocks.py 결과물)
+    stock_json_path = os.path.join(out_dir, 'stocks_export.json')
+    if os.path.exists(stock_json_path):
+        try:
+            with open(stock_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'stocks' in data:
+                    stock_df = pd.DataFrame(data['stocks'])
+                    st.session_state['data_file'] = "stocks_export.json"
+        except Exception as e:
+            print(f"Failed to load stocks JSON: {e}")
+
+    # 2. 분석 시그널 JSON 로드 (E_export_analysis_signals.py 결과물)
+    signal_json_path = os.path.join(out_dir, 'analysis_signals_export.json')
+    if os.path.exists(signal_json_path):
+        try:
+            with open(signal_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'analysis_signals' in data:
+                    signals_df = pd.DataFrame(data['analysis_signals'])
+        except Exception as e:
+            print(f"Failed to load analysis signals JSON: {e}")
+
+    # 3. 추천 종목 JSON 로드 (F_export_recommendations.py 결과물)
+    recs_json_path = os.path.join(out_dir, 'recommendations_export.json')
+    if os.path.exists(recs_json_path):
+        try:
+            with open(recs_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'recommendations' in data:
+                    recs_df = pd.DataFrame(data['recommendations'])
+        except Exception as e:
+            print(f"Failed to load recommendations JSON: {e}")
+
+    # 4. 뉴스레터 JSON 로드 (G_export_newsletters.py 결과물)
+    newsletters_json_path = os.path.join(out_dir, 'newsletters_export.json')
+    if os.path.exists(newsletters_json_path):
+        try:
+            with open(newsletters_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'newsletters' in data:
+                    newsletters_df = pd.DataFrame(data['newsletters'])
+        except Exception as e:
+            print(f"Failed to load newsletters JSON: {e}")
+
+    # 5. 사용자 성향 정보 로드 (B_export_user_type.py 결과물)
+    user_type_json_path = os.path.join(out_dir, 'user_type_export.json')
+    if os.path.exists(user_type_json_path):
+        try:
+            with open(user_type_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'user_type' in data:
+                    user_types_df = pd.DataFrame(data['user_type'])
+        except Exception as e:
+            print(f"Failed to load user_type JSON: {e}")
+
+    # 6. 뉴스 및 과거 시세 (기존 CSV 백업 방식 유지)
+    import glob
+    news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
+    hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
     if news_files:
         news_df = pd.read_csv(news_files[-1])
     if hist_files:
         hist_df = pd.read_csv(hist_files[-1])
-        
-    # CSV 파일 읽기 전용 로직
-    if signal_files:
-        try:
-            signals_df = pd.read_csv(signal_files[-1])
-        except Exception as e:
-            print(f"Failed to load CSV signals: {e}")
 
     # signals가 없으면 실시간 생성 (Fallback)
     if signals_df.empty and not stock_df.empty:
         signals_df = generate_analysis_signals(stock_df, '1D')
 
-    return stock_df, news_df, hist_df, signals_df
+    return stock_df, news_df, hist_df, signals_df, recs_df, newsletters_df, user_types_df
 
 
 # ============================================================
@@ -447,6 +545,26 @@ def init_user_type_table():
     pass # 파일 기반 관리로 변경되었으므로 별도의 초기화 불필요
 
 def load_users():
+    import json
+    out_users_file = os.path.join(os.path.dirname(__file__), 'out_data', 'users_export.json')
+    
+    # 1. 최상위 DB 백업인 JSON 먼저 확인
+    if os.path.exists(out_users_file):
+        try:
+            with open(out_users_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'users' in data:
+                    fallback_dict = {}
+                    for row in data['users']:
+                        fallback_dict[str(row["user_id"])] = {
+                            "user_password": str(row.get("user_password", "")),
+                            "user_email": str(row.get("user_email", ""))
+                        }
+                    return fallback_dict
+        except Exception as e:
+            pass
+            
+    # 2. JSON이 없거나 실패하면 로컬 CSV (작업본) 확인
     if os.path.exists(USERS_DB_FILE):
         try:
             df = pd.read_csv(USERS_DB_FILE)
@@ -518,13 +636,6 @@ def _safe_verify(password: str, hashed: str) -> bool:
     pw_bytes = password.encode('utf-8')[:72]
     return _bcrypt.checkpw(pw_bytes, hashed.encode('utf-8'))
 
-if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = False
-if 'username' not in st.session_state:
-    st.session_state['username'] = ""
-if 'current_page' not in st.session_state:
-    st.session_state['current_page'] = "🏠 메인 대시보드"
-
 # ============================================================
 # 사이드바 네비게이션 & 로그인 폼
 # ============================================================
@@ -572,6 +683,11 @@ with st.sidebar:
                     if _safe_verify(login_pw, hashed_pw):
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = login_id
+                        t = time.time()
+                        st.session_state['last_active'] = t
+                        st.query_params["login_token"] = login_id
+                        st.query_params["last_active"] = str(t)
+                        
                         st.success("로그인 성공!")
                         st.rerun()
                     else:
@@ -586,9 +702,11 @@ with st.sidebar:
             st.rerun()
     else:
         st.success(f"👋 환영합니다, **{st.session_state['username']}**님!")
+        
         if st.button("로그아웃", use_container_width=True):
             st.session_state['logged_in'] = False
             st.session_state['username'] = ""
+            st.query_params.clear()
             st.rerun()
             
     st.markdown("---")
@@ -633,10 +751,18 @@ with st.sidebar:
 
 
 # ============================================================
-# 📌 데이터 로드
+# 📌 데이터 로드 & DB 동기화
 # ============================================================
+# 1. 세션당 최초 1회 DB에서 로컬로 데이터 동기화 수행 (사이드바 메뉴 로드 전 실행)
+if 'last_sync_time' not in st.session_state:
+    run_outbound_sync()
+    st.session_state['last_sync_time'] = time.time()
+
+# 2. 로컬 데이터가 아예 없는 경우 스크래핑 (최초 실행용)
 ensure_data_exists()
-stock_df, news_df, hist_df, signals_df = load_latest_data()
+
+# 3. 로컬 JSON 데이터 로드 (캐싱 지원)
+stock_df, news_df, hist_df, signals_df, recs_df, newsletters_df, user_types_df = load_latest_data()
 
 
 # ============================================================
@@ -1175,6 +1301,15 @@ elif page == "📋 투자 성향 설문":
                         except Exception as e:
                             st.write(f"⚠️ 예기치 않은 오류: {e}")
                             status.update(label="DB 연동 중 오류 발생", state="error")
+                            
+        # 설문 완료 후 결과 페이지(맞춤 종목 추천)로 자동 강제 이동
+        import time 
+        time.sleep(1) # 유저가 토스트 메시지/상태창을 볼 아주 잠깐의 여유 제공
+        
+        # 라디오 버튼 UI 동기화를 위해 session_state 처리
+        st.session_state['current_page'] = "⭐ 맞춤 종목 추천"
+        st.session_state['menu_radio'] = "⭐ 맞춤 종목 추천"
+        st.rerun()
 
         type_info = TYPE_DESCRIPTIONS[investor_type]
 
@@ -1249,7 +1384,41 @@ elif page == "⭐ 맞춤 종목 추천":
         st.warning("⚠️ 주식 데이터가 없습니다. 먼저 `python scraper.py`를 실행해 주세요.")
         st.stop()
 
-    # ── 투자 성향 확인 ──
+    # ── 투자 성향 확인 (DB 연동 기반) ──
+    # 세션에 투자 성향이 없어도 DB에 기록이 있다면 불러오기
+    if 'investor_type' not in st.session_state and st.session_state.get('logged_in'):
+        import os, pandas as pd, json
+        
+        # 1. 최상위 DB 백업인 JSON 먼저 확인
+        out_type_json = os.path.join(os.path.dirname(__file__), 'out_data', 'user_type_export.json')
+        found_in_json = False
+        
+        if os.path.exists(out_type_json):
+            try:
+                with open(out_type_json, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if 'user_type' in data:
+                        tdf = pd.DataFrame(data['user_type'])
+                        user_match = tdf[tdf['user_id'].astype(str) == str(st.session_state['username'])]
+                        if not user_match.empty:
+                            st.session_state['investor_type'] = user_match.iloc[-1]['type_name']
+                            found_in_json = True
+            except Exception as e:
+                pass
+                
+        # 2. JSON에서 못 찾았으면 로컬 CSV (작업본) 확인
+        if not found_in_json:
+            type_db = os.path.join(DATA_DIR, 'user_type_db.csv')
+            if os.path.exists(type_db):
+                try:
+                    tdf = pd.read_csv(type_db)
+                    user_match = tdf[tdf['user_id'].astype(str) == str(st.session_state['username'])]
+                    if not user_match.empty:
+                        # DB에서 찾아온 성향 이름 저장
+                        st.session_state['investor_type'] = user_match.iloc[-1]['type_name']
+                except Exception as e:
+                    pass
+                
     if 'investor_type' not in st.session_state:
         st.info("📋 먼저 **투자 성향 설문**을 완료해 주세요.")
 
@@ -1286,7 +1455,12 @@ elif page == "⭐ 맞춤 종목 추천":
         filtered_df = filtered_df[filtered_df['시장'] == market_sel]
 
     # ── 추천 종목 계산 ──
-    recommendations = get_top_recommendations(filtered_df, investor_type, top_n)
+    # DB에서 이미 계산된 추천 데이터가 있으면 성향에 맞게 로드
+    if not recs_df.empty:
+        # DB 추천 데이터 중 현재 사용자의 성향과 일치하는 것 필터링 점수순
+        recommendations = recs_df.sort_values(by='추천점수', ascending=False).head(top_n)
+    else:
+        recommendations = get_top_recommendations(filtered_df, investor_type, top_n)
 
     if recommendations.empty:
         st.warning("추천 가능한 종목이 없습니다.")
@@ -1791,7 +1965,7 @@ elif page == "📈 분석 신호":
     for _, row in display_signals.iterrows():
         sig = row['signal']
         sig_emoji = '🟢' if sig == 'BUY' else '🟡' if sig == 'HOLD' else '🔴'
-        sig_color = color_map[sig]
+        sig_color = color_map.get(sig, '#8b949e') # Fallback color instead of raising KeyError
         st.markdown(
             f"""
             <div class="stock-card">
@@ -1861,16 +2035,21 @@ elif page == "📧 뉴스레터":
         f"**{type_info['emoji']} {type_info['title']}** — _{type_info['strategy']}_"
     )
 
-    # 뉴스레터 생성
-    scored = score_stocks(stock_df, inv_type)
-    newsletter = generate_newsletter(
-        stock_df=stock_df,
-        scored_df=scored,
-        signals_df=signals_df,
-        investor_type=inv_type,
-        user_id=1,
-        news_df=news_df,
-    )
+    # 뉴스레터 생성 (DB 데이터 우선 사용)
+    if not newsletters_df.empty:
+        # DB에서 현재 성향에 맞는 뉴스레터 찾기 (type_id 매칭 등)
+        # 여기서는 가장 최근 것을 가져옴
+        newsletter = newsletters_df.iloc[-1].to_dict()
+    else:
+        scored = score_stocks(stock_df, inv_type)
+        newsletter = generate_newsletter(
+            stock_df=stock_df,
+            scored_df=scored,
+            signals_df=signals_df,
+            investor_type=inv_type,
+            user_id=1,
+            news_df=news_df,
+        )
 
     st.markdown("---")
     st.markdown(f"### {newsletter['title']}")
