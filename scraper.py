@@ -744,8 +744,11 @@ def save_all_to_csv(stock_df, signals_df=None, recs_df=None, newsletter_dict=Non
         else:
             news_df = pd.DataFrame([newsletter_dict])
             
-        if 'id' not in news_df.columns: 
-            news_df.insert(0, 'id', range(101, 101 + len(news_df)))
+        # 사용자 요청 형식에 맞춰 컬럼 순서 조정
+        cols = ["user_id", "type_id", "created_at", "title", "content"]
+        # 존재하지 않는 컬럼이 있을 경우 대비 (안전장치)
+        news_df = news_df[[c for c in cols if c in news_df.columns]]
+            
         if pd.api.types.is_datetime64_any_dtype(news_df['created_at']):
             news_df['created_at'] = news_df['created_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
         _write_csv(news_df, f"newsletters_{today}.csv")
