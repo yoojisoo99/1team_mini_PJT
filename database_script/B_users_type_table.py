@@ -7,10 +7,7 @@ from sqlalchemy.dialects.mysql import insert
 
 pymysql.install_as_MySQLdb()
 
-with open('data/user_type_db.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
-
-table_df = pd.DataFrame(data['user_type'])
+table_df = pd.read_csv('data/user_type_db.csv')
 
 engine = create_engine(
     'mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4'

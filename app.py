@@ -72,14 +72,14 @@ def load_latest_data():
     stock_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_data_*.csv')))
     news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
     hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
-    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.json'))) 
+    signal_files = sorted(glob.glob(os.path.join(DATA_DIR, 'analysis_signals_*.csv'))) 
 
     # fallback (루트 디렉토리 탐색)
     if not stock_files:
         root_dir = os.path.dirname(os.path.abspath(__file__))
         stock_files = sorted(glob.glob(os.path.join(root_dir, 'stock_data_*.csv')))
         news_files = sorted(glob.glob(os.path.join(root_dir, 'stock_news_*.csv')))
-        signal_files = sorted(glob.glob(os.path.join(root_dir, 'analysis_signals_*.json')))
+        signal_files = sorted(glob.glob(os.path.join(root_dir, 'analysis_signals_*.csv')))
 
     stock_df = pd.DataFrame()
     news_df = pd.DataFrame()
@@ -94,17 +94,12 @@ def load_latest_data():
     if hist_files:
         hist_df = pd.read_csv(hist_files[-1])
         
-    # JSON 파일 읽기 전용 로직
+    # CSV 파일 읽기 전용 로직
     if signal_files:
         try:
-            with open(signal_files[-1], 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                if isinstance(data, dict) and "analysis_signals" in data:
-                    signals_df = pd.DataFrame(data["analysis_signals"])
-                else:
-                    signals_df = pd.DataFrame(data)
+            signals_df = pd.read_csv(signal_files[-1])
         except Exception as e:
-            print(f"Failed to load JSON signals: {e}")
+            print(f"Failed to load CSV signals: {e}")
 
     # signals가 없으면 실시간 생성 (Fallback)
     if signals_df.empty and not stock_df.empty:
@@ -419,8 +414,8 @@ import json
 import bcrypt as _bcrypt  # passlib 대신 raw bcrypt 사용 (backend 호환 문제 해결)
 import os
 
-USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.json')
-USER_TYPE_DB_FILE = os.path.join(DATA_DIR, 'user_type_db.json')
+USERS_DB_FILE = os.path.join(DATA_DIR, 'users_db.csv')
+USER_TYPE_DB_FILE = os.path.join(DATA_DIR, 'user_type_db.csv')
 
 def init_user_type_table():
     pass # 파일 기반 관리로 변경되었으므로 별도의 초기화 불필요
@@ -428,30 +423,19 @@ def init_user_type_table():
 def load_users():
     if os.path.exists(USERS_DB_FILE):
         try:
-            with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                if isinstance(data, dict) and "users" in data:
-                    fallback_dict = {}
-                    for u in data["users"]:
-                        fallback_dict[u["user_id"]] = {
-                            "user_password": u.get("user_password", ""),
-                            "user_email": u.get("user_email", "")
-                        }
-                    return fallback_dict
-                return data
-        except:
+            df = pd.read_csv(USERS_DB_FILE)
+            fallback_dict = {}
+            for _, row in df.iterrows():
+                fallback_dict[str(row["user_id"])] = {
+                    "user_password": str(row.get("user_password", "")),
+                    "user_email": str(row.get("user_email", ""))
+                }
+            return fallback_dict
+        except Exception as e:
             pass
     return {}
 
 def save_users(users_dict):
-    try:
-        with open(USERS_DB_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if not isinstance(data, dict):
-                data = {"users": []}
-    except:
-        data = {"users": []}
-        
     new_users = []
     for uid, udata in users_dict.items():
         new_users.append({
@@ -459,28 +443,27 @@ def save_users(users_dict):
             "user_password": udata.get("user_password", ""),
             "user_email": udata.get("user_email", "")
         })
-    data["users"] = new_users
-    
-    with open(USERS_DB_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    df = pd.DataFrame(new_users)
+    df.to_csv(USERS_DB_FILE, index=False, encoding='utf-8-sig')
 
-def save_user_profile(user_id, type_id):
+def save_user_profile(user_id, type_id, user_check=0):
     try:
-        with open(USER_TYPE_DB_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if not isinstance(data, dict) or "user_type" not in data:
-                data = {"user_type": []}
+        if os.path.exists(USER_TYPE_DB_FILE):
+            df = pd.read_csv(USER_TYPE_DB_FILE)
+            user_type_list = df.to_dict('records')
+        else:
+            user_type_list = []
     except:
-        data = {"user_type": []}
+        user_type_list = []
         
     type_names = {1: "안정형", 2: "안정추구형", 3: "위험중립형", 4: "적극투자형", 5: "공격투자형"}
-    user_type_list = data.get("user_type", [])
     found = False
     for ut in user_type_list:
-        if ut.get("user_id") == user_id:
+        if str(ut.get("user_id")) == str(user_id):
             ut["type_id"] = type_id
             ut["type_name"] = type_names.get(type_id, "Unknown Profile")
             ut["description"] = f"User has been profiled as {ut['type_name']}."
+            ut["user_check"] = user_check
             found = True
             break
             
@@ -489,12 +472,12 @@ def save_user_profile(user_id, type_id):
             "user_id": user_id,
             "type_id": type_id,
             "type_name": type_names.get(type_id, "Unknown Profile"),
-            "description": f"User has been profiled as {type_names.get(type_id, 'Unknown Profile')}."
+            "description": f"User has been profiled as {type_names.get(type_id, 'Unknown Profile')}.",
+            "user_check": user_check
         })
         
-    data["user_type"] = user_type_list
-    with open(USER_TYPE_DB_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    df = pd.DataFrame(user_type_list)
+    df.to_csv(USER_TYPE_DB_FILE, index=False, encoding='utf-8-sig')
 
 if 'user_type_init' not in st.session_state:
     init_user_type_table()
@@ -546,26 +529,29 @@ with st.sidebar:
     # 로그인 폼 구성
     if not st.session_state['logged_in']:
         st.markdown("### 🔑 로그인")
-        login_id = st.text_input("아이디", key="login_id")
-        login_pw = st.text_input("비밀번호", type="password", key="login_pw")
-        if st.button("로그인", use_container_width=True):
-            users = load_users()
-            if login_id in users:
-                user_data = users[login_id]
-                if isinstance(user_data, str):
-                    hashed_pw = user_data
-                else:
-                    hashed_pw = user_data.get("user_password", "")
-                    
-                if _safe_verify(login_pw, hashed_pw):
-                    st.session_state['logged_in'] = True
-                    st.session_state['username'] = login_id
-                    st.success("로그인 성공!")
-                    st.rerun()
+        with st.form("login_form"):
+            login_id = st.text_input("아이디", key="login_id")
+            login_pw = st.text_input("비밀번호", type="password", key="login_pw")
+            submitted = st.form_submit_button("로그인", use_container_width=True)
+            
+            if submitted:
+                users = load_users()
+                if login_id in users:
+                    user_data = users[login_id]
+                    if isinstance(user_data, str):
+                        hashed_pw = user_data
+                    else:
+                        hashed_pw = user_data.get("user_password", "")
+                        
+                    if _safe_verify(login_pw, hashed_pw):
+                        st.session_state['logged_in'] = True
+                        st.session_state['username'] = login_id
+                        st.success("로그인 성공!")
+                        st.rerun()
+                    else:
+                        st.error("아이디 또는 비밀번호가 틀렸습니다.")
                 else:
                     st.error("아이디 또는 비밀번호가 틀렸습니다.")
-            else:
-                st.error("아이디 또는 비밀번호가 틀렸습니다.")
                 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("📝 회원가입 하기", use_container_width=True):
@@ -673,16 +659,11 @@ if page == "📝 회원가입":
                                 import sys
                                 script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'A_users_table.py')
                                 
-                                # 시간 제한을 30초로 늘리고, 현재 파이썬 환경(sys.executable)을 보장
-                                res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
+                                # 백그라운드 스크립트 실행. 서버 연동 시간을 극적으로 줄임.
+                                subprocess.Popen([sys.executable, script_path])
                                 
-                                if res.returncode == 0:
-                                    st.write("🌐 DB 서버 테이블 최신화 성공")
-                                    status.update(label="DB 연동 완료", state="complete")
-                                else:
-                                    st.write("⚠️ DB 서버 연결에 실패했거나 지연되었습니다.")
-                                    # 사용자 친화적으로 에러 메시지 축소
-                                    status.update(label="DB 연동 실패 (로컬 접속은 가능)", state="error")
+                                st.write("🌐 DB 동기화 백그라운드 스케줄링 완료")
+                                status.update(label="DB 연동 완료 (백그라운드)", state="complete")
                                     
                             except subprocess.TimeoutExpired:
                                 st.write("⚠️ DB 서버 응답이 너무 늦습니다. (타임아웃)")
@@ -1004,12 +985,24 @@ elif page == "📋 투자 성향 설문":
             answers[q['id']] = selected
             st.markdown("")
 
+        st.markdown("### 📧 뉴스레터 구독")
+        newsletter_opt = st.radio(
+            "이메일로 뉴스레터 구독 받으시겠습니까?",
+            options=["예", "아니오"],
+            horizontal=True,
+            key="newsletter_subscribe"
+        )
+        st.markdown("")
+
         submitted = st.form_submit_button(
             "🔍 투자 성향 진단하기",
             use_container_width=True,
         )
 
     if submitted:
+        # 뉴스레터 구독 여부 세션 저장
+        st.session_state['newsletter_subscribed'] = (newsletter_opt == "예")
+
         investor_type, total_score = classify_investor_type(answers)
         st.session_state['investor_type'] = investor_type
         st.session_state['survey_score'] = total_score
@@ -1028,18 +1021,31 @@ elif page == "📋 투자 성향 설문":
                 }
                 type_id = type_id_map.get(investor_type)
                 if type_id:
-                    save_user_profile(user_id, type_id)
+                    user_check_val = 1 if st.session_state.get('newsletter_subscribed') else 0
+                    save_user_profile(user_id, type_id, user_check=user_check_val)
                     st.toast(f"✅ {user_id}님의 투자 성향({investor_type})이 로컬에 저장되었습니다!")
                     
                     # 투자 성향 외부 DB 최신화 스크립트 실행 (B_users_type_table.py)
-                    try:
-                        import subprocess
-                        import sys
-                        import os
-                        script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'B_users_type_table.py')
-                        subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
-                    except Exception as e:
-                        print(f"B_users_type_table DB Sync failed: {e}")
+                    with st.status("📊 외부 DB 서버(B_users_type_table.py) 연동 중...", expanded=True) as status:
+                        try:
+                            import subprocess
+                            import sys
+                            import os
+                            script_path = os.path.join(os.path.dirname(__file__), 'database_script', 'B_users_type_table.py')
+                            res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=30)
+                            
+                            if res.returncode == 0:
+                                st.write("🌐 투자성향 DB 테이블 최신화 성공")
+                                status.update(label="DB 연동 완료", state="complete")
+                            else:
+                                st.write("⚠️ DB 서버 연결에 실패했거나 지연되었습니다.")
+                                status.update(label="DB 연동 실패 (로컬 저장은 완료)", state="error")
+                        except subprocess.TimeoutExpired:
+                            st.write("⚠️ DB 서버 응답이 너무 늦습니다. (타임아웃)")
+                            status.update(label="DB 연동 타임아웃 (로컬 저장은 완료)", state="error")
+                        except Exception as e:
+                            st.write(f"⚠️ 예기치 않은 오류: {e}")
+                            status.update(label="DB 연동 중 오류 발생", state="error")
 
         type_info = TYPE_DESCRIPTIONS[investor_type]
 
