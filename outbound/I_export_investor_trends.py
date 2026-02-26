@@ -6,7 +6,7 @@ ENGINE_URL = "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4
 
 # 프로젝트 루트 기준 경로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUT_PATH = os.path.join(BASE_DIR, "../out_data", "investor_trends_export.json")
+OUTPUT_PATH = os.path.join(BASE_DIR, "out_data", "investor_trends_export.json")
 ROOT_KEY = "investor_trends"
 
 

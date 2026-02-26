@@ -44,7 +44,7 @@ try:
             stmt = stmt.prefix_with("IGNORE")  # 중복 무시
             conn.execute(stmt)
 
-    print("✅ 중복 제외하고 증시 데이터 추가 완료")
+    print("[Success] 중복 제외하고 증시 데이터 추가 완료")
 
 finally:
     engine.dispose()

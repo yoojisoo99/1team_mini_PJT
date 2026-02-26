@@ -7,7 +7,7 @@ TABLE_NAME = "price_snapshots"
 ROOT_KEY = "price_snapshots"
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUT_PATH = os.path.join(BASE_DIR, "../out_data", "price_snapshots_export.json")
+OUTPUT_PATH = os.path.join(BASE_DIR, "out_data", "price_snapshots_export.json")
 
 COLUMNS = ["id", "ticker", "captured_at", "price", "volume", "trade_value"]
 

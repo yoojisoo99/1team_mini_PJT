@@ -6,7 +6,7 @@ ENGINE_URL = "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4
 TABLE_NAME = "newsletters"
 ROOT_KEY = "newsletters"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUT_PATH = os.path.join(BASE_DIR, "../out_data", "newsletters_export.json")
+OUTPUT_PATH = os.path.join(BASE_DIR, "out_data", "newsletters_export.json")
 
 COLUMNS = ["user_id", "type_id", "created_at", "title", "content"]
 

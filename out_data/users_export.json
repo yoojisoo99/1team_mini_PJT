@@ -6,9 +6,19 @@
             "user_email": "asd@1.com"
         },
         {
+            "user_id": "asdqwe12",
+            "user_password": "$2b$12$zFeFNTP8VClTpWYIzt/pV.M5AQpasgSk7ce3EaRRjm1huBSk/UOoe",
+            "user_email": "asdqwe12@na.asd"
+        },
+        {
             "user_id": "asdqwe123",
             "user_password": "$2b$12$vS.sndyzdJ90xl4QS3kuHehmPwCaL3Hswzd7U6X/FtFdpkkyiw7p.",
             "user_email": "anjin0910@gmail.com"
+        },
+        {
+            "user_id": "kimgeo6",
+            "user_password": "$2b$12$NnT9JURWGkuZey9vhUmKUu/3mblMoPYTqwSpvRp6MMsQHYoO7A062",
+            "user_email": "kimgeo6@gmail.com"
         },
         {
             "user_id": "kimgeon",
@@ -29,6 +39,21 @@
             "user_id": "kimgeon3",
             "user_password": "$2b$12$d/bohfKw7wWYJUsj2yrUpe37Yero1h4FhphrgiR8p/SzMZ5kvfctO",
             "user_email": "kimgeon3@gmail.com"
+        },
+        {
+            "user_id": "kimgeon4",
+            "user_password": "$2b$12$6q/8mZdGM0Yc3vVVsLIizeSFQUTokuynJTMlO5kdnbRNTC0gcJJbK",
+            "user_email": "kimgeon4@gmail.com"
+        },
+        {
+            "user_id": "kimgeon5",
+            "user_password": "$2b$12$42LeWV2GVN6Beg2rNpGfcOqTpgOI0RpQuKQBorRArM1QnzXbllvaO",
+            "user_email": "kimgeon5@gmail.com"
+        },
+        {
+            "user_id": "test",
+            "user_password": "$2b$12$SctZVL06BhK3Ne6Il7UarO55djtp6ia94TAfGrPjlxP6w0l8FHu2W",
+            "user_email": "test@test.com"
         },
         {
             "user_id": "test14",
