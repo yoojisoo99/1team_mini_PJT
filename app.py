@@ -2205,8 +2205,8 @@ elif page == "📈 분석 신호":
     st.markdown("### 종목별 신호 카드")
     for _, row in display_signals.iterrows():
         sig = row['signal']
-        sig_emoji = '🟢' if sig == 'BUY' else '🟡' if sig == 'HOLD' else '🔴'
-        sig_color = color_map.get(sig, '#8b949e') # Fallback color instead of raising KeyError
+        sig_emoji = '🟢' if sig == '매수' else '🟡' if sig == '보유' else '🔴'
+        sig_color = color_map.get(sig, "#8b949e") # Fallback color instead of raising KeyError
         st.markdown(
             f"""
             <div class="stock-card">
