@@ -4,7 +4,7 @@ ENGINE_URL = "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4
 
 TABLE_NAME = "price_snapshots"
 ROOT_KEY = "price_snapshots"
-OUTPUT_PATH = "out_data/price_snapshots_export.json"
+OUTPUT_PATH = "../out_data/price_snapshots_export.json"
 
 COLUMNS = ["id", "ticker", "captured_at", "price", "volume", "trade_value"]
 
