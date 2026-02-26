@@ -6,7 +6,7 @@ TABLE_NAME = "stocks"
 ROOT_KEY = "stocks"
 OUTPUT_PATH = "out_data/stocks_export.json"
 
-COLUMNS = ["ticker", "name", "market"]
+COLUMNS = ["ticker", "name", "market","total_value"]
 
 def main():
     rows = export_table_to_json(
