@@ -130,6 +130,9 @@ def load_latest_data():
     signals_df = pd.DataFrame()
     news_df = pd.DataFrame()
     hist_df = pd.DataFrame()
+    recs_df = pd.DataFrame()
+    newsletters_df = pd.DataFrame()
+    user_types_df = pd.DataFrame()
 
     # 1. 시세/거래량 JSON 로드 (C_export_stocks.py 결과물)
     stock_json_path = os.path.join(out_dir, 'stocks_export.json')
@@ -154,7 +157,40 @@ def load_latest_data():
         except Exception as e:
             print(f"Failed to load analysis signals JSON: {e}")
 
-    # 3. 뉴스 및 과거 시세 (기존 CSV 백업 방식 유지)
+    # 3. 추천 종목 JSON 로드 (F_export_recommendations.py 결과물)
+    recs_json_path = os.path.join(out_dir, 'recommendations_export.json')
+    if os.path.exists(recs_json_path):
+        try:
+            with open(recs_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'recommendations' in data:
+                    recs_df = pd.DataFrame(data['recommendations'])
+        except Exception as e:
+            print(f"Failed to load recommendations JSON: {e}")
+
+    # 4. 뉴스레터 JSON 로드 (G_export_newsletters.py 결과물)
+    newsletters_json_path = os.path.join(out_dir, 'newsletters_export.json')
+    if os.path.exists(newsletters_json_path):
+        try:
+            with open(newsletters_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'newsletters' in data:
+                    newsletters_df = pd.DataFrame(data['newsletters'])
+        except Exception as e:
+            print(f"Failed to load newsletters JSON: {e}")
+
+    # 5. 사용자 성향 정보 로드 (B_export_user_type.py 결과물)
+    user_type_json_path = os.path.join(out_dir, 'user_type_export.json')
+    if os.path.exists(user_type_json_path):
+        try:
+            with open(user_type_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'user_type' in data:
+                    user_types_df = pd.DataFrame(data['user_type'])
+        except Exception as e:
+            print(f"Failed to load user_type JSON: {e}")
+
+    # 6. 뉴스 및 과거 시세 (기존 CSV 백업 방식 유지)
     import glob
     news_files = sorted(glob.glob(os.path.join(DATA_DIR, 'stock_news_*.csv')))
     hist_files = sorted(glob.glob(os.path.join(DATA_DIR, 'historical_*.csv')))
@@ -167,7 +203,7 @@ def load_latest_data():
     if signals_df.empty and not stock_df.empty:
         signals_df = generate_analysis_signals(stock_df, '1D')
 
-    return stock_df, news_df, hist_df, signals_df
+    return stock_df, news_df, hist_df, signals_df, recs_df, newsletters_df, user_types_df
 
 
 # ============================================================
@@ -726,7 +762,7 @@ if 'last_sync_time' not in st.session_state:
 ensure_data_exists()
 
 # 3. 로컬 JSON 데이터 로드 (캐싱 지원)
-stock_df, news_df, hist_df, signals_df = load_latest_data()
+stock_df, news_df, hist_df, signals_df, recs_df, newsletters_df, user_types_df = load_latest_data()
 
 
 # ============================================================
@@ -1419,7 +1455,12 @@ elif page == "⭐ 맞춤 종목 추천":
         filtered_df = filtered_df[filtered_df['시장'] == market_sel]
 
     # ── 추천 종목 계산 ──
-    recommendations = get_top_recommendations(filtered_df, investor_type, top_n)
+    # DB에서 이미 계산된 추천 데이터가 있으면 성향에 맞게 로드
+    if not recs_df.empty:
+        # DB 추천 데이터 중 현재 사용자의 성향과 일치하는 것 필터링 점수순
+        recommendations = recs_df.sort_values(by='추천점수', ascending=False).head(top_n)
+    else:
+        recommendations = get_top_recommendations(filtered_df, investor_type, top_n)
 
     if recommendations.empty:
         st.warning("추천 가능한 종목이 없습니다.")
@@ -1994,16 +2035,21 @@ elif page == "📧 뉴스레터":
         f"**{type_info['emoji']} {type_info['title']}** — _{type_info['strategy']}_"
     )
 
-    # 뉴스레터 생성
-    scored = score_stocks(stock_df, inv_type)
-    newsletter = generate_newsletter(
-        stock_df=stock_df,
-        scored_df=scored,
-        signals_df=signals_df,
-        investor_type=inv_type,
-        user_id=1,
-        news_df=news_df,
-    )
+    # 뉴스레터 생성 (DB 데이터 우선 사용)
+    if not newsletters_df.empty:
+        # DB에서 현재 성향에 맞는 뉴스레터 찾기 (type_id 매칭 등)
+        # 여기서는 가장 최근 것을 가져옴
+        newsletter = newsletters_df.iloc[-1].to_dict()
+    else:
+        scored = score_stocks(stock_df, inv_type)
+        newsletter = generate_newsletter(
+            stock_df=stock_df,
+            scored_df=scored,
+            signals_df=signals_df,
+            investor_type=inv_type,
+            user_id=1,
+            news_df=news_df,
+        )
 
     st.markdown("---")
     st.markdown(f"### {newsletter['title']}")

@@ -753,6 +753,36 @@ def save_all_to_csv(stock_df, signals_df=None, recs_df=None, newsletter_dict=Non
             news_df['created_at'] = news_df['created_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
         _write_csv(news_df, f"newsletters_{today}.csv")
 
+def cleanup_old_files(data_dir='data'):
+    """당일 데이터와 코어 DB를 제외한 구식 파일을 삭제합니다."""
+    import os
+    from datetime import datetime
+    
+    today_str = datetime.now().strftime("%Y%m%d")
+    keep_list = ['users_db.json', 'user_type_db.json', 'users_db.csv', 'user_type_db.csv']
+    
+    if not os.path.exists(data_dir):
+        return
+        
+    logger.info(f"[Cleanup] '{data_dir}' 폴더 정리 중...")
+    count = 0
+    for f in os.listdir(data_dir):
+        fpath = os.path.join(data_dir, f)
+        if not os.path.isfile(fpath):
+            continue
+            
+        # 유지 조건: 코어 DB 파일이거나 파일명에 오늘 날짜 포함
+        if f in keep_list or today_str in f:
+            continue
+            
+        try:
+            os.remove(fpath)
+            count += 1
+        except Exception as e:
+            logger.warning(f"  FAILED to delete {f}: {e}")
+            
+    logger.info(f"[Cleanup] 총 {count}개의 구식 파일이 삭제되었습니다.")
+
 # ============================================================
 # 7. 전체 파이프라인 실행 함수
 # ============================================================
@@ -893,6 +923,9 @@ def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
         news_df.to_csv(f"data/stock_news_{today}.csv", index=False, encoding='utf-8-sig')
     if not historical_df.empty:
         historical_df.to_csv(f"data/historical_{today}.csv", index=False, encoding='utf-8-sig')
+
+    # 구식 데이터 정리
+    cleanup_old_files('data')
 
 
     # ─── 결과 요약 ───

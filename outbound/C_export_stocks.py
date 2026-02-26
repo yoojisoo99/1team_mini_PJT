@@ -2,8 +2,12 @@ import pandas as pd
 from common import get_engine, dataframe_to_json_file
 import time
 
+import os
+
 ENGINE_URL = "mysql+pymysql://test:test@25.4.53.12:3306/stock_db?charset=utf8mb4"
-OUTPUT_PATH = "out_data/stocks_export.json"
+# 프로젝트 루트 기준 경로 설정
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_PATH = os.path.join(BASE_DIR, "out_data", "stocks_export.json")
 ROOT_KEY = "stocks"
 
 def main():

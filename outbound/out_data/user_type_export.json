@@ -24,8 +24,8 @@
         {
             "user_id": "test14",
             "type_id": 3,
-            "type_name": "위험중립형",
-            "description": "테스트용 위험중립형 사용자",
+            "type_name": "안전추구형",
+            "description": "테스트용 안정형 사용자",
             "user_check": 1
         },
         {
