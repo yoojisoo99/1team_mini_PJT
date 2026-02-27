@@ -8,8 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
-<<<<<<< HEAD
-=======
 
 # 환경 변수 (민감 정보 보호)
 .env
@@ -23,4 +21,6 @@ users.json
 # IDE
 .idea/
 .vscode/
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
+
+# 기획서 등 임시 텍스트
+프로젝트_기획서_LUMINA.txt

@@ -1,13 +1,4 @@
 [project]
-<<<<<<< HEAD
-name = "webscraping-gemini"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.11,<3.13"
-dependencies = [
-    "pykrx>=1.2.4",
-=======
 name = "stock-recommender"
 version = "0.1.0"
 description = "네이버 증권 투자 성향별 주식 추천 웹앱"
@@ -38,5 +29,7 @@ dependencies = [
     "cryptography>=46.0.5",
     "passlib>=1.7.4",
     "bcrypt>=5.0.0",
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
+    "streamlit-autorefresh>=1.0.1",
+    "streamlit-option-menu>=0.4.0",
+    "webdriver-manager>=4.0.2",
 ]

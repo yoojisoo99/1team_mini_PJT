@@ -7,34 +7,32 @@ import sqlite3
 logger = logging.getLogger(__name__)
 
 def load_realtime_market_data():
-    """DB(또는 fallback CSV)에서 실시간 시장 데이터를 로드하여 DataFrame으로 반환합니다."""
-    # 우선 MySQL 시도 (db_manager 연동)
-    try:
-        from db_manager import get_engine
-        engine = get_engine()
-        if engine is not None:
-            # 당일 데이터만 우선 조회 (성능상)
-            df = pd.read_sql("SELECT * FROM stock_market_data WHERE DATE(수집시간) = CURDATE()", engine)
-            if not df.empty:
-                logger.info(f"[RTD] MySQL에서 오늘 날짜 시세 {len(df)}건 로드 완료")
-                return df
-    except Exception as e:
-        logger.warning(f"[RTD] MySQL 로드 실패: {e}")
-        
-    # 실패 시 CSV Fallback
-    fallback_path = os.path.join(DATA_DIR, 'stock_market_data_fallback.csv')
-    if os.path.exists(fallback_path):
+    """`data/` 폴더 내의 스케줄러가 저장한 JSON에서 실시간 시장 데이터를 로드하여 DataFrame으로 반환합니다."""
+    import glob
+    import json
+    
+    # scheduler_market_data_*.json 파일들 로드
+    file_pattern = os.path.join(DATA_DIR, 'scheduler_market_data_*.json')
+    files = sorted(glob.glob(file_pattern))
+    
+    all_data = []
+    for fpath in files[-10:]: # 최근 10개 파일 정도만 읽기 (당일 데이터 위주)
         try:
-            df = pd.read_csv(fallback_path)
-            df['수집시간'] = pd.to_datetime(df['수집시간'])
-            # 오늘 날짜만 필터링
-            today = pd.Timestamp.now().date()
-            df = df[df['수집시간'].dt.date == today]
-            logger.info(f"[RTD] Fallback CSV에서 오늘 날짜 시세 {len(df)}건 로드 완료")
-            return df
+            with open(fpath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, dict) and "stock_market_data" in data:
+                    all_data.extend(data["stock_market_data"])
         except Exception as e:
-            logger.error(f"[RTD] CSV 로드 실패: {e}")
+            logger.warning(f"[RTD] 파일 로드 실패 {fpath}: {e}")
             
+    if all_data:
+        df = pd.DataFrame(all_data)
+        df['수집시간'] = pd.to_datetime(df['수집시간'])
+        today = pd.Timestamp.now().date()
+        df = df[df['수집시간'].dt.date == today]
+        logger.info(f"[RTD] JSON에서 오늘 날짜 시세 {len(df)}건 로드 완료")
+        return df
+        
     return pd.DataFrame()
 
 

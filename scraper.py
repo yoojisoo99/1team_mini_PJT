@@ -1,14 +1,6 @@
 """
 네이버 증권 주식 데이터 스크래핑 & 정제
 =======================================
-<<<<<<< HEAD
-- requests + BeautifulSoup : 거래량 상위 종목 시세 수집
-- selenium                 : 종목별 최신 뉴스 수집
-- 수집한 데이터는 CSV로 저장
-"""
-
-import requests
-=======
 채점 기준 충족을 위한 수집 도구:
   ① requests + BeautifulSoup : 거래량 상위 종목 시세 + 종목 기본 정보
   ② Selenium                 : 투자자별 매매 동향 + 종목 뉴스
@@ -18,17 +10,13 @@ import requests
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
 import time
 import re
-<<<<<<< HEAD
-=======
 import os
 import logging
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
 
 # Selenium
 from selenium import webdriver
@@ -36,22 +24,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-<<<<<<< HEAD
-
-
-# ============================================================
-# 1. [requests + BeautifulSoup] 거래량 상위 종목 수집
-# ============================================================
-def clean_number(text):
-    """텍스트에서 숫자(콤마 포함)만 추출하여 정수로 변환합니다."""
-    nums = re.sub(r'[^\d]', '', text)
-    return int(nums) if nums else 0
-
-
-def scrape_top_volume(market="KOSPI", limit=20):
-    """
-    네이버 금융에서 거래량 상위 종목을 스크래핑합니다.
-=======
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
 # ============================================================
@@ -144,21 +116,10 @@ def parse_change_pct(pct_text):
 def scrape_top_volume(market="KOSPI", limit=20, session=None):
     """
     네이버 금융에서 거래량 상위 종목 시세를 스크래핑합니다.
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
 
     Args:
         market: "KOSPI" 또는 "KOSDAQ"
         limit:  수집할 종목 수
-<<<<<<< HEAD
-    Returns:
-        pandas DataFrame
-    """
-    sosok = "0" if market == "KOSPI" else "1"
-    base_url = f"https://finance.naver.com/sise/sise_quant.naver?sosok={sosok}"
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
-=======
         session: requests.Session (없으면 새로 생성)
     Returns:
         pandas DataFrame
@@ -168,18 +129,10 @@ def scrape_top_volume(market="KOSPI", limit=20, session=None):
 
     sosok = "0" if market == "KOSPI" else "1"
     base_url = f"https://finance.naver.com/sise/sise_quant.naver?sosok={sosok}"
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
 
     stocks = []
     page = 1
 
-<<<<<<< HEAD
-    while len(stocks) < limit:
-        url = f"{base_url}&page={page}"
-        resp = requests.get(url, headers=headers)
-        resp.encoding = 'euc-kr'
-        soup = BeautifulSoup(resp.text, 'html.parser')
-=======
     logger.info(f"[수집] {market} 거래량 상위 {limit}개 종목 수집 시작")
 
     while len(stocks) < limit:
@@ -191,7 +144,6 @@ def scrape_top_volume(market="KOSPI", limit=20, session=None):
         except requests.RequestException as e:
             logger.error(f"[네트워크 오류] {market} page={page}: {e}")
             break
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
 
         rows = soup.select('table.type_2 tr')
         found = False
@@ -204,26 +156,6 @@ def scrape_top_volume(market="KOSPI", limit=20, session=None):
             found = True
             try:
                 name = cols[1].text.strip()
-<<<<<<< HEAD
-                code = cols[1].find('a')['href'].split('code=')[-1]
-
-                # ── 데이터 정제 ──
-                price  = clean_number(cols[2].text)          # 현재가
-                volume = clean_number(cols[5].text)          # 거래량
-
-                # 전일비: "하락\n\t\t\t3" 같은 노이즈 제거 → 숫자만 추출
-                change_val = clean_number(cols[3].text)
-
-                # 등락률: "+1.05%" / "-2.30%" 그대로 유지
-                change_pct = cols[4].text.strip()
-
-                # 등락률 부호를 전일비에 반영 (+/-)
-                if '-' in change_pct:
-                    change_val = -change_val
-
-                # 거래대금 (백만원)
-                trade_val = clean_number(cols[6].text)
-=======
                 link = cols[1].find('a')
                 if not link or 'href' not in link.attrs:
                     continue
@@ -243,7 +175,6 @@ def scrape_top_volume(market="KOSPI", limit=20, session=None):
                     change_val = -abs(change_val)
                 elif pct_value == 0:
                     change_val = 0
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
 
                 stocks.append({
                     '종목코드': code,
@@ -261,45 +192,20 @@ def scrape_top_volume(market="KOSPI", limit=20, session=None):
                     break
 
             except (ValueError, TypeError, AttributeError) as e:
-<<<<<<< HEAD
-                print(f"  [정제 오류] {e}")
-=======
                 logger.warning(f"  [정제 오류] {e}")
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
                 continue
 
         if not found:
             break
         page += 1
-<<<<<<< HEAD
-        time.sleep(0.5)
-
-    df = pd.DataFrame(stocks)
-    print(f"[완료] [{market}] 거래량 상위 {len(df)}개 종목 수집 완료")
-=======
         time.sleep(0.3)
 
     df = pd.DataFrame(stocks)
     logger.info(f"  -> {market} {len(df)}개 종목 수집 완료")
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
     return df
 
 
 # ============================================================
-<<<<<<< HEAD
-# 2. [Selenium] 종목별 최신 뉴스 수집
-# ============================================================
-def scrape_news(ticker, limit=3):
-    """
-    네이버 금융에서 특정 종목의 최신 뉴스 제목을 수집합니다.
-
-    Args:
-        ticker: 종목코드 (예: "005930")
-        limit:  수집할 뉴스 개수
-    Returns:
-        list of str
-    """
-=======
 # 2. [requests + BeautifulSoup] 종목별 기본 정보 수집
 #    (시가총액, PER, PBR, 배당수익률, 52주 최고/최저)
 # ============================================================
@@ -429,17 +335,10 @@ def scrape_all_details(tickers, session=None, delay=0.3):
 # ============================================================
 def create_driver():
     """Selenium Chrome 드라이버를 headless 모드로 생성합니다."""
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
-<<<<<<< HEAD
-
-    driver = webdriver.Chrome(options=options)
-    titles = []
-
-=======
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--log-level=3')
     options.add_argument(f'user-agent={HEADERS["user-agent"]}')
@@ -565,7 +464,6 @@ def scrape_news(ticker, driver=None, limit=3):
         driver = create_driver()
 
     articles = []
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78
     try:
         url = f"https://finance.naver.com/item/news_news.naver?code={ticker}&page=1"
         driver.get(url)
@@ -574,73 +472,6 @@ def scrape_news(ticker, driver=None, limit=3):
             EC.presence_of_element_located((By.CSS_SELECTOR, 'table.type5'))
         )
 
-<<<<<<< HEAD
-        articles = driver.find_elements(By.CSS_SELECTOR, '.title a')
-        for i, a in enumerate(articles):
-            if i >= limit:
-                break
-            clean = a.text.strip().replace("'", "").replace('"', '')
-            if clean:
-                titles.append(clean)
-
-    except Exception as e:
-        print(f"  [뉴스 수집 실패] {ticker}: {e}")
-    finally:
-        driver.quit()
-
-    return titles
-
-
-# ============================================================
-# 3. 메인 실행
-# ============================================================
-if __name__ == "__main__":
-    print("=" * 55)
-    print("[START] 네이버 증권 데이터 스크래핑 시작")
-    print(f"   시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 55)
-
-    # -- STEP 1: 거래량 상위 종목 수집 --
-    kospi_df  = scrape_top_volume("KOSPI",  limit=20)
-    kosdaq_df = scrape_top_volume("KOSDAQ", limit=20)
-    all_df = pd.concat([kospi_df, kosdaq_df], ignore_index=True)
-
-    # -- STEP 2: 상위 5개 종목 뉴스 수집 --
-    print("\n[NEWS] 상위 5개 종목 뉴스 수집 중...")
-    news_data = []
-    for _, row in all_df.head(5).iterrows():
-        news_list = scrape_news(row['종목코드'])
-        for title in news_list:
-            news_data.append({
-                '종목코드': row['종목코드'],
-                '종목명':   row['종목명'],
-                '뉴스제목': title,
-                '수집시간': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            })
-        print(f"  [OK] {row['종목명']}({row['종목코드']}) - {len(news_list)}건")
-        time.sleep(1)
-
-    news_df = pd.DataFrame(news_data) if news_data else pd.DataFrame()
-
-    # -- STEP 3: CSV 파일로 저장 --
-    today = datetime.now().strftime('%Y%m%d')
-    stock_csv = f"top_volume_{today}.csv"
-    news_csv  = f"stock_news_{today}.csv"
-
-    all_df.to_csv(stock_csv, index=False, encoding='utf-8-sig')
-    if not news_df.empty:
-        news_df.to_csv(news_csv, index=False, encoding='utf-8-sig')
-
-    print(f"\n{'='*55}")
-    print(f"[DONE] 수집 완료!")
-    print(f"   -> {stock_csv} ({len(all_df)}개 종목)")
-    print(f"   -> {news_csv} ({len(news_df)}건 뉴스)")
-    print(f"{'='*55}")
-
-    # 결과 미리보기
-    print("\n[거래량 상위 종목 미리보기]")
-    print(all_df.head(10).to_string(index=False))
-=======
         rows = driver.find_elements(By.CSS_SELECTOR, 'table.type5 tr')
         count = 0
         for row in rows:
@@ -846,6 +677,113 @@ def scrape_historical_prices(tickers, days=5):
 
 
 # ============================================================
+# 6.5 신규 추가: CSV 저장 전용 함수
+# ============================================================
+def save_all_to_csv(stock_df, signals_df=None, recs_df=None, newsletter_dict=None):
+    import os
+    from datetime import datetime
+    
+    os.makedirs('data', exist_ok=True)
+    today = datetime.now().strftime('%Y%m%d')
+    time_suffix = datetime.now().strftime('%Y%m%d_%H%M%S')
+    
+    def _write_csv(df, filename):
+        filepath = os.path.join('data', filename)
+        df.to_csv(filepath, index=False, encoding='utf-8-sig')
+        logger.info(f"  -> CSV 저장 완료: {filepath}")
+
+    # (1) stocks.csv
+    if not stock_df.empty:
+        master = stock_df[['종목코드', '종목명', '시장']].drop_duplicates(subset='종목코드')
+        master = master.rename(columns={'종목코드': 'ticker', '종목명': 'name', '시장': 'market'})
+        _write_csv(master, f"stocks_{today}.csv")
+        
+    # (2) price_snapshots.csv
+    if not stock_df.empty:
+        required = ['종목코드', '수집시간', '현재가', '거래량', '거래대금']
+        available = [c for c in required if c in stock_df.columns]
+        if len(available) == len(required):
+            snap = stock_df[['종목명'] + required].copy() if '종목명' in stock_df.columns else stock_df[required].copy()
+            if '종목명' in snap.columns:
+                snap.rename(columns={'종목명': 'id'}, inplace=True)
+            else:
+                snap['id'] = snap['종목코드']
+            snap.rename(columns={'종목코드': 'ticker', '수집시간': 'captured_at', '현재가': 'price', '거래량': 'volume', '거래대금': 'trade_value'}, inplace=True)
+            
+            if pd.api.types.is_datetime64_any_dtype(snap['captured_at']):
+                snap['captured_at'] = snap['captured_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+            snap['price'] = snap['price'].fillna(0).astype('int64')
+            snap['volume'] = snap['volume'].fillna(0).astype('int64')
+            snap['trade_value'] = snap['trade_value'].fillna(0).astype('int64')
+            _write_csv(snap, f"price_snapshots_{time_suffix}.csv")
+
+    # (3) analysis_signals.csv
+    if signals_df is not None and not signals_df.empty:
+        sign = signals_df.copy()
+        if '종목명' in sign.columns: sign.rename(columns={'종목명': 'id'}, inplace=True)
+        elif 'name' in sign.columns: sign.rename(columns={'name': 'id'}, inplace=True)
+        else: sign['id'] = sign['ticker']
+        
+        if pd.api.types.is_datetime64_any_dtype(sign['as_of']):
+            sign['as_of'] = sign['as_of'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+        _write_csv(sign, f"analysis_signals_{today}.csv")
+
+    # (4) recommendations.csv
+    if recs_df is not None and not recs_df.empty:
+        recs = recs_df.copy()
+        if pd.api.types.is_datetime64_any_dtype(recs['as_of']):
+            recs['as_of'] = recs['as_of'].dt.strftime('%Y-%m-%d')
+        if 'id' not in recs.columns:
+            recs.insert(0, 'id', range(1, len(recs) + 1))
+        _write_csv(recs, f"recommendations_{today}.csv")
+
+    # (5) newsletters.csv
+    if newsletter_dict:
+        if isinstance(newsletter_dict, list):
+            news_df = pd.DataFrame(newsletter_dict)
+        else:
+            news_df = pd.DataFrame([newsletter_dict])
+            
+        # 사용자 요청 형식에 맞춰 컬럼 순서 조정
+        cols = ["user_id", "type_id", "created_at", "title", "content"]
+        # 존재하지 않는 컬럼이 있을 경우 대비 (안전장치)
+        news_df = news_df[[c for c in cols if c in news_df.columns]]
+            
+        if pd.api.types.is_datetime64_any_dtype(news_df['created_at']):
+            news_df['created_at'] = news_df['created_at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+        _write_csv(news_df, f"newsletters_{today}.csv")
+
+def cleanup_old_files(data_dir='data'):
+    """당일 데이터와 코어 DB를 제외한 구식 파일을 삭제합니다."""
+    import os
+    from datetime import datetime
+    
+    today_str = datetime.now().strftime("%Y%m%d")
+    keep_list = ['users_db.json', 'user_type_db.json', 'users_db.csv', 'user_type_db.csv']
+    
+    if not os.path.exists(data_dir):
+        return
+        
+    logger.info(f"[Cleanup] '{data_dir}' 폴더 정리 중...")
+    count = 0
+    for f in os.listdir(data_dir):
+        fpath = os.path.join(data_dir, f)
+        if not os.path.isfile(fpath):
+            continue
+            
+        # 유지 조건: 코어 DB 파일이거나 파일명에 오늘 날짜 포함
+        if f in keep_list or today_str in f:
+            continue
+            
+        try:
+            os.remove(fpath)
+            count += 1
+        except Exception as e:
+            logger.warning(f"  FAILED to delete {f}: {e}")
+            
+    logger.info(f"[Cleanup] 총 {count}개의 구식 파일이 삭제되었습니다.")
+
+# ============================================================
 # 7. 전체 파이프라인 실행 함수
 # ============================================================
 def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
@@ -870,7 +808,6 @@ def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
         generate_analysis_signals, score_stocks,
         build_recommendations_df, generate_newsletter,
     )
-    from db_manager import save_all_to_db
 
     logger.info("=" * 60)
     logger.info(" 네이버 증권 데이터 수집 & 분석 시스템")
@@ -921,40 +858,75 @@ def run_full_pipeline(kospi_limit=100, kosdaq_limit=100):
     logger.info("[분석] 분석 신호 생성 중...")
     signals_df = generate_analysis_signals(final_df, window='1D')
 
-    # ─── STEP 7: (F) 추천 데이터 생성 (기본: 위험중립형) ───
-    logger.info("[추천] 기본 추천 데이터 생성 중...")
-    scored_df = score_stocks(final_df, '위험중립형')
-    recs_df = build_recommendations_df(scored_df, user_id=1, top_n=10)
+    # ─── STEP 7 & 8: 유저별 (F) 추천 및 (G) 뉴스레터 생성 ───
+    logger.info("[추천/뉴스레터] 구독 유저별 데이터 생성 중...")
+    all_recs = []
+    all_newsletters = []
+    
+    # 기본값 (DB 파일이 없거나 비구독자만 있을 때 실패 방지용)
+    users_to_process = [{'user_id': 1, 'type_name': '위험중립형', 'user_check': 1}]
+    
+    # user_type_db.csv 에서 구독자(user_check=1) 불러오기
+    import os
+    type_db_path = os.path.join('data', 'user_type_db.csv')
+    if os.path.exists(type_db_path):
+        try:
+            tdf = pd.read_csv(type_db_path)
+            # 구독한 유저만 필터링 (컬럼이 존재하는지 확인)
+            if 'user_check' in tdf.columns:
+                subscribed = tdf[tdf['user_check'] == 1]
+                if not subscribed.empty:
+                    users_to_process = subscribed.to_dict('records')
+        except Exception as e:
+            logger.warning(f"user_type_db.csv 읽기 실패, 기본값 사용: {e}")
 
-    # ─── STEP 8: (G) 뉴스레터 생성 ───
-    logger.info("[뉴스레터] 뉴스레터 생성 중...")
-    newsletter = generate_newsletter(
+    for u in users_to_process:
+        uid = u.get('user_id', 1)
+        utype = u.get('type_name', '위험중립형')
+        
+        # 7. 추천 데이터 생성
+        scored_df = score_stocks(final_df, utype)
+        recs_df = build_recommendations_df(scored_df, user_id=uid, top_n=10)
+        all_recs.append(recs_df)
+        
+        # 8. 뉴스레터 생성
+        newsletter = generate_newsletter(
+            stock_df=final_df,
+            scored_df=scored_df,
+            signals_df=signals_df,
+            investor_type=utype,
+            user_id=uid,
+            news_df=news_df,
+        )
+        newsletter['type_id'] = u.get('type_id', 3)
+        all_newsletters.append(newsletter)
+
+    final_recs_df = pd.concat(all_recs, ignore_index=True) if all_recs else pd.DataFrame()
+
+    # ─── STEP 9: 전체 저장 (C~G) CSV ───
+    logger.info("[저장] 전체 데이터 CSV 파일로 저장 중...")
+
+    # save_all_to_csv 내부 로직 실행
+    save_all_to_csv(
         stock_df=final_df,
-        scored_df=scored_df,
         signals_df=signals_df,
-        investor_type='위험중립형',
-        user_id=1,
-        news_df=news_df,
+        recs_df=final_recs_df,
+        newsletter_dict=all_newsletters, # 리스트로 전달됨
     )
-
-    # ─── STEP 9: 전체 저장 (C~G) ───
-    logger.info("[저장] 전체 데이터 저장 중...")
 
     # 기존 CSV도 저장 (호환성 유지)
-    save_to_csv(final_df, f"stock_data_{today}.csv")
-    save_to_csv(volume_df, f"top_volume_{today}.csv")
+    # db_manager의 save_to_csv 대신 간단한 로컬 구문 사용 또는 기본 저장
+    os.makedirs('data', exist_ok=True)
+    final_df.to_csv(f"data/stock_data_{today}.csv", index=False, encoding='utf-8-sig')
+    volume_df.to_csv(f"data/top_volume_{today}.csv", index=False, encoding='utf-8-sig')
     if not news_df.empty:
-        save_to_csv(news_df, f"stock_news_{today}.csv")
+        news_df.to_csv(f"data/stock_news_{today}.csv", index=False, encoding='utf-8-sig')
     if not historical_df.empty:
-        save_to_csv(historical_df, f"historical_{today}.csv")
+        historical_df.to_csv(f"data/historical_{today}.csv", index=False, encoding='utf-8-sig')
 
-    # DB 형식 저장 (C~G 테이블)
-    save_all_to_db(
-        stock_df=final_df,
-        signals_df=signals_df,
-        recs_df=recs_df,
-        newsletter_dict=newsletter,
-    )
+    # 구식 데이터 정리
+    cleanup_old_files('data')
+
 
     # ─── 결과 요약 ───
     buy_cnt = (signals_df['signal'] == 'BUY').sum() if not signals_df.empty else 0
@@ -1001,7 +973,9 @@ if __name__ == "__main__":
 
     newsletter = result['newsletter']
     if newsletter:
-        print(f"\n[뉴스레터] {newsletter['title']}")
-        print(newsletter['content'][:500] + '...')
+        try:
+            print(f"\n[뉴스레터] {newsletter['title']}")
+            print(newsletter['content'][:500] + '...')
+        except UnicodeEncodeError:
+            print("\n[뉴스레터] (터미널 인코딩 문제로 내용을 표시할 수 없습니다. JSON 파일을 확인해주세요.)")
 
->>>>>>> 74c9dccb7912e9876696a88823f96a6c18236a78

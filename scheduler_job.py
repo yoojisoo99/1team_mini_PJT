@@ -3,8 +3,9 @@ import logging
 import pandas as pd
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from scraper import create_session, scrape_top_volume
-from db_manager import save_to_db
+from scraper import run_full_pipeline
+import subprocess
+import os
 
 # 로깅 설정
 logging.basicConfig(
@@ -14,76 +15,86 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# 글로벌 카운터 (1시간마다 실행되므로 24가 되면 1일)
+hourly_run_count = 0
+
 def job_realtime_market_data():
-    """매 정시 KOSPI/KOSDAQ 거래량 상위 종목을 수집하여 DB에 누적 저장합니다."""
-    logger.info("=== [스케줄링] 1시간 단위 주식 시세 수집 시작 ===")
-    session = create_session()
+    global hourly_run_count
+    hourly_run_count += 1
     
+    """매 정시 전체 파이프라인(스크래핑 -> JSON 저장 -> DB C~G 갱신)을 실행합니다."""
+    logger.info("=== [스케줄링] 1시간 단위 주식 시세 전체 수집 및 DB 동기화 파이프라인 시작 ===")
     try:
-        # KOSPI 100 + KOSDAQ 100 수집
-        kospi = scrape_top_volume('KOSPI', limit=100, session=session)
-        kosdaq = scrape_top_volume('KOSDAQ', limit=100, session=session)
+        # 1. 스크래퍼 전체 파이프라인 실행 (JSON 파일들 생성됨)
+        logger.info("1. Scraper run_full_pipeline() 실행 중...")
+        result = run_full_pipeline()
+        logger.info("-> 스크래핑 및 JSON 저장 완료.")
         
-        # 병합
-        df = pd.concat([kospi, kosdaq], ignore_index=True)
+        # 2. 생성된 JSON 들을 DB에 반영하는 C ~ G 스크립트 순차 실행
+        scripts_to_run = [
+            'C_stocks_table.py',
+            'D_price_snapshots_table.py',
+            'E_analysis_signals.py',
+            'F_recommendations.py',
+            'G_newsletters.py',
+            'H_stock_fundamentals.py',
+            'I_investor_trends.py'
+        ]
         
-        if df.empty:
-            logger.warning("[실패] 수집된 데이터가 없습니다.")
-            return
-
-        # DB 형식 매핑 (필요한 핵심 데이터만)
-        now = datetime.now()
-        df['수집시간'] = now.replace(minute=0, second=0, microsecond=0) # 정시 기준으로 통일
+        script_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database_script')
         
-        # 문자열 숫자로 변환
-        for col in ['현재가', '전일비', '거래량', '거래대금']:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype('int64')
+        logger.info("2. Database Scripts (C~G) 순차 실행 중...")
+        for script_name in scripts_to_run:
+            script_path = os.path.join(script_dir, script_name)
+            if os.path.exists(script_path):
+                logger.info(f" -> 실행: {script_name}")
+                res = subprocess.run(['python', script_path], capture_output=True, text=True)
+                if res.returncode == 0:
+                    logger.info(f"    [성공] {script_name}")
+                else:
+                    logger.error(f"    [실패] {script_name}\nError: {res.stderr}")
+            else:
+                logger.warning(f" -> 경고: {script_path} 파일을 찾을 수 없습니다.")
+                
+        # 3. 하루 간격 (24번 카운트) 달성 시 또는 오전 9시 정각일 때 이메일 뉴스레터 발송
+        current_hour = datetime.now().hour
+        if hourly_run_count >= 24 or current_hour == 9:
+            logger.info(f"=== ⏰ 이벤트 트리거 (카운트: {hourly_run_count}, 현재시각: {current_hour}시): 일간 뉴스레터 이메일 발송 시작 ===")
             
-        # 등락률 % 제거 후 float 변환
-        df['등락률_num'] = df['등락률'].astype(str).str.replace('%', '').str.replace('+', '').str.replace(',', '')
-        df['등락률_num'] = pd.to_numeric(df['등락률_num'], errors='coerce').fillna(0.0)
-        
-        # DB 저장용 최종 데이터셋
-        db_df = df[['종목코드', '종목명', '시장', '현재가', '전일비', '등락률', '등락률_num', '거래량', '거래대금', '수집시간']]
-        
-        # 1. JSON 변환 및 저장
-        # datetime 직렬화 지원을 위해 변환
-        json_df = db_df.copy()
-        json_df['수집시간'] = json_df['수집시간'].dt.strftime('%Y-%m-%dT%H:%M:%S')
-        data_records = json_df.to_dict(orient='records')
-        json_data = {"stock_market_data": data_records}
-        
-        time_suffix = now.strftime('%Y%m%d_%H%M%S')
-        from db_manager import save_json, sync_json_to_db
-        json_filepath = save_json(json_data, f'scheduler_market_data_{time_suffix}.json')
-
-        # 2. MySQL 테이블에 누적(append) 동기화
-        if json_filepath:
-            success = sync_json_to_db(json_filepath, 'stock_market_data', if_exists='append')
-        else:
-            success = False
-        
-        if success:
-            logger.info(f"=== [성공] {len(db_df)}종목 시세 DB 동기화 완료 ({now.strftime('%H:%M')}) ===")
-        else:
-            logger.error("=== [실패] JSON DB 동기화 실패 ===")
+            mailer_res = subprocess.run(
+                ['python', '-m', 'mailer.send_newsletters'], 
+                capture_output=True, 
+                text=True, 
+                cwd=os.path.dirname(os.path.abspath(__file__))
+            )
             
+            if mailer_res.returncode == 0:
+                logger.info("    [성공] 뉴스레터 이메일 발송 완료")
+            else:
+                logger.error(f"    [실패] 뉴스레터 이메일 발송 오류\nError: {mailer_res.stderr}")
+                logger.error(f"          Output: {mailer_res.stdout}")
+            
+            # 발송 후 카운트 초기화
+            hourly_run_count = 0
+
+        logger.info("=== [완료] 전체 파이프라인 스케줄링 정상 종료 ===")
+        
     except Exception as e:
         logger.error(f"=== [오류] 스케줄링 작업 중 예외 발생: {e} ===")
 
 
 if __name__ == "__main__":
     logger.info("=== 백그라운드 스케줄러를 시작합니다 ===")
-    logger.info("주식 시세 수집: 평일(월-금) 09:00 ~ 15:00 매 정시 동작")
+    logger.info("주식 시세 수집: 24시간 매 정시 동작 (1시간 간격)")
     
     scheduler = BackgroundScheduler(timezone='Asia/Seoul')
     
-    # 평일 오전 9시부터 오후 3시까지 정각에 실행
+    # 1시간 스케줄링 카운트를 위해 매 정각마다 실행
     scheduler.add_job(
         job_realtime_market_data,
         'cron',
-        day_of_week='mon-fri',
-        hour='9-15',
+        day_of_week='mon-sun',
+        hour='*',
         minute=0,
         id='realtime_market_job'
     )
