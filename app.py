@@ -749,14 +749,10 @@ with st.sidebar:
         menu_options = ["🏠 메인 대시보드", "📋 투자 성향 설문", "⭐ 맞춤 종목 추천",
                         "📈 분석 신호", "📰 종목 뉴스", "📧 뉴스레터"]
         
-        # 아이콘 설정
-        menu_icons = ["house", "clipboard-check", "star", "graph-up", "newspaper", "envelope"]
-
         # option_menu 생성 (빨간 선 제거)
         selected = option_menu(
             menu_title=None,
             options=menu_options,
-            icons=menu_icons,
             menu_icon="cast",
             default_index=menu_options.index(st.session_state['current_page']) if st.session_state['current_page'] in menu_options else 0,
             styles={
