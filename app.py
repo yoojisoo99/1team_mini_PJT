@@ -2003,10 +2003,61 @@ elif page == "⭐ 맞춤 종목 추천":
 elif page == "📰 종목 뉴스":
     st.markdown("# 📰 종목 관련 뉴스")
 
+    # ── 뉴스 동적 수집 버튼 ──
+    col_btn1, col_btn2 = st.columns([1, 3])
+    with col_btn1:
+        scrape_clicked = st.button("🔄 뉴스 수집하기", use_container_width=True,
+                                   help="Selenium으로 종목별 최신 뉴스를 실시간 수집합니다.")
+    
+    if scrape_clicked:
+        with st.spinner("📡 종목 뉴스를 수집 중입니다... (Selenium 구동 중, 1~2분 소요)"):
+            try:
+                from scraper import scrape_all_news, scrape_top_volume
+                
+                # 거래량 상위 종목 코드 가져오기 (stock_df가 있으면 활용)
+                if not stock_df.empty and '종목코드' in stock_df.columns:
+                    tickers = stock_df['종목코드'].astype(str).str.zfill(6).tolist()[:20]
+                    ticker_names = dict(zip(
+                        stock_df['종목코드'].astype(str).str.zfill(6),
+                        stock_df['종목명']
+                    )) if '종목명' in stock_df.columns else {}
+                else:
+                    # stock_df가 없으면 직접 거래량 상위 종목 수집
+                    vol_df = scrape_top_volume(market="KOSPI", limit=10)
+                    tickers = vol_df['종목코드'].tolist() if not vol_df.empty else []
+                    ticker_names = dict(zip(vol_df['종목코드'], vol_df['종목명'])) if not vol_df.empty else {}
+
+                if tickers:
+                    scraped_news = scrape_all_news(tickers, limit=3, delay=1)
+                    
+                    if not scraped_news.empty:
+                        # 종목명 매핑 추가
+                        if ticker_names:
+                            scraped_news['종목명'] = scraped_news['종목코드'].map(ticker_names).fillna(scraped_news['종목코드'])
+                        
+                        # CSV로 저장
+                        from datetime import datetime as _dt
+                        filename = f"stock_news_{_dt.now().strftime('%Y%m%d')}.csv"
+                        filepath = os.path.join(DATA_DIR, filename)
+                        scraped_news.to_csv(filepath, index=False, encoding='utf-8-sig')
+                        
+                        st.success(f"뉴스 {len(scraped_news)}건 수집 완료! ({filename})")
+                        st.cache_data.clear()
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.warning("수집된 뉴스가 없습니다. 네트워크 상태를 확인해 주세요.")
+                else:
+                    st.warning("수집할 종목 코드가 없습니다. 먼저 종목 시세 데이터를 수집해 주세요.")
+            except Exception as e:
+                st.error(f"뉴스 수집 중 오류 발생: {e}")
+
+    st.markdown("---")
+
     if news_df.empty:
-        st.warning(
-            "⚠️ 뉴스 데이터가 없습니다. `python scraper.py`를 실행하여 "
-            "뉴스를 수집해 주세요."
+        st.info(
+            "📭 뉴스 데이터가 아직 없습니다. 위의 **🔄 뉴스 수집하기** 버튼을 눌러 "
+            "실시간으로 뉴스를 수집해 보세요."
         )
         st.stop()
 
